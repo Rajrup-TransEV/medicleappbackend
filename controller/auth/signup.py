@@ -58,7 +58,7 @@ def signup():
                     "password": user_data["password"],
                     "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
                     "profilepictures": 'none',
-                    "userrole": 'user'
+                    "userrole": 'patient'
                 }
                 
                 try:
