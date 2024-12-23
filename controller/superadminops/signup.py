@@ -17,7 +17,7 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
-signup_bp = Blueprint('signup', __name__)
+super_admin_signup_bp = Blueprint('super_admin_signup_bp', __name__)
 
 # Temporary storage for user data and OTP
 temporary_storage = {}
@@ -26,7 +26,7 @@ temporary_storage = {}
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
-@signup_bp.route('/users/signup', methods=['POST'])
+@super_admin_signup_bp.route('/superadmin/signup', methods=['POST'])
 def signup():
     # Extracting user details from request data
     name = str(request.form.get('name'))

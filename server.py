@@ -6,10 +6,13 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_socketio import SocketIO,emit
-
-from controller.auth.signup import signup_bp
-from controller.auth.login import login_bp
-
+#
+from controller.patientops.signup import signup_bp
+from controller.patientops.login import login_bp
+from controller.adminops.login import admin_login_bp
+from controller.adminops.signup import admin_signup_bp
+from controller.superadminops.login import super_admin_login_bp
+from controller.superadminops.signup import super_admin_signup_bp
 
 app = Flask(__name__)
 
@@ -38,6 +41,10 @@ def index():
 #blueprint rest apis
 app.register_blueprint(signup_bp)
 app.register_blueprint(login_bp)
+app.register_blueprint(admin_login_bp)
+app.register_blueprint(admin_signup_bp)
+app.register_blueprint(super_admin_login_bp)
+app.register_blueprint(super_admin_login_bp)
 
 #websocket based routes
 
