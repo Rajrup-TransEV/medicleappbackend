@@ -13,6 +13,9 @@ from controller.adminops.login import admin_login_bp
 from controller.adminops.signup import admin_signup_bp
 from controller.superadminops.login import super_admin_login_bp
 from controller.superadminops.signup import super_admin_signup_bp
+from controller.superadminops.suforgotpassword import superadminpasswordreset_bp
+from controller.adminops.adforgotpassword import adminpasswordreset_bp
+from controller.patientops.pforgotpassword import patientpasswordreset_bp
 
 app = Flask(__name__)
 
@@ -45,6 +48,9 @@ app.register_blueprint(admin_login_bp)
 app.register_blueprint(admin_signup_bp)
 app.register_blueprint(super_admin_login_bp)
 app.register_blueprint(super_admin_signup_bp)
+app.register_blueprint(superadminpasswordreset_bp)
+app.register_blueprint(adminpasswordreset_bp)
+app.register_blueprint(patientpasswordreset_bp)
 
 #websocket based routes
 

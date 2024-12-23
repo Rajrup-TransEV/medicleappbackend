@@ -29,7 +29,7 @@ def get_db_connection():
         raise
 
 # Password reset logic for superadmin
-@superadminpasswordreset_bp.route("/superadminpasswordreset", methods=["POST"])
+@superadminpasswordreset_bp.route("/adminpasswordreset", methods=["POST"])
 def passwordresetfn():
     email = request.form.get('email')
     otp = request.form.get('otp')
