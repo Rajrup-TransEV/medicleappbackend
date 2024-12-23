@@ -68,7 +68,7 @@ def adminlogin():
         }
         
         token = jwt.encode(token_payload, str(os.getenv('JWT_SECRET')), algorithm='HS256')
-        
+        generatelogs('info', f"User {user['email']} logged in successfully.", 'adninops/login.py')
         return jsonify({
             "message": "Login successful!",
             "token": token
