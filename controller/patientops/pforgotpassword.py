@@ -10,7 +10,7 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
 # Create a Blueprint for superadmin password reset
-superadminpasswordreset_bp = Blueprint("superadminpasswordreset_bp", __name__)
+patientpasswordreset_bp = Blueprint("patientpasswordreset_bp", __name__)
 
 # Temporary storage for OTPs
 temp_storage = {}
@@ -24,12 +24,12 @@ def get_db_connection():
     except PyMongoError as e:
         messagetype = 'error'
         message = f"Database connection error: {str(e)}"
-        filelocation = 'superadmin_password_reset.py'
+        filelocation = 'patientops/pforgotpassword.py'
         generatelogs(messagetype, message, filelocation)
         raise
 
 # Password reset logic for superadmin
-@superadminpasswordreset_bp.route("/patientpasswordreset", methods=["POST"])
+@patientpasswordreset_bp.route("/patientpasswordreset", methods=["POST"])
 def passwordresetfn():
     email = request.form.get('email')
     otp = request.form.get('otp')
@@ -44,8 +44,8 @@ def passwordresetfn():
             user = users_collection.find_one({"email": email})
 
             if not user:
-                generatelogs("error", "No superadmin found with this email.", "superadmin_password_reset.py")
-                return jsonify({"message": "No superadmin found with this email."}), 404
+                generatelogs("error", "No patients details found with this email.", "patientops/pforgotpassword.py")
+                return jsonify({"message": "No patients details found with this email."}), 404
             
             user_name = user['name']
             otp_generated = str(random.randint(100000, 999999))
@@ -57,32 +57,32 @@ def passwordresetfn():
             }
 
             # Send the OTP via email
-            subject = 'OTP for Superadmin Password Reset'
+            subject = 'OTP for Password Reset'
             text = f"Hello {user_name}, your OTP for password reset is: {otp_generated}"
             email_sender(email, subject, text)
-            generatelogs("success", f"OTP {otp_generated} sent to {email} for password reset.", "superadmin_password_reset.py")
+            generatelogs("success", f"OTP {otp_generated} sent to {email} for password reset.", "patientops/pforgotpassword.py")
 
             return jsonify({"message": "OTP sent to your email for password reset."}), 201
 
         # Step 2: Verify OTP and reset password
         if otp and new_password and email:
             if email not in temp_storage:
-                generatelogs("error", "Session expired or invalid. Please request a new OTP.", "superadmin_password_reset.py")
+                generatelogs("error", "Session expired or invalid. Please request a new OTP.", "patientops/pforgotpassword.py")
                 return jsonify({"message": "Session expired or invalid. Please request a new OTP."}), 400
 
             otp_data = temp_storage[email]
 
             if 'otpExpiration' not in otp_data or 'generatedOtp' not in otp_data:
-                generatelogs("error", "OTP data is incomplete.", "superadmin_password_reset.py")
+                generatelogs("error", "OTP data is incomplete.", "patientops/pforgotpassword.py")
                 return jsonify({"message": "Invalid OTP data."}), 400
             
             if time.time() > otp_data['otpExpiration']:
                 del temp_storage[email]  # Clean up expired session
-                generatelogs("error", "OTP has expired.", "superadmin_password_reset.py")
+                generatelogs("error", "OTP has expired.", "patientops/pforgotpassword.py")
                 return jsonify({"message": "OTP has expired."}), 400
 
             if otp != otp_data['generatedOtp']:
-                generatelogs("error", "Invalid OTP.", "superadmin_password_reset.py")
+                generatelogs("error", "Invalid OTP.", "patientops/pforgotpassword.py")
                 return jsonify({"message": "Invalid OTP."}), 400
 
             del temp_storage[email]  # Clear OTP after successful verification
@@ -93,15 +93,15 @@ def passwordresetfn():
             # Update the user's password in the database
             users_collection.update_one({"email": email}, {"$set": {"password": hashed_password}})
             
-            generatelogs("success", f"Password reset successfully for superadmin: {email}", "superadmin_password_reset.py")
+            generatelogs("success", f"Password reset successfully for patients: {email}", "patientops/pforgotpassword.py")
 
             return jsonify({"message": "Password reset successfully."}), 200
 
         # If neither condition is met, return an error
-        generatelogs("error", "Invalid request. Provide either an email to receive an OTP or both an OTP and a new password.", "superadmin_password_reset.py")
+        generatelogs("error", "Invalid request. Provide either an email to receive an OTP or both an OTP and a new password.", "patientops/pforgotpassword.py")
         return jsonify({"message": "Invalid request. Provide either an email to receive an OTP or both an OTP and a new password."}), 400
 
     except Exception as err:
-        generatelogs("error", f"Error occurred: {err}\nTraceback: {traceback.format_exc()}", "superadmin_password_reset.py")
+        generatelogs("error", f"Error occurred: {err}\nTraceback: {traceback.format_exc()}", "patientops/pforgotpassword.py")
         return jsonify({"message": "Internal server error.", "error": str(err)}), 500
 
