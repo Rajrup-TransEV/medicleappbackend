@@ -68,7 +68,7 @@ def login():
         }
         
         token = jwt.encode(token_payload, str(os.getenv('JWT_SECRET')), algorithm='HS256')
-        
+        generatelogs('info', f"Superadmin login successful for {email}", 'login.py')
         return jsonify({
             "message": "Login successful!",
             "token": token

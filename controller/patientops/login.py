@@ -68,7 +68,7 @@ def login():
         }
         
         token = jwt.encode(token_payload, str(os.getenv('JWT_SECRET')), algorithm='HS256')
-        
+        generatelogs('success', f"User {email} logged in successfully.", 'patientops/login.py')
         return jsonify({
             "message": "Login successful!",
             "token": token

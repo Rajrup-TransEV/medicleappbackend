@@ -64,7 +64,7 @@ def signup():
                 try:
                     users_collection.insert_one(user_data_to_store)
                     del temporary_storage[email]  # Clean up temporary storage
-                    
+                    generatelogs('success', f"User {email} signed up successfully.", 'patientops/signup.py')
                     return jsonify({"message": "Signup successful!"}), 201
                 
                 except Exception as e:
@@ -72,16 +72,19 @@ def signup():
                     return jsonify({"error": "Internal server error."}), 500
             
             else:
+                generatelogs('error', f"Invalid OTP {entered_otp} for {email}.", 'patientops/signup.py')
                 return jsonify({"error": "Invalid OTP!"}), 400
-        
+        generatelogs('error', f"No signup request found for {email}.", 'patientops/signup.py')
         return jsonify({"error": "No signup request found for this email!"}), 400
     
     # If no OTP provided, proceed with signup process
     if email and password:
         if not is_valid_email(email):
+            generatelogs('error', f"Invalid email format: {email}", 'patientops/signup.py')
             return jsonify({"error": "Invalid email format!"}), 400
         
         if password != confirm_password:
+            generatelogs('error', f"Passwords do not match for {email}.", 'patientops/signup.py')
             return jsonify({"error": "Passwords do not match!"}), 400
         
         # Check if the email already exists in the database
@@ -91,6 +94,7 @@ def signup():
             existing_user_email = users_collection.find_one({"email": email})
 
             if existing_user_email:
+                generatelogs('error', f"Email {email} already exists.", 'patientops/signup.py')
                 return jsonify({"error": "Email already exists!"}), 400
             
         except Exception as e:
