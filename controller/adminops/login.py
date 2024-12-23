@@ -8,7 +8,7 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
-login_bp = Blueprint('login', __name__)
+admin_login_bp = Blueprint('admin_login_bp', __name__)
 
 # MongoDB connection setup
 def get_db_connection():
@@ -23,8 +23,8 @@ def get_db_connection():
         generatelogs(messagetype, message, filelocation)
         raise
 
-@login_bp.route("/users/login", methods=["POST"])
-def login():
+@admin_login_bp.route("/admins/login", methods=["POST"])
+def adminlogin():
     email = str(request.form.get('email'))
     password = str(request.form.get('password'))
 

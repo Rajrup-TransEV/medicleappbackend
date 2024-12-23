@@ -26,7 +26,7 @@ temporary_storage = {}
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
-@signup_bp.route('/users/signup', methods=['POST'])
+@signup_bp.route('/patients/signup', methods=['POST'])
 def signup():
     # Extracting user details from request data
     name = str(request.form.get('name'))
@@ -49,7 +49,7 @@ def signup():
             if user_data["otp"] == int(entered_otp):
                 # Save user data to MongoDB now that OTP is verified
                 db = get_db_connection()
-                users_collection = db['admins']
+                users_collection = db['users']
                 
                 user_data_to_store = {
                     "uid": str(uuid.uuid4()),
@@ -58,7 +58,7 @@ def signup():
                     "password": user_data["password"],
                     "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
                     "profilepictures": 'none',
-                    "userrole": 'admin'
+                    "userrole": 'patient'
                 }
                 
                 try:
@@ -87,7 +87,7 @@ def signup():
         # Check if the email already exists in the database
         try:
             db = get_db_connection()
-            users_collection = db['admins']
+            users_collection = db['users']
             existing_user_email = users_collection.find_one({"email": email})
 
             if existing_user_email:

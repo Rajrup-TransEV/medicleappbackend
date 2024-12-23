@@ -23,7 +23,7 @@ def get_db_connection():
         generatelogs(messagetype, message, filelocation)
         raise
 
-@login_bp.route("/users/login", methods=["POST"])
+@login_bp.route("/patients/login", methods=["POST"])
 def login():
     email = str(request.form.get('email'))
     password = str(request.form.get('password'))
@@ -38,7 +38,7 @@ def login():
 
     try:
         db = get_db_connection()
-        users_collection = db['superadmins']
+        users_collection = db['users']
         
         # Find user by email
         user = users_collection.find_one({"email": email})

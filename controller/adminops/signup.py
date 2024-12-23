@@ -17,7 +17,7 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
-signup_bp = Blueprint('signup', __name__)
+admin_signup_bp = Blueprint('admin_signup_bp', __name__)
 
 # Temporary storage for user data and OTP
 temporary_storage = {}
@@ -26,8 +26,8 @@ temporary_storage = {}
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
-@signup_bp.route('/users/signup', methods=['POST'])
-def signup():
+@admin_signup_bp.route('/admins/signup', methods=['POST'])
+def adminsignup():
     # Extracting user details from request data
     name = str(request.form.get('name'))
     email = str(request.form.get('email'))
@@ -49,7 +49,7 @@ def signup():
             if user_data["otp"] == int(entered_otp):
                 # Save user data to MongoDB now that OTP is verified
                 db = get_db_connection()
-                users_collection = db['users']
+                users_collection = db['admins']
                 
                 user_data_to_store = {
                     "uid": str(uuid.uuid4()),
@@ -58,7 +58,7 @@ def signup():
                     "password": user_data["password"],
                     "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
                     "profilepictures": 'none',
-                    "userrole": 'patient'
+                    "userrole": 'admin'
                 }
                 
                 try:
@@ -87,7 +87,7 @@ def signup():
         # Check if the email already exists in the database
         try:
             db = get_db_connection()
-            users_collection = db['users']
+            users_collection = db['admins']
             existing_user_email = users_collection.find_one({"email": email})
 
             if existing_user_email:
