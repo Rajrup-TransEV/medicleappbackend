@@ -57,7 +57,7 @@ def passwordresetfn():
             }
 
             # Send the OTP via email
-            subject = 'OTP for Superadmin Password Reset'
+            subject = 'OTP for Password Reset'
             text = f"Hello {user_name}, your OTP for password reset is: {otp_generated}"
             email_sender(email, subject, text)
             generatelogs("success", f"OTP {otp_generated} sent to {email} for password reset.", "superadmin_password_reset.py")
