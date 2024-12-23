@@ -49,7 +49,7 @@ def signup():
             if user_data["otp"] == int(entered_otp):
                 # Save user data to MongoDB now that OTP is verified
                 db = get_db_connection()
-                users_collection = db['users']
+                users_collection = db['patients']
                 
                 user_data_to_store = {
                     "uid": str(uuid.uuid4()),

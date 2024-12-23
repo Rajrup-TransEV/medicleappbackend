@@ -38,7 +38,7 @@ def login():
 
     try:
         db = get_db_connection()
-        users_collection = db['users']
+        users_collection = db['patients']
         
         # Find user by email
         user = users_collection.find_one({"email": email})
