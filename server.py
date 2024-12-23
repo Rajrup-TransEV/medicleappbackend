@@ -44,7 +44,7 @@ app.register_blueprint(login_bp)
 app.register_blueprint(admin_login_bp)
 app.register_blueprint(admin_signup_bp)
 app.register_blueprint(super_admin_login_bp)
-app.register_blueprint(super_admin_login_bp)
+app.register_blueprint(super_admin_signup_bp)
 
 #websocket based routes
 
