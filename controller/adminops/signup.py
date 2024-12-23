@@ -68,7 +68,7 @@ def adminsignup():
                     return jsonify({"message": "Signup successful!"}), 201
                 
                 except Exception as e:
-                    generatelogs('error', f"Database error: {str(e)}", 'signup.py')
+                    generatelogs('error', f"Database error: {str(e)}", 'adminops/signup.py')
                     return jsonify({"error": "Internal server error."}), 500
             
             else:
@@ -94,7 +94,7 @@ def adminsignup():
                 return jsonify({"error": "Email already exists!"}), 400
             
         except Exception as e:
-            generatelogs('error', f"Database error: {str(e)}", 'signup.py')
+            generatelogs('error', f"Database error: {str(e)}", 'adminops/signup.py')
             return jsonify({"error": "Internal server error."}), 500
 
         # Generate a 6-digit OTP
@@ -115,7 +115,7 @@ def adminsignup():
         try:
             email_sender(email, subject, text)  # Assume email_sender is a function that sends emails
         except Exception as e:
-            generatelogs('error', f"Email sending failed: {str(e)}", 'signup.py')
+            generatelogs('error', f"Email sending failed: {str(e)}", 'adminops/signup.py')
             return jsonify({"error": "Failed to send verification email."}), 500
 
         return jsonify({"message": "OTP sent to your email! Please verify."}), 200
