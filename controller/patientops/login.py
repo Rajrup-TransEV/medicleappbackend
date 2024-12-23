@@ -19,7 +19,7 @@ def get_db_connection():
     except PyMongoError as e:
         messagetype = 'error'
         message = f"Database connection error: {str(e)}"
-        filelocation = 'login.py'
+        filelocation = 'patientops/login.py'
         generatelogs(messagetype, message, filelocation)
         raise
 
@@ -32,7 +32,7 @@ def login():
     if not email or not password:
         messagetype = 'error'
         message = "Email and password are required!"
-        filelocation = 'login.py'
+        filelocation = 'patientops/login.py'
         generatelogs(messagetype, message, filelocation)
         return jsonify({"error": "Email and password are required!"}), 400
 
@@ -47,14 +47,14 @@ def login():
         if not user:
             messagetype = 'error'
             message = "User not found!"
-            filelocation = 'login.py'
+            filelocation = 'patientops/login.py'
             generatelogs(messagetype, message, filelocation)
             return jsonify({"error": "Invalid credentials!"}), 401
         
         if not bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
             messagetype = 'error'
             message = "Invalid credentials!"
-            filelocation = 'login.py'
+            filelocation = 'patientops/login.py'
             generatelogs(messagetype, message, filelocation)
             return jsonify({"error": "Invalid credentials!"}), 401
         ist_timezone = pytz.timezone('Asia/Kolkata')  # Define IST timezone

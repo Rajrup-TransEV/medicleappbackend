@@ -68,7 +68,7 @@ def signup():
                     return jsonify({"message": "Signup successful!"}), 201
                 
                 except Exception as e:
-                    generatelogs('error', f"Database error: {str(e)}", 'signup.py')
+                    generatelogs('error', f"Database error: {str(e)}", 'patientops/signup.py')
                     return jsonify({"error": "Internal server error."}), 500
             
             else:
@@ -94,7 +94,7 @@ def signup():
                 return jsonify({"error": "Email already exists!"}), 400
             
         except Exception as e:
-            generatelogs('error', f"Database error: {str(e)}", 'signup.py')
+            generatelogs('error', f"Database error: {str(e)}", 'patientops/signup.py')
             return jsonify({"error": "Internal server error."}), 500
 
         # Generate a 6-digit OTP
@@ -113,11 +113,12 @@ def signup():
         text = f"Hello {name}, your OTP for email verification is {otp}. Please use this to complete your signup."
         
         try:
-            email_sender(email, subject, text)  # Assume email_sender is a function that sends emails
-        except Exception as e:
-            generatelogs('error', f"Email sending failed: {str(e)}", 'signup.py')
-            return jsonify({"error": "Failed to send verification email."}), 500
 
+            email_sender(email, subject, text)  # Assume email_sender is a function that sends emails]
+        except Exception as e:
+            generatelogs('error', f"Email sending failed: {str(e)}", 'patientops/signup.py')
+            return jsonify({"error": "Failed to send verification email."}), 500
+        generatelogs('success', f"OTP {otp} sent to {email} for email verification.", 'patientops/signup.py')
         return jsonify({"message": "OTP sent to your email! Please verify."}), 200
     
     return jsonify({"error": "Email and password are required!"}), 400
