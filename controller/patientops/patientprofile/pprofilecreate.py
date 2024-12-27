@@ -39,7 +39,7 @@ def pprofilecreate():
     phonenumber = request.form.get('phonenumber')
     address = request.form.get('address')
     email = request.form.get('email')
-    name = request.form.get('name')
+    # name = request.form.get('name')
 
     # Handle file upload
     profilepicture = request.files.get('profilepicture')  # Get the uploaded file
@@ -78,8 +78,8 @@ def pprofilecreate():
             update_fields['address'] = address
         if email is not None:
             update_fields['email'] = email
-        if name is not None:
-            update_fields['name'] = name
+        # if name is not None:
+        #     update_fields['name'] = name
         
         # Handle profile picture upload if provided
         if profilepicture:
@@ -112,7 +112,7 @@ def pprofilecreate():
             "phonenumber": updated_patient_data['phonenumber'],
             "address": updated_patient_data['address'],
             "email": updated_patient_data['email'],
-            "name": updated_patient_data['name'],
+            # "name": updated_patient_data['name'],
         }
 
         # Encode profile picture to base64 if it exists in the database

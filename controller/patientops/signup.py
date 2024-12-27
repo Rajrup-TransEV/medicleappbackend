@@ -29,7 +29,6 @@ def is_valid_email(email):
 @signup_bp.route('/patients/signup', methods=['POST'])
 def signup():
     # Extracting user details from request data
-    name = str(request.form.get('name'))
     email = str(request.form.get('email'))
     password = str(request.form.get('password'))
     confirm_password = str(request.form.get('confirm_password'))
@@ -53,7 +52,6 @@ def signup():
                 
                 user_data_to_store = {
                     "uid": str(uuid.uuid4()),
-                    "name": user_data["name"],
                     "email": email,
                     "password": user_data["password"],
                     "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
@@ -106,7 +104,6 @@ def signup():
         
         # Store user data temporarily with timestamp
         temporary_storage[email] = {
-            "name": name,
             "password": bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             "otp": otp,
             "created_at": time.time()  # Store current timestamp
@@ -114,7 +111,7 @@ def signup():
         
         # Prepare and send the OTP email
         subject = "Email Verification"
-        text = f"Hello {name}, your OTP for email verification is {otp}. Please use this to complete your signup."
+        text = f"Hello your OTP for email verification is {otp}. Please use this to complete your signup."
         
         try:
 
