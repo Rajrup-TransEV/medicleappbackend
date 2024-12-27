@@ -18,6 +18,9 @@ from controller.adminops.adforgotpassword import adminpasswordreset_bp
 from controller.patientops.pforgotpassword import patientpasswordreset_bp
 from controller.patientops.patientprofile.pprofilecreate import pprofilecreate_bp
 from controller.patientops.patientprofile.getprofilebyid import getprofiebyid_bp
+from controller.patientops.patientprofile.getallpatient import getallpatient_bp
+
+
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -54,6 +57,8 @@ app.register_blueprint(adminpasswordreset_bp)
 app.register_blueprint(patientpasswordreset_bp)
 app.register_blueprint(pprofilecreate_bp)
 app.register_blueprint(getprofiebyid_bp)
+app.register_blueprint(getallpatient_bp)
+
 
 #websocket based routes
 
