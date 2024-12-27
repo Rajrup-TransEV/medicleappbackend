@@ -16,7 +16,8 @@ from controller.superadminops.signup import super_admin_signup_bp
 from controller.superadminops.suforgotpassword import superadminpasswordreset_bp
 from controller.adminops.adforgotpassword import adminpasswordreset_bp
 from controller.patientops.pforgotpassword import patientpasswordreset_bp
-
+from controller.patientops.patientprofile.pprofilecreate import pprofilecreate_bp
+from controller.patientops.patientprofile.getprofilebyid import getprofiebyid_bp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -51,6 +52,8 @@ app.register_blueprint(super_admin_signup_bp)
 app.register_blueprint(superadminpasswordreset_bp)
 app.register_blueprint(adminpasswordreset_bp)
 app.register_blueprint(patientpasswordreset_bp)
+app.register_blueprint(pprofilecreate_bp)
+app.register_blueprint(getprofiebyid_bp)
 
 #websocket based routes
 
