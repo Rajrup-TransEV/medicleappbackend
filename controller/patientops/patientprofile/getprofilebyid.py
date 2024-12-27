@@ -45,7 +45,6 @@ def getprofilebyid():
             profile_picture_data = None  # or
         normal_payload = {
             "uid": patient.get('uid'),
-        
             "email": patient.get('email'),
             "phone": patient.get('phonenumber'),
             "address": patient.get('address'),
