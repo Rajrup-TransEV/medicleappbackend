@@ -46,7 +46,7 @@ def getprofilebyid():
         normal_payload = {
             "uid": patient.get('uid'),
             "email": patient.get('email'),
-            "phone": patient.get('phonenumber'),
+            "phonenumber": patient.get('phonenumber'),
             "address": patient.get('address'),
             "age": patient.get('age'),
             "bloodgroup": patient.get('bloodgroup'),
@@ -54,6 +54,7 @@ def getprofilebyid():
             "firstname": patient.get('firstname'),
             "lastname": patient.get('lastname'),
             "height": patient.get('height'),
+            "weight": patient.get('weight'),
             "profilepicture": profile_picture_data,
         }
         return jsonify({"message": "Patient profile fetched successfully", "data": normal_payload}), 200
