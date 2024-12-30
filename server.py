@@ -19,7 +19,7 @@ from controller.patientops.pforgotpassword import patientpasswordreset_bp
 from controller.patientops.patientprofile.pprofilecreate import pprofilecreate_bp
 from controller.patientops.patientprofile.getprofilebyid import getprofiebyid_bp
 from controller.patientops.patientprofile.getallpatient import getallpatient_bp
-
+from controller.patientops.patientprofile.deleteprofile import deleteprofile_bp
 
 app = Flask(__name__)
 
@@ -58,7 +58,7 @@ app.register_blueprint(patientpasswordreset_bp)
 app.register_blueprint(pprofilecreate_bp)
 app.register_blueprint(getprofiebyid_bp)
 app.register_blueprint(getallpatient_bp)
-
+app.register_blueprint(deleteprofile_bp)
 
 #websocket based routes
 
