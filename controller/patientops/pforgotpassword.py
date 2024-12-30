@@ -47,7 +47,7 @@ def passwordresetfn():
                 generatelogs("error", "No patients details found with this email.", "patientops/pforgotpassword.py")
                 return jsonify({"message": "No patients details found with this email."}), 404
             
-            user_name = user['name']
+            # user_name = user['name']
             otp_generated = str(random.randint(100000, 999999))
 
             # Store the generated OTP and expiration in temporary storage
@@ -58,7 +58,7 @@ def passwordresetfn():
 
             # Send the OTP via email
             subject = 'OTP for Password Reset'
-            text = f"Hello {user_name}, your OTP for password reset is: {otp_generated}"
+            text = f"Hello your OTP for password reset is: {otp_generated}"
             email_sender(email, subject, text)
             generatelogs("success", f"OTP {otp_generated} sent to {email} for password reset.", "patientops/pforgotpassword.py")
 
