@@ -23,6 +23,8 @@ def get_db_connection():
         filelocation = 'patientops/login.py'
         generatelogs(messagetype, message, filelocation)
         raise
+
+    
 getprofiebyid_bp = Blueprint('getprofiebyid_bp', __name__)
 
 @getprofiebyid_bp.route("/patients/profile/getbyid", methods=["POST"])
