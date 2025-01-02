@@ -61,7 +61,7 @@ def doctorloginfn():
             "role":str(doctor['userrole']),
             "exp":expiration_time.timestamp()
         }
-        token = jwt.encode(token_payload,os.getenv('SECRET_KEY'),algorithm='HS256')
+        token = jwt.encode(token_payload,os.getenv('JWT_SECRET'),algorithm='HS256')
         generatelogs('info','Doctor logged in successfully','doctorops/login.py')
         return jsonify({"message":"Login successful","token":token}),200
     except Exception as e:
