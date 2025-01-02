@@ -53,6 +53,7 @@ def getprofilebyid():
             "dob": patient.get('dob'),
             "firstname": patient.get('firstname'),
             "lastname": patient.get('lastname'),
+            "gender":patient.get('gender'),
             "height": patient.get('height'),
             "weight": patient.get('weight'),
             "profilepicture": profile_picture_data,
