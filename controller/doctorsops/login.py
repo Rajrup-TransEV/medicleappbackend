@@ -61,6 +61,13 @@ def doctorloginfn():
             "role":str(doctor['userrole']),
             "exp":expiration_time.timestamp()
         }
-        # token = 
+        token = jwt.encode(token_payload,os.getenv('SECRET_KEY'),algorithm='HS256')
+        generatelogs('info','Doctor logged in successfully','doctorops/login.py')
+        return jsonify({"message":"Login successful","token":token}),200
     except Exception as e:
         print(e)
+        messagetype = 'error'
+        message = f"{str(e)}"
+        filelocation = 'doctorops/login.py'
+        generatelogs(messagetype, message, filelocation)
+        return jsonify({"error": "Internal Server Error!"}), 500
