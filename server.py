@@ -24,6 +24,7 @@ from controller.doctorsops.doctorsignup import doctorsignup_bp
 from controller.doctorsops.login import doctor_login_bp
 from controller.doctorsops.getdoctordetailsbyid import getdoctordetailsbyid_bp
 from controller.doctorsops.getalldoctor import getalldoctor_bp
+from controller.doctorsops.doctbyspecialization import getdoctorbyspc_bp
 
 app = Flask(__name__)
 
@@ -67,6 +68,7 @@ app.register_blueprint(doctorsignup_bp)
 app.register_blueprint(doctor_login_bp)
 app.register_blueprint(getdoctordetailsbyid_bp)
 app.register_blueprint(getalldoctor_bp)
+app.register_blueprint(getdoctorbyspc_bp)
 
 #websocket based routes
 
