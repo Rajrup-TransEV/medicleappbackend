@@ -19,7 +19,7 @@ def get_db_connection():
     except PyMongoError as e:
         messagetype = 'error'
         message = f"Database connection error: {str(e)}"
-        filelocation = 'adninops/login.py'
+        filelocation = 'adminops/login.py'
         generatelogs(messagetype, message, filelocation)
         raise
 
@@ -47,14 +47,14 @@ def adminlogin():
         if not user:
             messagetype = 'error'
             message = "User not found!"
-            filelocation = 'adninops/login.py'
+            filelocation = 'adminops/login.py'
             generatelogs(messagetype, message, filelocation)
             return jsonify({"error": "Invalid credentials!"}), 401
         
         if not bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
             messagetype = 'error'
             message = "Invalid credentials!"
-            filelocation = 'adninops/login.py'
+            filelocation = 'adminops/login.py'
             generatelogs(messagetype, message, filelocation)
             return jsonify({"error": "Invalid credentials!"}), 401
         ist_timezone = pytz.timezone('Asia/Kolkata')  # Define IST timezone
@@ -68,7 +68,7 @@ def adminlogin():
         }
         
         token = jwt.encode(token_payload, str(os.getenv('JWT_SECRET')), algorithm='HS256')
-        generatelogs('info', f"User {user['email']} logged in successfully.", 'adninops/login.py')
+        generatelogs('info', f"User {user['email']} logged in successfully.", 'adminops/login.py')
         return jsonify({
             "message": "Login successful!",
             "token": token
@@ -77,20 +77,20 @@ def adminlogin():
     except PyMongoError as e:
         messagetype = 'error'
         message = f"Database operation failed: {str(e)}"
-        filelocation = 'adninops/login.py'
+        filelocation = 'adminops/login.py'
         generatelogs(messagetype, message, filelocation)
         return jsonify({"error": "Internal server error."}), 500
         
     except jwt.ExpiredSignatureError:
         messagetype = 'error'
         message = "JWT token has expired."
-        filelocation = 'adninops/login.py'
+        filelocation = 'adminops/login.py'
         generatelogs(messagetype, message, filelocation)
         return jsonify({"error": "Session expired. Please log in again."}), 401
 
     except Exception as e:
         messagetype = 'error'
         message = f"An unexpected error occurred: {str(e)}"
-        filelocation = 'adninops/login.py'
+        filelocation = 'adminops/login.py'
         generatelogs(messagetype, message, filelocation)
         return jsonify({"error": "Internal server error."}), 500
