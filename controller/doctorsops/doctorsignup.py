@@ -87,7 +87,7 @@ def doctorsignupfn():
                     "qualification": qualification,
                     "yoe": yoe,
                     "license_number": license_number,
-                    "address": doctor_data.get('address', ''),  # Assuming address can be added later
+                    "address": address,  # Assuming address can be added later
                     "phonenumber": phonenumber,
                     "password": bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
                     "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
