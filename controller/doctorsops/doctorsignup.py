@@ -36,6 +36,7 @@ def doctorsignupfn():
     # Extracting user details from request data
     fullname = str(request.form.get("fullname"))
     gender = str(request.form.get("gender"))
+    address = str(request.form.get('address'))
     dob = str(request.form.get('dob'))
     specialization = str(request.form.get('specialization'))
     qualification = str(request.form.get('qualification'))
@@ -79,6 +80,7 @@ def doctorsignupfn():
                     "uid": str(uuid.uuid4()),
                     "fullname": fullname,
                     "gender": gender,
+                    "address": address,
                     "dob": dob,
                     "email": email,
                     "specialization": specialization,
