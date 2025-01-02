@@ -22,6 +22,9 @@ from controller.patientops.patientprofile.getallpatient import getallpatient_bp
 from controller.patientops.patientprofile.deleteprofile import deleteprofile_bp
 from controller.doctorsops.doctorsignup import doctorsignup_bp
 from controller.doctorsops.login import doctor_login_bp
+from controller.doctorsops.getdoctordetailsbyid import getdoctordetailsbyid_bp
+from controller.doctorsops.getalldoctor import getalldoctor_bp
+
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -62,6 +65,8 @@ app.register_blueprint(getallpatient_bp)
 app.register_blueprint(deleteprofile_bp)
 app.register_blueprint(doctorsignup_bp)
 app.register_blueprint(doctor_login_bp)
+app.register_blueprint(getdoctordetailsbyid_bp)
+app.register_blueprint(getalldoctor_bp)
 
 #websocket based routes
 
