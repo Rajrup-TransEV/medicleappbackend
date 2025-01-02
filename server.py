@@ -20,7 +20,7 @@ from controller.patientops.patientprofile.pprofilecreate import pprofilecreate_b
 from controller.patientops.patientprofile.getprofilebyid import getprofiebyid_bp
 from controller.patientops.patientprofile.getallpatient import getallpatient_bp
 from controller.patientops.patientprofile.deleteprofile import deleteprofile_bp
-
+from controller.doctorsops.doctorsignup import doctorsignup_bp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -59,6 +59,7 @@ app.register_blueprint(pprofilecreate_bp)
 app.register_blueprint(getprofiebyid_bp)
 app.register_blueprint(getallpatient_bp)
 app.register_blueprint(deleteprofile_bp)
+app.register_blueprint(doctorsignup_bp)
 
 #websocket based routes
 
