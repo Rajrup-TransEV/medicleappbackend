@@ -31,7 +31,6 @@ def updatedoctordata():
     # Retrieve form data
     doctorid = request.form.get('doctorid')
     fullname = request.form.get('fullname')
-    fullname = str(request.form.get("fullname"))
     gender = str(request.form.get("gender"))
     address = str(request.form.get('address'))
     dob = str(request.form.get('dob'))

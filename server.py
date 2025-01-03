@@ -30,7 +30,7 @@ from controller.doctorsops.doctorleaveupdate import doctorleaveupdate_bp
 from controller.doctorsops.deleteleave import deleteleave_bp
 from controller.doctorsops.getallleave import getallleave_bp
 from controller.doctorsops.doctorpasswordreset import doctorpasswordreset_bp
-
+from controller.doctorsops.updatedoctordata import updatedoctordata_bp
 
 app = Flask(__name__)
 
@@ -85,6 +85,7 @@ app.register_blueprint(doctorleaveupdate_bp) #/doctors/leave
 app.register_blueprint(deleteleave_bp) #/doctorsops/deleteleave
 app.register_blueprint(getallleave_bp) #/doctorops/getallleave
 app.register_blueprint(doctorpasswordreset_bp) #/doctorpasswordreset
+app.register_blueprint(updatedoctordata_bp) #/doctors/profile/update
 #doctor route ends
 
 #websocket based routes
