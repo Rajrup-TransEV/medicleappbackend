@@ -25,6 +25,10 @@ from controller.doctorsops.login import doctor_login_bp
 from controller.doctorsops.getdoctordetailsbyid import getdoctordetailsbyid_bp
 from controller.doctorsops.getalldoctor import getalldoctor_bp
 from controller.doctorsops.doctbyspecialization import getdoctorbyspc_bp
+from controller.doctorsops.doctorleave import doctorleave_bp
+from controller.doctorsops.doctorleaveupdate import doctorleaveupdate_bp
+from controller.doctorsops.deleteleave import deleteleave_bp
+from controller.doctorsops.getallleave import getallleave_bp
 
 app = Flask(__name__)
 
@@ -69,6 +73,10 @@ app.register_blueprint(doctor_login_bp)
 app.register_blueprint(getdoctordetailsbyid_bp)
 app.register_blueprint(getalldoctor_bp)
 app.register_blueprint(getdoctorbyspc_bp)
+app.register_blueprint(doctorleave_bp)
+app.register_blueprint(doctorleaveupdate_bp)
+app.register_blueprint(deleteleave_bp)
+app.register_blueprint(getallleave_bp)
 
 #websocket based routes
 

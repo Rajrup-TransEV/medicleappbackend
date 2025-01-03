@@ -33,6 +33,12 @@ def getdoctordetaillsbyid():
         doctor = doctor_collection.find_one({"uid": doctorid})
         if not doctor:
             return jsonify({"error": "Doctor not found!"}), 404
+        leave = db['doctorleave']
+        doctor_leave = leave.find_one({"doctorid": doctorid})
+        leavefrom = doctor_leave.get('leavefrom') if doctor_leave else None
+        leaveto = doctor_leave.get('leaveto') if doctor_leave else None
+        reason = doctor_leave.get('reason') if doctor_leave else None
+        status = doctor_leave.get('status') if doctor_leave else None
         profile_picture_path = doctor.get('profilepictures')
         if profile_picture_path and os.path.exists(profile_picture_path):
             with open(profile_picture_path, "rb") as img_file:
@@ -51,6 +57,10 @@ def getdoctordetaillsbyid():
             "license_number": doctor.get('license_number'),
             "email": doctor.get('email'),
             "phonenumber": doctor.get('phonenumber'),
+            "status": status,
+            "leavefrom": leavefrom,
+            "leaveto": leaveto,
+            "reason": reason,
             "profilepictures": profile_picture_data,
             "role": doctor.get('userrole')
         }
