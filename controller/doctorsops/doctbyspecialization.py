@@ -79,7 +79,7 @@ def getdoctordetaillsbyid():
                 "phonenumber": doctor.get('phonenumber'),
                 "profilepictures": profile_picture_data,
                 "role": doctor.get('userrole'),
-                "leaves": leaves_data  # Include leaves data in the payload
+                "leaves": leaves_data if leaves_data else None # Include leaves data in the payload
             }
             
             # Append each doctor's data to the list
