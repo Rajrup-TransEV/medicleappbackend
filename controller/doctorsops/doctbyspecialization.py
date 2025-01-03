@@ -1,6 +1,3 @@
-"""
-Get doctor by specialization
-"""
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
@@ -28,8 +25,10 @@ def get_db_connection():
 getdoctorbyspc_bp = Blueprint('getdoctorbyspc_bp', __name__)
 
 @getdoctorbyspc_bp.route("/doctors/getdoctorbyspc", methods=["POST"])
-def getdoctordetaillsbyid():
-    doctorspecialization = str(request.form.get('doctorspecialization'))
+def get_doctor_details_by_specialization():
+    # Normalize specialization input to lowercase
+    doctorspecialization = str(request.form.get('doctorspecialization')).lower()
+    
     try:
         db = get_db_connection()
         doctor_collection = db['doctors']
@@ -79,7 +78,7 @@ def getdoctordetaillsbyid():
                 "phonenumber": doctor.get('phonenumber'),
                 "profilepictures": profile_picture_data,
                 "role": doctor.get('userrole'),
-                "leaves": leaves_data if leaves_data else None # Include leaves data in the payload
+                "leaves": leaves_data if leaves_data else None  # Include leaves data in the payload
             }
             
             # Append each doctor's data to the list
