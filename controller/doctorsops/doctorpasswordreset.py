@@ -53,7 +53,9 @@ def docpasswordresetfn():
 
             subject = 'OTP for Password Reset'
             body = f"Your OTP for password reset is {otp_generated}. This OTP is valid for 15 minutes."
+            generatelogs("success", f"OTP {otp_generated} OTP sent to {email}.", "doctorsops/doctorpasswordreset.py")
             email_sender(email, subject, body)
+
             return jsonify({"message": "OTP sent to your email address."}), 200
 
         # Step 2: Verify OTP and reset password
