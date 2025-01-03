@@ -29,6 +29,8 @@ from controller.doctorsops.doctorleave import doctorleave_bp
 from controller.doctorsops.doctorleaveupdate import doctorleaveupdate_bp
 from controller.doctorsops.deleteleave import deleteleave_bp
 from controller.doctorsops.getallleave import getallleave_bp
+from controller.doctorsops.doctorpasswordreset import doctorpasswordreset_bp
+
 
 app = Flask(__name__)
 
@@ -55,28 +57,35 @@ def index():
 
 
 #blueprint rest apis
-app.register_blueprint(signup_bp)
-app.register_blueprint(login_bp)
-app.register_blueprint(admin_login_bp)
-app.register_blueprint(admin_signup_bp)
-app.register_blueprint(super_admin_login_bp)
-app.register_blueprint(super_admin_signup_bp)
-app.register_blueprint(superadminpasswordreset_bp)
-app.register_blueprint(adminpasswordreset_bp)
-app.register_blueprint(patientpasswordreset_bp)
-app.register_blueprint(pprofilecreate_bp)
-app.register_blueprint(getprofiebyid_bp)
-app.register_blueprint(getallpatient_bp)
-app.register_blueprint(deleteprofile_bp)
-app.register_blueprint(doctorsignup_bp)
-app.register_blueprint(doctor_login_bp)
-app.register_blueprint(getdoctordetailsbyid_bp)
-app.register_blueprint(getalldoctor_bp)
-app.register_blueprint(getdoctorbyspc_bp)
-app.register_blueprint(doctorleave_bp)
-app.register_blueprint(doctorleaveupdate_bp)
-app.register_blueprint(deleteleave_bp)
-app.register_blueprint(getallleave_bp)
+#auth routes
+app.register_blueprint(signup_bp) #/patients/signup
+app.register_blueprint(login_bp) #/patients/login
+app.register_blueprint(admin_login_bp) #/admin/login
+app.register_blueprint(admin_signup_bp) #/admin/signup
+app.register_blueprint(super_admin_login_bp) #/superadmin/login
+app.register_blueprint(super_admin_signup_bp) #/superadmin/signup
+app.register_blueprint(superadminpasswordreset_bp) #/superadminpasswordreset
+app.register_blueprint(adminpasswordreset_bp) #/adminpasswordreset
+app.register_blueprint(patientpasswordreset_bp)#/patientpasswordreset
+#auth route ends
+#patient profile routes
+app.register_blueprint(pprofilecreate_bp) #/patients/profile/update
+app.register_blueprint(getprofiebyid_bp) #/patients/profile/getbyid
+app.register_blueprint(getallpatient_bp) #/patientops/getallpatient
+app.register_blueprint(deleteprofile_bp) #/patientops/deleteprofile
+#patient profile route ends
+#doctor routes
+app.register_blueprint(doctorsignup_bp) #/doctor/signup
+app.register_blueprint(doctor_login_bp) #/doctors/login
+app.register_blueprint(getdoctordetailsbyid_bp) #/doctors/getbyid
+app.register_blueprint(getalldoctor_bp)#/doctorops/getalldoctor
+app.register_blueprint(getdoctorbyspc_bp)#/doctors/getdoctorbyspc
+app.register_blueprint(doctorleave_bp)#/doctors/leave
+app.register_blueprint(doctorleaveupdate_bp) #/doctors/leave
+app.register_blueprint(deleteleave_bp) #/doctorsops/deleteleave
+app.register_blueprint(getallleave_bp) #/doctorops/getallleave
+app.register_blueprint(doctorpasswordreset_bp) #/doctorpasswordreset
+#doctor route ends
 
 #websocket based routes
 
