@@ -37,6 +37,7 @@ def doctorsleavefn():
             return jsonify({"error": "Doctor already on leave!"}), 409
         else:
             leave_collections.insert_one({
+                "uid": str(uuid.uuid4()),
                 "doctorid": doctorid,
                 "leavefrom": leavefrom,
                 "leaveto": leaveto,
