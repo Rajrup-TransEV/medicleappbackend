@@ -16,9 +16,9 @@ def get_db_connection():
         generatelogs(messagetype, message, filelocation)
         raise
 
-doctorleave_bp = Blueprint('doctorleave_bp', __name__)
+doctorleaveupdate_bp = Blueprint('doctorleaveupdate_bp', __name__)
 
-@doctorleave_bp.route("/doctors/leave", methods=["POST"])
+@doctorleaveupdate_bp.route("/doctors/leave", methods=["POST"])
 def updateleavefn():
     doctorid= request.form.get('doctorid')
     leavefrom = request.form.get('leavefrom')
