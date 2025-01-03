@@ -33,7 +33,7 @@ def getdoctordetaillsbyid():
     try:
         db = get_db_connection()
         doctor_collection = db['doctors']
-        doctor = doctor_collection.find_one({"specialization": doctorspecialization})
+        doctor = doctor_collection.find({"specialization": doctorspecialization})
         if not doctor:
             return jsonify({"error": "Doctor not found!"}), 404
         profile_picture_path = doctor.get('profilepictures')
