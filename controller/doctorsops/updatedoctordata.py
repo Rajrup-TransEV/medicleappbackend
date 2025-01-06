@@ -51,36 +51,42 @@ def updatedoctordata():
         doctor = doctor_collection.find_one({"uid": doctorid})
         if not doctor:
             return jsonify({"error": "Doctor not found!"}), 404
+        
         if fullname is not None:
             updatedoctordata['fullname'] = fullname
         if gender is not None:
-            updatedoctordata['gender']=gender
+            updatedoctordata['gender'] = gender
         if address is not None:
-            updatedoctordata['address']=address
+            updatedoctordata['address'] = address
         if dob is not None:
-            updatedoctordata['dob']=dob
+            updatedoctordata['dob'] = dob
         if specialization is not None:
-            updatedoctordata['specialization']=specialization
+            updatedoctordata['specialization'] = specialization
         if qualification is not None:
-            updatedoctordata['qualification']=qualification
+            updatedoctordata['qualification'] = qualification
         if yoe is not None:
-            updatedoctordata['yoe']=yoe
+            updatedoctordata['yoe'] = yoe
         if license_number is not None:
-            updatedoctordata['license_number']=license_number
+            updatedoctordata['license_number'] = license_number
         if email is not None:
-            updatedoctordata['email']=email
+            updatedoctordata['email'] = email
         if phonenumber is not None:
-            updatedoctordata['phonenumber']=phonenumber
+            updatedoctordata['phonenumber'] = phonenumber
+        
         if profile_picture_file:
             filename = secure_filename(profile_picture_file.filename)
             profile_picture_path = os.path.join(UPLOAD_FOLDER, filename)
             profile_picture_file.save(profile_picture_path)
             with open(profile_picture_path, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
+                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')  # Decode bytes to string
                 updatedoctordata['profilepicture'] = encoded_string
+        
         doctor_collection.update_one({"uid": doctorid}, {"$set": updatedoctordata})
-        return jsonify({"message": "Doctor data updated successfully!","updateddata":updatedoctordata}), 200
+        
+        return jsonify({"message": "Doctor data updated successfully!", "updateddata": updatedoctordata}), 200
+    
     except Exception as e:
         print(e)
         generatelogs('error', f"Error updating doctor data: {str(e)}", 'doctorops/updatedoctordata.py')
         return jsonify({"error": "Internal Server Error!"}), 500
+
