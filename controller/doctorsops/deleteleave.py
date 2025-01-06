@@ -27,5 +27,5 @@ def deleteleavefn():
             return jsonify({'message': 'Leave not found'}),404
     except Exception as e:
         print(e)
-        generatelogs("error","Error deleting leave",str(e),"deleteleave.py")
+        generatelogs("error",f"{e}","deleteleave.py")
         return jsonify({'message': 'Error deleting leave'}),500
