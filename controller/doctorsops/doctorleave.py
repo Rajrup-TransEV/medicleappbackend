@@ -22,7 +22,7 @@ def get_db_connection():
 
 doctorleave_bp = Blueprint('doctorleave_bp', __name__)
 
-@doctorleave_bp.route("/doctors/leave", methods=["POST"])
+@doctorleave_bp.route("/doctors/create/leave", methods=["POST"])
 def doctorsleavefn():
     doctorid = str(request.form.get('doctorid'))
     leavefrom = str(request.form.get('leavefrom'))
@@ -32,20 +32,17 @@ def doctorsleavefn():
     try:
         db = get_db_connection()
         leave_collections = db['doctorleave']
-        doctor = leave_collections.find_one({"doctorid": doctorid})
-        if doctor:
-            return jsonify({"error": "Doctor already on leave!"}), 409
-        else:
-            leave_collections.insert_one({
-                "uid": str(uuid.uuid4()),
-                "doctorid": doctorid,
-                "leavefrom": leavefrom,
-                "leaveto": leaveto,
-                "reason": reason,
-                "status":"pending"
-            })
-            generatelogs('info', f'Doctor has been marked on leave!', 'doctorsops/doctorleave.py')
-            return jsonify({"message": "Doctor has been marked on leave!"}), 200
+
+        leave_collections.insert_one({
+            "uid": str(uuid.uuid4()),
+            "doctorid": doctorid,
+            "leavefrom": leavefrom,
+            "leaveto": leaveto,
+            "reason": reason,
+            "status":"pending"
+        })
+        generatelogs('info', f'Doctor has been marked on leave!', 'doctorsops/doctorleave.py')
+        return jsonify({"message": "Doctor has been marked on leave!"}), 200
     except Exception as e:
         print(e)
         generatelogs('error', f'Error occurred: {str(e)}', 'doctorsops/doctorleave0.py')
