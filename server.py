@@ -32,7 +32,7 @@ from controller.doctorsops.getallleave import getallleave_bp
 from controller.doctorsops.doctorpasswordreset import doctorpasswordreset_bp
 from controller.doctorsops.updatedoctordata import updatedoctordata_bp
 from controller.doctorsops.deletedoctor import deletedoctor_bp
-
+from controller.adminops.getbyidadmin import getadminbyidbp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -89,6 +89,8 @@ app.register_blueprint(doctorpasswordreset_bp) #/doctorpasswordreset
 app.register_blueprint(updatedoctordata_bp) #/doctors/profile/update
 app.register_blueprint(deletedoctor_bp) #/doctorsops/deletedoctor
 #doctor route ends
+#admin routes
+app.register_blueprint(getadminbyidbp)
 
 #websocket based routes
 
