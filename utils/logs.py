@@ -13,9 +13,9 @@ logging.basicConfig(level=logging.INFO)
 # MongoDB connection setup
 def get_db_connection():
     mongodb_uri = os.getenv('MONGODB_URI')
-    print(mongodb_uri)
+    # print(mongodb_uri)
     db_name = os.getenv('DB_NAME')
-    print(db_name)
+    # print(db_name)
     
     if not mongodb_uri or not db_name:
         raise ValueError("Environment variables MONGODB_URI and DB_NAME must be set.")
