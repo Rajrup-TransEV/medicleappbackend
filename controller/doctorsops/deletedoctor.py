@@ -28,5 +28,5 @@ def deletedocfn():
             return jsonify({'message': 'Doctor profile not found'}),404
     except Exception as e:
         print(e)
-        generatelogs("error","Error deleting doctor profile",str(e),"deletedoctor.py")
+        generatelogs("error","Error deleting doctor profile","deletedoctor.py")
         return jsonify({'message': 'Error deleting doctor profile'}),500

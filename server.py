@@ -38,6 +38,7 @@ from controller.appoinmentops.createappoinmentdetails import createappoinment_bp
 from controller.appoinmentops.getappoinmentdetails import getappoinmentdetailsbp
 from controller.appoinmentops.getallappoinmentdetails import getallappoinmentbp
 from controller.appoinmentops.updateappoinmentops import updateappoinmentopsbp
+from controller.appoinmentops.deleteappn import deleteapponbp
 
 app = Flask(__name__)
 
@@ -104,6 +105,7 @@ app.register_blueprint(createappoinment_bp)
 app.register_blueprint(getappoinmentdetailsbp)
 app.register_blueprint(getallappoinmentbp)
 app.register_blueprint(updateappoinmentopsbp)
+app.register_blueprint(deleteapponbp)
 
 #websocket based routes
 
