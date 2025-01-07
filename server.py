@@ -37,6 +37,7 @@ from controller.doctorsops.getallleavebydocid import getallleavebydocidbp
 from controller.appoinmentops.createappoinmentdetails import createappoinment_bp
 from controller.appoinmentops.getappoinmentdetails import getappoinmentdetailsbp
 from controller.appoinmentops.getallappoinmentdetails import getallappoinmentbp
+from controller.appoinmentops.updateappoinmentops import updateappoinmentopsbp
 
 app = Flask(__name__)
 
@@ -102,6 +103,7 @@ app.register_blueprint(getadminbyidbp)
 app.register_blueprint(createappoinment_bp)
 app.register_blueprint(getappoinmentdetailsbp)
 app.register_blueprint(getallappoinmentbp)
+app.register_blueprint(updateappoinmentopsbp)
 
 #websocket based routes
 
