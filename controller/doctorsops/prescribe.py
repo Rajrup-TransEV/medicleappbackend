@@ -1,4 +1,6 @@
 import uuid
+import random
+import string
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
@@ -51,11 +53,19 @@ def wrap_text(pdf_canvas, text, max_width):
 
     return wrapped_lines
 
+def generate_prescription_id(length=6):
+    """Generate a random alphanumeric ID of specified length."""
+    characters = string.ascii_letters + string.digits  # Letters and digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
 prescribe_bp = Blueprint('prescribe_bp', __name__)
 
 @prescribe_bp.route('/createprescription', methods=['POST'])
 def createprescribfn():
     try:
+        # Generate a unique prescription ID
+        prescription_id = generate_prescription_id()
+
         # Retrieve form data
         hospitalname = str(request.form.get('hospitalname'))
         doctorid = str(request.form.get('doctorid'))
@@ -98,6 +108,10 @@ def createprescribfn():
         pdf.setFont("Helvetica-Bold", 24)
         pdf.setFillColor(HexColor("#FFFFFF"))  # White text
         pdf.drawCentredString(width / 2, height - 70, hospitalname)
+
+        # Prescription ID (in small caps below hospital name)
+        pdf.setFont("Helvetica", 12)
+        pdf.drawCentredString(width / 2, height - 90, f"Prescription ID: {prescription_id.lower()}")  # Small caps
 
         # Doctor Details Section below header
         pdf.setFont("Helvetica", 14)
@@ -149,24 +163,27 @@ def createprescribfn():
 
         pdf.drawString(20 ,0.25 * inch ,f"© {hospitalname}")
 
-         # Add timestamp on right side of footer
+        # Add timestamp on right side of footer
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         pdf.drawString(width -180 ,0.25 * inch ,f"Generated on: {timestamp}")
 
-         # Save the PDF
+        # Save the PDF
         pdf.save()
 
         prescribe_data = {
-             "hospitalname": hospitalname,
-             "patientfullname": patientfirstname + ' ' + patientlastname,
-             "dateandtime": dateandtime,
-             "diagonistics": diagonistics,
-             "file_path": save_path
-         }
+            "hospitalname": hospitalname,
+            "patientfullname": patientfirstname + ' ' + patientlastname,
+            "dateandtime": dateandtime,
+            "diagonistics": diagonistics,
+            "file_path": save_path,
+            "patientid":patientid,
+            "doctorid":doctorid,
+            "prescription_id": prescription_id   # Store the prescription ID here in MongoDB as well.
+        }
 
         prescribe_collection.insert_one(prescribe_data)
 
-         # Return response
+        # Return response
         return jsonify({"message": "Prescription created successfully", "file_path": save_path}),200
 
     except Exception as e:
