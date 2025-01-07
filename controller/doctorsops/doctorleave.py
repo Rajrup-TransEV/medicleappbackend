@@ -33,17 +33,23 @@ def doctorsleavefn():
         db = get_db_connection()
         leave_collections = db['doctorleave']
 
+        # Create a new leave record
+        leave_id = str(uuid.uuid4())
         leave_collections.insert_one({
-            "uid": str(uuid.uuid4()),
+            "uid": leave_id,
             "doctorid": doctorid,
             "leavefrom": leavefrom,
             "leaveto": leaveto,
             "reason": reason,
-            "status":"pending"
+            "status": "pending"
         })
+        
+        # Log successful operation
         generatelogs('info', f'Doctor has been marked on leave!', 'doctorsops/doctorleave.py')
-        return jsonify({"message": "Doctor has been marked on leave!"}), 200
+        
+        # Return response with leave ID
+        return jsonify({"message": "Doctor has been marked on leave!", "leave_id": leave_id}), 200
     except Exception as e:
         print(e)
-        generatelogs('error', f'Error occurred: {str(e)}', 'doctorsops/doctorleave0.py')
+        generatelogs('error', f'Error occurred: {str(e)}', 'doctorsops/doctorleave.py')
         return jsonify({"error": "An error occurred!"}), 500
