@@ -16,7 +16,7 @@ def deleteleavefn():
     leaveid = str(request.form.get('leaveid'))
     try:
         db = get_db_connection()
-        leavecollection = db['leaves']
+        leavecollection = db['doctorleave']
         leave = leavecollection.find_one({'uid': leaveid})
         if leave:
             leavecollection.delete_one({'uid': leaveid})
