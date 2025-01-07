@@ -49,6 +49,7 @@ def get_doctor_details_by_specialization():
 
             for leave in doctor_leaves:
                 leaves_data.append({
+                    "leaveid":leave.get('uid'),
                     "leavefrom": leave.get('leavefrom'),
                     "leaveto": leave.get('leaveto'),
                     "reason": leave.get('reason'),
