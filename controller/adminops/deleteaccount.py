@@ -24,6 +24,7 @@ def deleteadminpf():
         findone = adminprofile.find_one({"uid":adminid})
         if findone:
             adminprofile.delete_one({"uid":adminid})
+            return jsonify({"message":"account deleted successfully"})
         else:
             generatelogs('info','No admin profile found associated with this id','deleteaccount.py')
             return jsonify({'message':'account not found'}),400
