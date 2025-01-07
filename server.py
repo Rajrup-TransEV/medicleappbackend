@@ -39,6 +39,8 @@ from controller.appoinmentops.getappoinmentdetails import getappoinmentdetailsbp
 from controller.appoinmentops.getallappoinmentdetails import getallappoinmentbp
 from controller.appoinmentops.updateappoinmentops import updateappoinmentopsbp
 from controller.appoinmentops.deleteappn import deleteapponbp
+from controller.doctorsops.prescribe import prescribe_bp
+from controller.adminops.deleteaccount import deleteadminaccountbp
 
 app = Flask(__name__)
 
@@ -98,6 +100,7 @@ app.register_blueprint(deletedoctor_bp) #/doctorsops/deletedoctor
 app.register_blueprint(getallleavebydocidbp)#'/doctors/leave
 #doctor route ends
 #admin routes
+app.register_blueprint(deleteadminaccountbp)
 app.register_blueprint(getadminbyidbp)
 #end admin
 #create appoinments
@@ -106,6 +109,8 @@ app.register_blueprint(getappoinmentdetailsbp)
 app.register_blueprint(getallappoinmentbp)
 app.register_blueprint(updateappoinmentopsbp)
 app.register_blueprint(deleteapponbp)
+#prescribe
+app.register_blueprint(prescribe_bp)
 
 #websocket based routes
 
