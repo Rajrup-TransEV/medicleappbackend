@@ -46,5 +46,5 @@ def getallleave():
         return jsonify({"message": "Error fetching leave data", "error": str(e)}), 500
     
     except Exception as e:
-        generatelogs(f"Unexpected error: {str(e)}")  # Log unexpected errors
+        generatelogs("error",f"Unexpected error: {str(e)}","getallleave.py")  # Log unexpected errors
         return jsonify({"message": "Error fetching leave data", "error": str(e)}), 500
