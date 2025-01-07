@@ -33,7 +33,7 @@ def createappoinment():
             "appoinmenttime":appoinmenttime,
             "appoinmentdetails":appointmentdetails,
             "doctorid":doctorid,
-            'status':'assigned',
+            'status':'applied',
             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
         generatelogs('info',"appoinment details created",'createappoinmentdetails.py')
