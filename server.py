@@ -41,6 +41,7 @@ from controller.appoinmentops.updateappoinmentops import updateappoinmentopsbp
 from controller.appoinmentops.deleteappn import deleteapponbp
 from controller.doctorsops.prescribe import prescribe_bp
 from controller.adminops.deleteaccount import deleteadminaccountbp
+from controller.doctorsops.lessdoctor import lessdocbp
 
 app = Flask(__name__)
 
@@ -98,6 +99,7 @@ app.register_blueprint(doctorpasswordreset_bp) #/doctorpasswordreset
 app.register_blueprint(updatedoctordata_bp) #/doctors/profile/update
 app.register_blueprint(deletedoctor_bp) #/doctorsops/deletedoctor
 app.register_blueprint(getallleavebydocidbp)#'/doctors/leave
+app.register_blueprint(lessdocbp)
 #doctor route ends
 #admin routes
 app.register_blueprint(deleteadminaccountbp)
