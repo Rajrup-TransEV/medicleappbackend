@@ -39,10 +39,10 @@ def createappoinment():
 
         patient_email = patient.get("email")
         doctor_email = doctor.get("email")
-
+        uuidx = str(uuid.uuid4())
         # Insert appointment details into the database
         appoinmentops.insert_one({
-            "uid": str(uuid.uuid4()),
+            "uid": uuidx,
             "patientid": patinetid,
             "appoinmenttime": appoinmenttime,
             "appoinmentdetails": appointmentdetails,
@@ -53,14 +53,14 @@ def createappoinment():
 
         # Prepare email content
         subject = "Appointment Confirmation"
-        text = f"Dear {patient.get('name')},\n\nYour appointment has been successfully booked with Dr. {doctor.get('name')}.\n\nDetails:\nTime: {appoinmenttime}\nDetails: {appointmentdetails}\n\nThank you!"
+        text = f"Dear {patient.get('firstname')},\n\nYour appointment has been successfully booked with Dr. {doctor.get('name')}.\n\nDetails:\nTime: {appoinmenttime}\nDetails: {appointmentdetails}\n\nThank you!"
 
         # Send emails to both patient and doctor
         email_sender(patient_email, subject, text)
         email_sender(doctor_email, subject, text)
 
         generatelogs('info', "Appointment details created", 'createappoinmentdetails.py')
-        return jsonify({"message": "Appointment details created"}), 201
+        return jsonify({"message": "Appointment details created","data":uuidx}), 201
 
     except Exception as e:
         print(e)
