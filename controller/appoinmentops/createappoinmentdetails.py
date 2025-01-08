@@ -18,7 +18,7 @@ createappoinment_bp = Blueprint('createappoinment_bp', __name__)
 def createappoinment():
     doctorid = str(request.form.get('doctorid'))
     patinetid = str(request.form.get('patinetid'))
-    appoinmenttime = str(request.form.get('appoinmenttime'))  # This is coming from the API
+    appoinmenttime = str(request.form.get('appoinmenttime'))  # example date time format, 2025-01-10 15:30:00
     appointmentdetails = str(request.form.get('appointmentdetails'))
 
     try:
