@@ -1,9 +1,10 @@
-from flask import Blueprint, jsonify, request
 from datetime import datetime
-import pytz
+from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 import os
 import uuid
+
+import pytz
 from utils.logs import generatelogs
 from lib.emailsender import email_sender
 
@@ -38,29 +39,20 @@ def createappoinment():
         doctor_email = doctor.get("email")
         uuidx = str(uuid.uuid4())
 
-        # Convert appoinmenttime string to datetime and localize to IST
-        # Assuming appoinmenttime comes in 'YYYY-MM-DD HH:MM:SS' format
-        appointment_datetime_utc = datetime.strptime(appoinmenttime, '%Y-%m-%d %H:%M:%S')
-        
-        # Localize to IST (Asia/Kolkata)
-        ist_timezone = pytz.timezone('Asia/Kolkata')
-        appointment_datetime_ist = appointment_datetime_utc.replace(tzinfo=pytz.utc).astimezone(ist_timezone)
-
-        # Insert appointment details into the database
+        # Insert appointment details into the database without any formatting or processing
         appoinmentops.insert_one({
             "uid": uuidx,
             "patientid": patinetid,
-            "appoinmenttime": appointment_datetime_ist.isoformat(),
+            "appoinmenttime": appoinmenttime,  # Directly assign the variable
             "appoinmentdetails": appointmentdetails,
             "doctorid": doctorid,
             'status': 'applied',
-            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
+            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()  # Directly assign current datetime as string
         })
 
-        # Prepare email content with formatted appointment time
+        # Prepare email content using the appointment time directly without formatting
         subject = "Appointment Confirmation"
-        formatted_time = appointment_datetime_ist.strftime('%d %B %Y, %I:%M %p IST')
-        text = f"Dear {patient.get('firstname')},\n\nYour appointment has been successfully booked with Dr. {doctor.get('fullname')}.\n\nDetails:\nTime: {formatted_time}\nDetails: {appointmentdetails}\n\nThank you!"
+        text = f"Dear {patient.get('firstname')},\n\nYour appointment has been successfully booked with Dr. {doctor.get('fullname')}.\n\nDetails:\nTime: {appoinmenttime}\nDetails: {appointmentdetails}\n\nThank you!"
 
         # Send emails to both patient and doctor
         email_sender(patient_email, subject, text)
