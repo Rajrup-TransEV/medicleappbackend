@@ -18,15 +18,11 @@ def appointmentfn():
     appoinid = request.form.get('appoinid')
 
     # Initialize the query dictionary
-    query = {}
-    
-    # Populate the query based on provided parameters
-    if doctorid and doctorid != 'None':
-        query['doctorid'] = doctorid
-    if patientid and patientid != 'None':
-        query['patientid'] = patientid
-    if appoinid and appoinid != 'None':
-        query['appoinid'] = appoinid
+    query = {key: value for key, value in {
+        'doctorid': doctorid,
+        'patientid': patientid,
+        'appoinid': appoinid
+    }.items() if value and value != 'None'}
 
     print(query)  # Debugging output to see what query is being constructed
 
@@ -38,25 +34,37 @@ def appointmentfn():
         db = get_db_connection()
         appoinmentops = db['appoinments']
         
-        # Fetch appointment details based on the constructed query
-        getappndetails = appoinmentops.find_one(query)
-        patient_collections = db['patients']
-        patient = patient_collections.find_one({"uid":getappndetails.get('patientid')})
-        doctor_collection = db['doctors']
-        doctor = doctor_collection.find_one({"uid": getappndetails.get('doctorid')})
+        # Fetch the latest appointment details based on the constructed query
+        getappndetails_cursor = appoinmentops.find(query).sort("created_at", -1).limit(1)
+
+        # Convert cursor to a list and check if there are any results
+        getappndetails_list = list(getappndetails_cursor)
+        
         # Check if any appointment details were found
-        if not getappndetails:
+        if not getappndetails_list:
             return jsonify({"message": "No appointment details found associated with the provided IDs."}), 404
         
+        # Get the first result from the list (which should be the latest due to sorting)
+        getappndetails = getappndetails_list[0]
+
+        # Fetch patient and doctor details based on appointment data
+        patient_collections = db['patients']
+        patient = patient_collections.find_one({"uid": getappndetails.get('patientid')})
+        
+        doctor_collection = db['doctors']
+        doctor = doctor_collection.find_one({"uid": getappndetails.get('doctorid')})
+
+        # Construct the response payload
         normalpayload = {
-            "uid":getappndetails.get('uid'),
-            'patient_firstname':patient['firstname'] if patient else None,
-            'patient_lastname':patient['lastname'] if patient else None,
-            'doctor_fullname': doctor['fullname'] if doctor else None,
-              'appoinmenttime':getappndetails.get('appoinmenttime'),
-                'appoinmentdetails':getappndetails.get('appoinmentdetails'),
-            'created_at':getappndetails.get('created_at'),
+            "uid": getappndetails.get('uid'),
+            'patient_firstname': patient.get('firstname') if patient else None,
+            'patient_lastname': patient.get('lastname') if patient else None,
+            'doctor_fullname': doctor.get('fullname') if doctor else None,
+            'appoinmenttime': getappndetails.get('appoinmenttime'),
+            'appoinmentdetails': getappndetails.get('appoinmentdetails'),
+            'created_at': getappndetails.get('created_at'),
         }
+
         # Log successful data fetch
         generatelogs('info', 'Data fetched successfully', 'getappoinmentdetails.py')
         
