@@ -41,7 +41,7 @@ def getallappnfn():
                 'created_at':appoinment.get('created_at'),
             }
             appoinmentlist.append(appoinment_data)
-            return jsonify({"message":"Appoinment data hasbeen fetched successfully","data":appoinmentlist})
+        return jsonify({"message":"Appoinment data hasbeen fetched successfully","data":appoinmentlist})
     except Exception as e:
         generatelogs("error",f"{str(e)}","getallappoinmentdetails.py")
         return jsonify({"message":"Error fetching leave data Internal server error"}),500
