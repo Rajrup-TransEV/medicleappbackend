@@ -63,6 +63,7 @@ def appointmenthisfn():
                 'doctor_fullname': doctor.get('fullname') if doctor else None,
                 'appoinmenttime': getappndetails.get('appoinmenttime'),
                 'appoinmentdetails': getappndetails.get('appoinmentdetails'),
+                'appoinmentstatus':getappndetails.get('status'),
                 'created_at': getappndetails.get('created_at'),
             }
 

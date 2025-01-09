@@ -34,6 +34,7 @@ def getallappnfn():
                 'doctorid':appoinment.get('doctorid'),
                 'appoinmenttime':appoinment.get('appoinmenttime'),
                 'appoinmentdetails':appoinment.get('appoinmentdetails'),
+                'appoinmentstatus':appoinment.get('status'),
                 'patientid':appoinment.get('patientid'),
                 'patient_firstname':patient['firstname'] if patient else None,
                 'patient_lastname':patient['lastname'] if patient else None,
