@@ -42,6 +42,7 @@ from controller.appoinmentops.deleteappn import deleteapponbp
 from controller.doctorsops.prescribe import prescribe_bp
 from controller.adminops.deleteaccount import deleteadminaccountbp
 from controller.doctorsops.lessdoctor import lessdocbp
+from controller.appoinmentops.appoinmenthistory import getappoinmenthistorybp
 
 app = Flask(__name__)
 
@@ -110,6 +111,7 @@ app.register_blueprint(createappoinment_bp)
 app.register_blueprint(getappoinmentdetailsbp)
 app.register_blueprint(getallappoinmentbp)
 app.register_blueprint(updateappoinmentopsbp)
+app.register_blueprint(getappoinmenthistorybp)
 app.register_blueprint(deleteapponbp)
 #prescribe
 app.register_blueprint(prescribe_bp)
