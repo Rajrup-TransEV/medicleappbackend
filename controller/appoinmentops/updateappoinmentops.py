@@ -4,43 +4,57 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
-
 def get_db_connection():
-        client = MongoClient(os.getenv('MONGODB_URI'))
-        db = client[os.getenv('DB_NAME')]
-        return db
+    client = MongoClient(os.getenv('MONGODB_URI'))
+    db = client[os.getenv('DB_NAME')]
+    return db
 
-updateappoinmentopsbp = Blueprint('updateappoinmentops',__name__)
+updateappoinmentopsbp = Blueprint('updateappoinmentops', __name__)
 
-@updateappoinmentopsbp.route('/update/appoinment',methods=['POST'])
+@updateappoinmentopsbp.route('/update/appoinment', methods=['POST'])
 def updateappnfn():
-    patientid = request.form.get('patientid')
-    doctorid = request.form.get('doctorid')
     appoinid = request.form.get('appoinid')
-    appoinmenttime = str(request.form.get('appoinmenttime'))
-    appointmentdetails = str(request.form.get('appointmentdetails'))
-    appoinmentstatus = str(request.form.get('appoinmentstatus'))
+    appoinmenttime = request.form.get('appoinmenttime')
+    appointmentdetails = request.form.get('appointmentdetails')
+    appoinmentstatus = request.form.get('appoinmentstatus')
+
     updatedetails = {}
-    query = {}
-    if doctorid and doctorid != 'None':
-        query['doctorid'] = doctorid
-    if patientid and patientid != 'None':
-        query['patientid'] = patientid
-    if appoinid and appoinid != 'None':
-        query['appoinid'] = appoinid
+    
+    # Log incoming data for debugging
+    generatelogs('info', f"Received update request: {request.form}", 'updateappoinmentops.py')
+
+    # Validate appoinid
+    if not appoinid:
+        return jsonify({"message": "Appoinment ID is required"}), 400
+
     try:
         db = get_db_connection()
         appoinmentops = db['appoinments']
-        if appoinmenttime is not None:
-             updatedetails['appoinmenttime']=appoinmenttime
-        if appointmentdetails is not None:
-             updatedetails['appoinmentdetails'] = appointmentdetails
-        if appoinmentstatus is not None:
-             updatedetails['status']=appoinmentstatus
-        appoinmentops.update_one(query,{"$set",updatedetails})
-        generatelogs('info','Appoinment details hasbeen updated successfully','updateappoinmentops.py')
-        return jsonify({"message":"Appoinment details hasbeen updated successfully"}),200
+        
+        # Prepare fields to update
+        if appoinmenttime:
+            updatedetails['appoinmenttime'] = appoinmenttime
+        if appointmentdetails:
+            updatedetails['appoinmentdetails'] = appointmentdetails
+        if appoinmentstatus:
+            updatedetails['status'] = appoinmentstatus
+        
+        # Check if there are any fields to update
+        if not updatedetails:
+            return jsonify({"message": "No fields to update"}), 400
+        
+        # Perform the update operation using only appoinid
+        result = appoinmentops.update_one({"uid": appoinid}, {"$set": updatedetails})
+        
+        # Check if any documents were modified
+        if result.modified_count > 0:
+            generatelogs('info', 'Appoinment details have been updated successfully', 'updateappoinmentops.py')
+            return jsonify({"message": "Appoinment details have been updated successfully"}), 200
+        else:
+            generatelogs('warning', 'No matching appointment found or no changes made', 'updateappoinmentops.py')
+            return jsonify({"message": "No matching appointment found or no changes made"}), 404
+    
     except Exception as e:
-          print(e)
-          generatelogs('error',f"{str(e)}",'updateappoinmentops.py')
-          return jsonify({"message":"Internal server error"}),500
+        print(e)
+        generatelogs('error', f"{str(e)}", 'updateappoinmentops.py')
+        return jsonify({"message": "Internal server error"}), 500
