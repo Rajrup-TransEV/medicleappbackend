@@ -17,41 +17,57 @@ def patientviewfn():
     try:
         db = get_db_connection()
         doctor_collection = db['doctors']
-        appointment_collection = db['appoinments']
+        appointment_collection = db['appoinments']  # Retaining the typo as requested
         patient_collection = db['patients']
 
         # Step 1: Find doctors with the specified specialization
         doctors = list(doctor_collection.find({"specialization": doctorspecialization}))
-        # print("doctors",doctors)
+
+        if not doctors:
+            return jsonify({"error": "No doctors found with the specified specialization."}), 404
+
         # Step 2: Extract doctor UIDs
         doctor_uids = [doctor['uid'] for doctor in doctors]
-        # print("doctorid",doctor_uids)
+
         # Step 3: Find appointments for these doctors
         appointments = list(appointment_collection.find({"doctorid": {"$in": doctor_uids}}))
-        # print("appoinments",appointments)
-        # Step 4: Extract patient UIDs from appointments
-        patient_uids = [appointment['patientid'] for appointment in appointments]
-        # print("patient id",patient_uids)
-        # Step 5: Fetch selected patient details based on patient UIDs
-        patients = list(patient_collection.find(
-            {"uid": {"$in": patient_uids}},
-            {
-                "firstname": 1,
-                "lastname": 1,
-                "email": 1,
-                "phonenumber": 1,
-                "age": 1,
-                "gender": 1,
-                "bloodgroup": 1,
-                "_id": 0  # Exclude the default MongoDB _id field if not needed
-            }
-        ))
-        print("patinets",patients)
-        generatelogs("info","Data fetched successfully","patientview.py")
-        # Step 6: Return the patient data as a JSON response
-        return jsonify({"patients": patients}), 200
+
+        # Step 4: Extract patient UIDs from appointments and map them to their respective doctor IDs
+        patient_data = []
+        seen_patient_uids = set()  # Set to track unique patient UIDs
+
+        for appointment in appointments:
+            patient_uid = appointment['patientid']
+            doctor_id = appointment['doctorid']  # Assuming 'doctorid' is stored in the appointment document
+            
+            # Fetch patient details only if we haven't seen this patient UID before
+            if patient_uid not in seen_patient_uids:
+                patient_info = patient_collection.find_one({"uid": patient_uid}, {
+                    "firstname": 1,
+                    "lastname": 1,
+                    "email": 1,
+                    "phonenumber": 1,
+                    "age": 1,
+                    "gender": 1,
+                    "bloodgroup": 1,
+                    "_id": 0
+                })
+
+                if patient_info:
+                    # Add doctor ID and specialization to the patient's info
+                    patient_info['doctorid'] = doctor_id
+                    patient_info['doctorspecialization'] = doctorspecialization
+                    
+                    # Add the patient's info to the list and mark this UID as seen
+                    patient_data.append(patient_info)
+                    seen_patient_uids.add(patient_uid)  # Mark this UID as seen
+
+        generatelogs("info", "Data fetched successfully", "patientview.py")
+
+        # Step 5: Return the combined patient data as a JSON response
+        return jsonify({"patients": patient_data}), 200
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        generatelogs("error",f'{str(e)}','patientview.py')
+        generatelogs("error", f'{str(e)}', 'patientview.py')
         return jsonify({"error": "An error occurred while processing your request."}), 500
