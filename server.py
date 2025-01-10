@@ -43,7 +43,7 @@ from controller.doctorsops.prescribe import prescribe_bp
 from controller.adminops.deleteaccount import deleteadminaccountbp
 from controller.doctorsops.lessdoctor import lessdocbp
 from controller.appoinmentops.appoinmenthistory import getappoinmenthistorybp
-
+from controller.patientops.patientview import patientviewbp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -85,6 +85,7 @@ app.register_blueprint(pprofilecreate_bp) #/patients/profile/update
 app.register_blueprint(getprofiebyid_bp) #/patients/profile/getbyid
 app.register_blueprint(getallpatient_bp) #/patientops/getallpatient
 app.register_blueprint(deleteprofile_bp) #/patientops/deleteprofile
+app.register_blueprint(patientviewbp)
 #patient profile route ends
 #doctor routes
 app.register_blueprint(doctorsignup_bp) #/doctor/signup
