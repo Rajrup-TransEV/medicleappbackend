@@ -12,7 +12,8 @@ patientviewbp = Blueprint('patientviewbp', __name__)
 
 @patientviewbp.route('/patientview', methods=['POST'])
 def patientviewfn():
-    doctorspecialization = str(request.form.get('doctorspecialization')).lower()
+    doctorspecialization = str(request.form.get('doctorspecialization')).lower() if request.form.get('doctorspecialization') else None
+    doctorid = str(request.form.get('doctorid')) if request.form.get('doctorid') else None
     
     try:
         db = get_db_connection()
@@ -20,14 +21,24 @@ def patientviewfn():
         appointment_collection = db['appoinments']  # Retaining the typo as requested
         patient_collection = db['patients']
 
-        # Step 1: Find doctors with the specified specialization
-        doctors = list(doctor_collection.find({"specialization": doctorspecialization}))
+        # Step 1: Build the query based on specialization or doctor ID
+        query = {}
+        if doctorspecialization:
+            query['specialization'] = doctorspecialization
+        if doctorid:
+            query['uid'] = doctorid
+        
+        print("Constructed query:", query)
+
+        # Fetch doctors based on the constructed query
+        doctors = list(doctor_collection.find(query))
 
         if not doctors:
-            return jsonify({"error": "No doctors found with the specified specialization."}), 404
+            return jsonify({"error": "No doctors found with the specified criteria."}), 404
 
-        # Step 2: Extract doctor UIDs
-        doctor_uids = [doctor['uid'] for doctor in doctors]
+        # Step 2: Extract doctor UIDs and specializations
+        doctor_info_map = {doctor['uid']: doctor['specialization'] for doctor in doctors}
+        doctor_uids = list(doctor_info_map.keys())
 
         # Step 3: Find appointments for these doctors
         appointments = list(appointment_collection.find({"doctorid": {"$in": doctor_uids}}))
@@ -56,7 +67,7 @@ def patientviewfn():
                 if patient_info:
                     # Add doctor ID and specialization to the patient's info
                     patient_info['doctorid'] = doctor_id
-                    patient_info['doctorspecialization'] = doctorspecialization
+                    patient_info['doctorspecialization'] = doctor_info_map.get(doctor_id, None)  # Get specialization from map
                     
                     # Add the patient's info to the list and mark this UID as seen
                     patient_data.append(patient_info)
