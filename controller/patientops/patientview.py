@@ -37,7 +37,7 @@ def patientviewfn():
             return jsonify({"error": "No doctors found with the specified criteria."}), 404
 
         # Step 2: Extract doctor UIDs and specializations
-        doctor_info_map = {doctor['uid']: doctor['specialization'] for doctor in doctors}
+        doctor_info_map = {doctor['uid']: doctor for doctor in doctors}
         doctor_uids = list(doctor_info_map.keys())
 
         # Step 3: Find appointments for these doctors
@@ -67,7 +67,11 @@ def patientviewfn():
                 if patient_info:
                     # Add doctor ID and specialization to the patient's info
                     patient_info['doctorid'] = doctor_id
-                    patient_info['doctorspecialization'] = doctor_info_map.get(doctor_id, None)  # Get specialization from map
+                    patient_info['doctorspecialization'] = doctor_info_map[doctor_id]['specialization']  # Get specialization from map
+                    
+                    # Add appointment details to the patient's info
+                    patient_info['appointment_time'] = appointment.get('appoinmenttime')  # Assuming 'appointment_time' is a field in the appointment document
+                    patient_info['appointment_details'] = appointment.get('appoinmentdetails')  # Assuming 'details' is a field in the appointment document
                     
                     # Add the patient's info to the list and mark this UID as seen
                     patient_data.append(patient_info)
