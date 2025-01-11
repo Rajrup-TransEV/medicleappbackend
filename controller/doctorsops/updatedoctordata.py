@@ -1,10 +1,8 @@
-import uuid
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
-from werkzeug.utils import secure_filename
 import base64
 
 # Upload folder setup
@@ -20,73 +18,111 @@ def get_db_connection():
     except PyMongoError as e:
         messagetype = 'error'
         message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
+        filelocation = 'getdoctordetaillsbyid.py'
         generatelogs(messagetype, message, filelocation)
         raise
 
-updatedoctordata_bp = Blueprint('updatedoctordata_bp', __name__)
+getdoctordetailsbyid_bp = Blueprint('getdoctordetailsbyid_bp', __name__)
 
-@updatedoctordata_bp.route("/doctors/profile/update", methods=["POST"])
-def updatedoctordata():
-    # Retrieve form data
-    doctorid = request.form.get('doctorid')
-    fullname = request.form.get('fullname')
-    gender = str(request.form.get("gender"))
-    address = str(request.form.get('address'))
-    dob = str(request.form.get('dob'))
-    specialization = str(request.form.get('specialization'))
-    qualification = str(request.form.get('qualification'))
-    yoe = str(request.form.get('yoe'))
-    license_number = str(request.form.get('license_number'))
-    email = str(request.form.get('email'))
-    phonenumber = str(request.form.get('phonenumber'))
+@getdoctordetailsbyid_bp.route("/doctors/getbyid", methods=["POST"])
+def getdoctordetaillsbyid():
+    doctorid = str(request.form.get('doctorid'))
 
-    profile_picture_file = request.files.get('profilepicture')  # Get the uploaded file
+    # Check if a new profile picture is being uploaded
+    if 'profile_picture' in request.files:
+        file = request.files['profile_picture']
+        
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+        
+        print(f"Uploaded file: {file.filename}")  # Debug log
 
-    updatedoctordata = {}
+        try:
+            filename = f"{doctorid}_profile_picture.jpg"
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            print(f"Attempting to save file at: {filepath}")  # Debug log
+            
+            # Save the file in binary mode
+            with open(filepath, "wb") as img_file:
+                img_file.write(file.read())
+                print("File saved successfully.")  # Debug log
+
+            if os.path.exists(filepath):
+                print("File exists after saving.")  # Debug log
+            else:
+                print("File does NOT exist after saving!")  # Debug log
+
+            # Update MongoDB with new profile picture path
+            db = get_db_connection()
+            doctor_collection = db['doctors']
+            print(f"Updating MongoDB with profile picture path: {filepath}")  # Debug log
+            
+            result = doctor_collection.update_one(
+                {"uid": doctorid},
+                {"$set": {"profilepictures": filepath}}
+            )
+            
+            # print(f"MongoDB update result: {result.modified_count}")  # Debug log
+
+            # if result.modified_count == 0:
+            #     return jsonify({"error": "Doctor not found or profile picture not updated"}), 404
+
+        except Exception as e:
+            messagetype = 'error'
+            message = f"Error while uploading profile picture: {str(e)}"
+            filelocation = 'doctorsops/getdoctordetailsbyid.py'
+            generatelogs(messagetype, message, filelocation)
+            return jsonify({"error": str(e)}), 500
 
     try:
         db = get_db_connection()
         doctor_collection = db['doctors']
         doctor = doctor_collection.find_one({"uid": doctorid})
+        
         if not doctor:
             return jsonify({"error": "Doctor not found!"}), 404
         
-        if fullname is not None:
-            updatedoctordata['fullname'] = fullname
-        if gender is not None:
-            updatedoctordata['gender'] = gender
-        if address is not None:
-            updatedoctordata['address'] = address
-        if dob is not None:
-            updatedoctordata['dob'] = dob
-        if specialization is not None:
-            updatedoctordata['specialization'] = specialization
-        if qualification is not None:
-            updatedoctordata['qualification'] = qualification
-        if yoe is not None:
-            updatedoctordata['yoe'] = yoe
-        if license_number is not None:
-            updatedoctordata['license_number'] = license_number
-        if email is not None:
-            updatedoctordata['email'] = email
-        if phonenumber is not None:
-            updatedoctordata['phonenumber'] = phonenumber
+        leave_collection = db['doctorleave']
+        doctor_leave = leave_collection.find_one({"doctorid": doctorid})
         
-        if profile_picture_file:
-            filename = secure_filename(profile_picture_file.filename)
-            profile_picture_path = os.path.join(UPLOAD_FOLDER, filename)
-            profile_picture_file.save(profile_picture_path)
-            with open(profile_picture_path, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')  # Decode bytes to string
-                updatedoctordata['profilepicture'] = encoded_string
+        leavefrom = doctor_leave.get('leavefrom') if doctor_leave else None
+        leaveto = doctor_leave.get('leaveto') if doctor_leave else None
+        reason = doctor_leave.get('reason') if doctor_leave else None
+        status = doctor_leave.get('status') if doctor_leave else None
         
-        doctor_collection.update_one({"uid": doctorid}, {"$set": updatedoctordata})
+        profile_picture_path = doctor.get('profilepictures')
         
-        return jsonify({"message": "Doctor data updated successfully!", "updateddata": updatedoctordata}), 200
+        if profile_picture_path and os.path.exists(profile_picture_path):
+            with open(profile_picture_path, "rb") as img_file:
+                profile_picture_data = base64.b64encode(img_file.read()).decode('utf-8')
+        else:
+            profile_picture_data = None
+            
+        normal_payload = {
+            "uid": doctor.get('uid'),
+            "fullname": doctor.get('fullname'),
+            "gender": doctor.get('gender'),
+            "address": doctor.get('address'),
+            "dob": doctor.get('dob'),
+            "specialization": doctor.get('specialization'),
+            "qualification": doctor.get('qualification'),
+            "yoe": doctor.get('yoe'),
+            "license_number": doctor.get('license_number'),
+            "email": doctor.get('email'),
+            "phonenumber": doctor.get('phonenumber'),
+            "status": status,
+            "leavefrom": leavefrom,
+            "leaveto": leaveto,
+            "reason": reason,
+            "profilepictures": profile_picture_data,
+            "role": doctor.get('userrole')
+        }
+        
+        return jsonify({"message":"Doctor data has been fetched successfully", "data": normal_payload}), 200
     
     except Exception as e:
-        print(e)
-        generatelogs('error', f"Error updating doctor data: {str(e)}", 'doctorops/updatedoctordata.py')
-        return jsonify({"error": "Internal Server Error!"}), 500
-
+        messagetype = 'error'
+        message = f"Error while fetching doctor data: {str(e)}"
+        filelocation = 'doctorsops/getdoctordetailsbyid.py'
+        generatelogs(messagetype, message, filelocation)
+        return jsonify({"error": str(e)}), 500
