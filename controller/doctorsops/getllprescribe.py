@@ -6,16 +6,10 @@ import os
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
-from reportlab.lib.pagesizes import A4  # Change to A4
-from reportlab.lib.units import inch
-from reportlab.pdfgen import canvas
-from reportlab.lib.colors import HexColor
-from datetime import datetime
-import textwrap
+import base64
 
 UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
 
 def get_db_connection():
     try:
@@ -29,13 +23,31 @@ def get_db_connection():
         generatelogs(messagetype, message, filelocation)
         raise
 
-getallprescribebp = Blueprint("getallprescribebp",__name__)
+getallprescribebp = Blueprint("getallprescribebp", __name__)
 
-@getallprescribebp.route("/getallprescribe",methods=['GET'])
+@getallprescribebp.route("/getallprescribe", methods=['GET'])
 def getallprescribefn():
     try:
         db = get_db_connection()
         prescribe_collection = db['prescribe']
+        prescribes = prescribe_collection.find()
+        
+        prescribelist = []
+        for prescribe in prescribes:
+            # Omit the _id field
+            prescribe_data = {key: value for key, value in prescribe.items() if key != '_id'}
+            
+            # Fetching the file path and encoding it
+            file_path = prescribe.get('file_path')
+            if file_path and os.path.exists(file_path):
+                with open(file_path, "rb") as pdf_file:
+                    encoded_string = base64.b64encode(pdf_file.read()).decode('utf-8')
+                prescribe_data['file_data'] = encoded_string  # Add encoded data to the record
+            
+            prescribelist.append(prescribe_data)
+        
+        return jsonify(prescribelist), 200
         
     except Exception as e:
         print(e)
+        return jsonify({"error": str(e)}), 500
