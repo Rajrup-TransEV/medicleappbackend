@@ -24,7 +24,7 @@ def get_db_connection():
     except PyMongoError as e:
         messagetype = 'error'
         message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
+        filelocation = 'prescribe.py'
         generatelogs(messagetype, message, filelocation)
         raise
 

@@ -22,9 +22,9 @@ def get_db_connection():
         generatelogs(messagetype, message, filelocation)
         raise
 
-getdoctordetailsbyid_bp = Blueprint('getdoctordetailsbyid_bp', __name__)
+updatedoctordata_bp = Blueprint('updatedoctordata_bp', __name__)
 
-@getdoctordetailsbyid_bp.route("/doctors/getbyid", methods=["POST"])
+@updatedoctordata_bp.route("/doctors/updatedata", methods=["POST"])
 def getdoctordetaillsbyid():
     doctorid = str(request.form.get('doctorid'))
 
