@@ -44,6 +44,9 @@ from controller.adminops.deleteaccount import deleteadminaccountbp
 from controller.doctorsops.lessdoctor import lessdocbp
 from controller.appoinmentops.appoinmenthistory import getappoinmenthistorybp
 from controller.patientops.patientview import patientviewbp
+from controller.doctorsops.getllprescribe import getallprescribebp
+from controller.doctorsops.getprescribebyid import getprescribebyidbp
+
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -116,6 +119,8 @@ app.register_blueprint(getappoinmenthistorybp)
 app.register_blueprint(deleteapponbp)
 #prescribe
 app.register_blueprint(prescribe_bp)
+app.register_blueprint(getallprescribebp)
+app.register_blueprint(getprescribebyidbp)
 
 #websocket based routes
 
