@@ -46,6 +46,8 @@ from controller.appoinmentops.appoinmenthistory import getappoinmenthistorybp
 from controller.patientops.patientview import patientviewbp
 from controller.doctorsops.getllprescribe import getallprescribebp
 from controller.doctorsops.getprescribebyid import getprescribebyidbp
+from controller.doctorsops.getprescrbbypatientid import getprescribebypatientidbp
+from controller.doctorsops.getprescribbydoctorid import getprescribebydoctoridbp
 
 app = Flask(__name__)
 
@@ -121,7 +123,8 @@ app.register_blueprint(deleteapponbp)
 app.register_blueprint(prescribe_bp)
 app.register_blueprint(getallprescribebp)
 app.register_blueprint(getprescribebyidbp)
-
+app.register_blueprint(getprescribebypatientidbp)
+app.register_blueprint(getprescribebydoctoridbp)
 #websocket based routes
 
 if __name__ == '__main__':
