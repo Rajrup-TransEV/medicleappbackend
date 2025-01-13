@@ -54,6 +54,7 @@ def patientviewfn():
             # Fetch patient details only if we haven't seen this patient UID before
             if patient_uid not in seen_patient_uids:
                 patient_info = patient_collection.find_one({"uid": patient_uid}, {
+                    "uid":1,
                     "firstname": 1,
                     "lastname": 1,
                     "email": 1,
