@@ -50,6 +50,8 @@ from controller.doctorsops.getprescrbbypatientid import getprescribebypatientidb
 from controller.doctorsops.getprescribbydoctorid import getprescribebydoctoridbp
 from controller.facilitymanagement.faciltyopscreate import facilityopscreatebp
 from controller.facilitymanagement.facilityopsgetall import facilityopsgetallbp
+from controller.facilitymanagement.getfaciltydetailsbyid import getfacilitydetailsbyidbp
+from controller.facilitymanagement.deletefacility import deletefacilitybp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -129,6 +131,8 @@ app.register_blueprint(getprescribebydoctoridbp)
 #facility create
 app.register_blueprint(facilityopscreatebp)
 app.register_blueprint(facilityopsgetallbp)
+app.register_blueprint(getfacilitydetailsbyidbp)
+app.register_blueprint(deletefacilitybp)
 
 #websocket based routes
 
