@@ -52,6 +52,7 @@ from controller.facilitymanagement.faciltyopscreate import facilityopscreatebp
 from controller.facilitymanagement.facilityopsgetall import facilityopsgetallbp
 from controller.facilitymanagement.getfaciltydetailsbyid import getfacilitydetailsbyidbp
 from controller.facilitymanagement.deletefacility import deletefacilitybp
+from controller.facilitymanagement.facilityupdate import facilityupdatebp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -133,6 +134,7 @@ app.register_blueprint(facilityopscreatebp)
 app.register_blueprint(facilityopsgetallbp)
 app.register_blueprint(getfacilitydetailsbyidbp)
 app.register_blueprint(deletefacilitybp)
+app.register_blueprint(facilityupdatebp)
 
 #websocket based routes
 
