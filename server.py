@@ -64,6 +64,9 @@ from controller.management.getbedetails import getbeddetailsbp
 from controller.management.getallbeddetails import getallbeddetailsbp
 from controller.management.equipmentmanagement.createequipment import createequipmentbp
 from controller.management.equipmentmanagement.getallequipment import getallequipmentbp
+from controller.management.equipmentmanagement.getequipmentbyid import getallequipmentbyidbp
+from controller.management.equipmentmanagement.updateequipmentdetails import updateequipmentbp
+from controller.management.equipmentmanagement.deleteequipment import deleteequipmentbp
 
 app = Flask(__name__)
 
@@ -160,6 +163,9 @@ app.register_blueprint(getallbeddetailsbp)
 #equipment management
 app.register_blueprint(createequipmentbp)
 app.register_blueprint(getallequipmentbp)
+app.register_blueprint(getallequipmentbyidbp)
+app.register_blueprint(updateequipmentbp)
+app.register_blueprint(deleteequipmentbp)
 #websocket based routes
 
 if __name__ == '__main__':
