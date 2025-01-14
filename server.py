@@ -61,6 +61,7 @@ from controller.management.getallrooms import getallroomsbp
 from controller.management.getroombyid import getroombyidbp
 from controller.management.assignbedtopatient import assignbedtopatientbp
 from controller.management.getbedetails import getbeddetailsbp
+from controller.management.getallbeddetails import getallbeddetailsbp
 
 app = Flask(__name__)
 
@@ -153,6 +154,7 @@ app.register_blueprint(getallwardbp)
 app.register_blueprint(getwarddetailsbyidbp)
 app.register_blueprint(assignbedtopatientbp)
 app.register_blueprint(getbeddetailsbp)
+app.register_blueprint(getallbeddetailsbp)
 
 #websocket based routes
 
