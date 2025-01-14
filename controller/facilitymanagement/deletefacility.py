@@ -10,7 +10,7 @@ def get_db_connection():
 
 deletefacilitybp = Blueprint('deletefacilitybp',__name__)
 
-deletefacilitybp.route('/facilityops/deletefacility',methods=['POST'])
+@deletefacilitybp.route('/facilityops/deletefacility',methods=['POST'])
 def deletefacilityfn():
     facilityid = str(request.form.get('facilityid'))
     try:
