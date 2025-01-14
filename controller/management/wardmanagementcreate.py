@@ -28,6 +28,8 @@ def wardmanagementfn():
     ward_type = request.form.get('type')
     capacity = request.form.get('capacity')
     location = request.form.get('location')
+    ward_email = request.form.get('ward_email')
+    ward_phoneno = request.form.get('ward_phoneno')
 
     # # Input validation
     # if not all([name, ward_type, capacity, location]):
@@ -43,6 +45,8 @@ def wardmanagementfn():
         'name': name,
         'type': ward_type,
         'capacity': capacity,
+        'ward_email':ward_email,
+        "waard_phoneno":ward_phoneno,
         'location': location,
         'created_at': current_time.isoformat(),
         'uid': uuidx
