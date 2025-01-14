@@ -19,9 +19,9 @@ def deletefacilityfn():
         facility = facilitycol.find_one({"uid":facilityid})
         if facility:
             facilitycol.delete_one({"uid":facilityid})
-            generatelogs('info','Facility hasbeen deleted successfully','deletefacility.py')
-            return jsonify({"message":"Facility hasbeen deleted successfully"}),200
-        
+        generatelogs('info','Facility hasbeen deleted successfully','deletefacility.py')
+        return jsonify({"message":"Facility hasbeen deleted successfully"}),200
+    
     except Exception as e:
         print(e)
         generatelogs('error',f'{str(e)}','deletefacility.py')
