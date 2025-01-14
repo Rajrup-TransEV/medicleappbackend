@@ -28,9 +28,12 @@ def getallequipmentfn():
                 "equipmentdetails":equipment.get('equipmentdetails'),
                 "vendorname":equipment.get('vendorname'),
                 "vendordetails":equipment.get('vendordetails'),
-                "equipmentvendorassid":equipment.get('equipmentvendorassid'),
+                "equipmentvendorassociatedid":equipment.get('equipmentvendorassid'),
                 "purchasedat":equipment.get('purchasedat'),
-                "quantity":equipment.get('quantity')
+                "quantity":equipment.get('quantity'),
+                "equipmentprice":equipment.get('equipmentprice'),
+                "totalgst":equipment.get('totalgst'),
+                "totaltax":equipment.get("totaltax")
             }
             result.append(payloaddata)
         generatelogs('info','All equipment data hasbeen fetched','getallequipment.py')

@@ -23,6 +23,9 @@ def createequipmentfn():
     equipmentvendorassoid = str(request.form.get("equipmentvendorassoid"))
     purchasedat = str(request.form.get("purchasedat"))
     quantity = str(request.form.get("quantity"))
+    equipmentprice = str(request.form.get("equipmentprice"))
+    totalgst = str(request.form.get("totalgst"))
+    tottaltax = str(request.form.get("tottaltax"))
 
     try:
         db = get_db_connection()
@@ -36,7 +39,10 @@ def createequipmentfn():
             "vendordetails":vendordetails,
             "equipmentvendorassid":equipmentvendorassoid,
             "purchasedat":purchasedat,
-            "quantity":quantity
+            "quantity":quantity,
+            "equipmentprice":equipmentprice,
+            "totalgst":totalgst,
+            "tottaltax":tottaltax
         })
 
         generatelogs("success","Create equipment details","createequipment.py")
