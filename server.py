@@ -53,6 +53,13 @@ from controller.facilitymanagement.facilityopsgetall import facilityopsgetallbp
 from controller.facilitymanagement.getfaciltydetailsbyid import getfacilitydetailsbyidbp
 from controller.facilitymanagement.deletefacility import deletefacilitybp
 from controller.facilitymanagement.facilityupdate import facilityupdatebp
+from controller.management.wardmanagementcreate import wardmanagementcreatebp
+from controller.management.roommanagementcreate import roommanagementcreatebp
+from controller.management.getwarddetailsbyid import getwarddetailsbyidbp
+from controller.management.getallward import getallwardbp
+from controller.management.getallrooms import getallroomsbp
+from controller.management.getroombyid import getroombyidbp
+
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -135,6 +142,13 @@ app.register_blueprint(facilityopsgetallbp)
 app.register_blueprint(getfacilitydetailsbyidbp)
 app.register_blueprint(deletefacilitybp)
 app.register_blueprint(facilityupdatebp)
+#management operations
+app.register_blueprint(wardmanagementcreatebp)
+app.register_blueprint(roommanagementcreatebp)
+app.register_blueprint(getroombyidbp)
+app.register_blueprint(getallroomsbp)
+app.register_blueprint(getallwardbp)
+app.register_blueprint(getwarddetailsbyidbp)
 
 #websocket based routes
 
