@@ -10,7 +10,7 @@ def get_db_connection():
 
 deletestaffxbp = Blueprint('deletestaffxbp',__name__)
 
-@deletestaffxbp.route('/ops/staffdelete', methdos=['POST'])
+@deletestaffxbp.route('/ops/staffdelete', methods=['POST'])
 def deletestafffn():
     staffid = str(request.form.get('staffid'))
     try:
