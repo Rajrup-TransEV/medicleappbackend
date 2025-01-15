@@ -73,6 +73,8 @@ from controller.staffmanagement.staffid import getstaffdetailsbyidbp
 from controller.staffmanagement.staffupdate import staffupdatebp
 from controller.staffmanagement.staffdelete import deletestaffxbp
 from controller.management.patientadmitdetails import patientadmitdetailsbp
+from controller.management.roomdelete import deleteroomdatabp
+from controller.management.warddelete import deletewardbp
 
 app = Flask(__name__)
 
@@ -179,6 +181,8 @@ app.register_blueprint(stafflistbp)
 app.register_blueprint(getstaffdetailsbyidbp)
 app.register_blueprint(staffupdatebp)
 app.register_blueprint(deletestaffxbp)
+app.register_blueprint(deleteroomdatabp)
+app.register_blueprint(deletewardbp)
 #websocket based routes
 
 if __name__ == '__main__':

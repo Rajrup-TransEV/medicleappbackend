@@ -1,22 +1,14 @@
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 
 # MongoDB connection setup
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'doctbyspecialization.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 lessdocbp = Blueprint('lessdocbp',__name__)
 
@@ -42,12 +34,12 @@ def lessdocbpfn():
                 
                 # Append each doctor's data to the list
                 doctor_data_list.append(normal_payload)
-
+            generatelogs('success','Doctor data has been fetched successfully','lessdoctor.py')
             return jsonify({"message": "Doctor data has been fetched successfully", "data": doctor_data_list}), 200
 
     except Exception as e:
         messagetype = 'error'
         message = f"Error while fetching doctor data: {str(e)}"
-        filelocation = 'doctbyspecialization.py'
+        filelocation = 'lessdoctor.py'
         generatelogs(messagetype, message, filelocation)
         return jsonify({"error": str(e)}), 500

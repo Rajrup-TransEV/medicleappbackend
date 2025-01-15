@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 import base64
 
@@ -9,17 +8,9 @@ UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'prescribe.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
-
 getprescribebyidbp = Blueprint('getprescribebyidbp', __name__)
 
 @getprescribebyidbp.route("/doctors/getprescribebyid", methods=['POST'])
@@ -37,6 +28,7 @@ def getprescribebyidfn():
         prescription = prescribe_collection.find_one({"prescription_id": prescribeid})
         
         if prescription is None:
+            generatelogs('error','Prescription not found','getprescribebyid.py')
             return jsonify({"error": "Prescription not found"}), 404
         
         # Omit the _id field from the response
@@ -49,6 +41,7 @@ def getprescribebyidfn():
                 encoded_string = base64.b64encode(pdf_file.read()).decode('utf-8')
             prescription_data['file_data'] = encoded_string  # Add encoded data to the record
         
+        generatelogs('success','Prescription data hasbeen fetched successfully','getprescribebyid.py')
         return jsonify(prescription_data), 200
         
     except Exception as e:

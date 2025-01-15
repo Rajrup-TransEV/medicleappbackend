@@ -4,7 +4,6 @@ import string
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 import base64
 
@@ -12,16 +11,9 @@ UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'prescribe.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 getallprescribebp = Blueprint("getallprescribebp", __name__)
 
@@ -45,9 +37,10 @@ def getallprescribefn():
                 prescribe_data['file_data'] = encoded_string  # Add encoded data to the record
             
             prescribelist.append(prescribe_data)
-        
+        generatelogs('info','all prescribe data hasbeen fetched','getallprescribe.py')
         return jsonify(prescribelist), 200
         
     except Exception as e:
         print(e)
+        generatelogs('error',f'{str(e)}','getallprescribe.py')
         return jsonify({"error": str(e)}), 500

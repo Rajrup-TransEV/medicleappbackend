@@ -4,7 +4,6 @@ import bcrypt
 import jwt
 from datetime import timedelta,datetime
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 import pytz
 
@@ -13,16 +12,10 @@ doctor_login_bp = Blueprint('doctor_login_bp',__name__)
 
 # MongoDB connection setup
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
+
 
 @doctor_login_bp.route("/doctors/login",methods=["POST"])
 def doctorloginfn():

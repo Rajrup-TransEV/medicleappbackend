@@ -1,20 +1,12 @@
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 from flask import Blueprint, jsonify, request
 
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 doctorleaveupdate_bp = Blueprint('doctorleaveupdate_bp', __name__)
 
@@ -62,7 +54,7 @@ def update_leave():
         
         # Update the record in the database
         doctor_leave_collection.update_one(query, {"$set": update_fields})
-        
+        generatelogs('success','doctorleave hasbeen updated successfully'),200
         return jsonify({"message": "Doctor leave has been updated successfully!"}), 200
     
     except Exception as e:
