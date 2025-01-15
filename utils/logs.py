@@ -2,10 +2,13 @@
 create logs
 """
 
+import datetime
 from pymongo import MongoClient
 import os
 from uuid import uuid4
 import logging
+
+import pytz
 
 # Set up basic logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -43,7 +46,8 @@ def generatelogs(messagetype, message, filelocation):
             "id": newuid,
             "messagetype": messagetype,
             "message": message,
-            "filelocation": filelocation
+            "filelocation": filelocation,
+             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 
         # Insert the log entry into the MongoDB collection

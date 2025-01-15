@@ -13,17 +13,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # MongoDB connection setup
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
-
     
 getprofiebyid_bp = Blueprint('getprofiebyid_bp', __name__)
 
@@ -35,11 +27,10 @@ def getprofilebyid():
         patient_collection = db['patients']
         patient = patient_collection.find_one({"uid": patientid})
         if not patient:
+            generatelogs('error','patient not found','getprofilebyid.py')
             return jsonify({"error": "Patient not found!"}), 404
         
         profile_picture_path = patient.get('profilepicture')
-        print(profile_picture_path)
-
         if profile_picture_path and os.path.exists(profile_picture_path):
             with open(profile_picture_path, "rb") as img_file:
                 profile_picture_data = base64.b64encode(img_file.read()).decode('utf-8')
@@ -60,10 +51,9 @@ def getprofilebyid():
             "weight": patient.get('weight'),
             "profilepicture": profile_picture_data,
         }
+        generatelogs('success','Patient profile fetched successfully','getprofilebyid.py')
         return jsonify({"message": "Patient profile fetched successfully", "data": normal_payload}), 200
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database error: {str(e)}"
-        filelocation = 'patientops/patientprofile/getprofilebyid.py'
-        generatelogs(messagetype, message, filelocation)
-        return jsonify({"error": "Database error"}), 500
+    except Exception as e:
+        print(e)
+        generatelogs('error',f'{str(e)}','getprofilebyid.py')
+        return jsonify({"message":'Internal server error'}),500

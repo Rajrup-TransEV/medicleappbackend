@@ -5,7 +5,6 @@ import uuid
 import pytz
 from datetime import datetime
 from utils.logs import generatelogs
-from lib.emailsender import email_sender
 
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))
@@ -21,19 +20,21 @@ def roommanagementfn():
     current_time = datetime.now(tz)
 
     # Parse incoming form data
-    ward_id = request.form.get('ward_id')  # ID of the ward to which the room belongs
+    ward_id = request.form.get('ward_id')  
     room_number = request.form.get('room_number')
-    room_type = request.form.get('room_type')  # e.g., Single, Double, ICU
+    room_type = request.form.get('room_type')  
     capacity = request.form.get('capacity')
 
     # Input validation
     if not all([ward_id, room_number, room_type, capacity]):
+        generatelogs('error','All fields are required: ward_id, room_number, room_type, capacity','roommanagementcreate.py')
         return jsonify({'error': 'All fields are required: ward_id, room_number, room_type, capacity'}), 400
 
     # Create room object
     try:
         capacity = int(capacity)  # Ensure capacity is an integer
     except ValueError:
+        generatelogs('error','Capacity must be a number','roommanagementcreate.py')
         return jsonify({'error': 'Capacity must be a number'}), 400
     uuidx = str(uuid.uuid4())
     room = {

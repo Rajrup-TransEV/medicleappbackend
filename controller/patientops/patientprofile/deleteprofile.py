@@ -4,9 +4,7 @@ This file contains the code to delete a patient profile.
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
-import base64
 
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))
@@ -27,11 +25,8 @@ def deleteprofilefn():
             generatelogs("info","Patient profile deleted successfully", "deleteprofile.py")
             return jsonify({'message': 'Patient profile deleted successfully'}), 200
         else:
-            generatelogs("info","Patient profile not found", "", "deleteprofile.py")
+            generatelogs("info","Patient profile not found", "deleteprofile.py")
             return jsonify({'message': 'Patient profile not found'}), 404
-    except PyMongoError as e:
-        generatelogs("error","Error deleting patient profile", str(e), "deleteprofile.py")
-        return jsonify({'message': 'Error deleting patient profile'}), 500
     except Exception as e:
-        generatelogs("error","Error deleting patient profile", str(e), "deleteprofile.py")
+        generatelogs("error",f"Error deleting patient profile {str(e)} ","deleteprofile.py")
         return jsonify({'message': 'Error deleting patient profile'}), 500

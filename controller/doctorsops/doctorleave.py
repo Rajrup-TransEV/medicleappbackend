@@ -1,10 +1,12 @@
 """
 doctor side leave operations
 """
+import datetime
 import uuid
 from flask import Blueprint,jsonify,request
 import os
 from pymongo import MongoClient
+import pytz
 from utils.logs import generatelogs
 
 def get_db_connection():
@@ -33,7 +35,8 @@ def doctorsleavefn():
             "leavefrom": leavefrom,
             "leaveto": leaveto,
             "reason": reason,
-            "status": "pending"
+            "status": "pending",
+             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
         
         # Log successful operation

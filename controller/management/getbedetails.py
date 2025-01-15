@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 def get_db_connection():
@@ -36,21 +35,16 @@ def getbeddetailsfn():
         # Prepare the result payload
         result = {
             "admission_uid": admission.get('uid'),
-            "patient_name": patientdet.get('firstname'),  # Assuming 'firstname' is available
-            "patient_age": patientdet.get('age'),         # Assuming 'age' is available
-            "patient_gender": patientdet.get('gender'),   # Assuming 'gender' is available
+            "patient_name": patientdet.get('firstname'), 
+            "patient_age": patientdet.get('age'), 
+            "patient_gender": patientdet.get('gender'),
             "room_id": admission.get('room_id'),
             "ward_id": admission.get('ward_id'),
             "assigned_at": admission.get('assigned_at'),
             "patient_status": admission.get('patientstatus')
         }
-        
+        generatelogs('success','details hasbeen fetched success','getbeddetails.py')
         return jsonify({"data": result}), 200
-    
-    except PyMongoError as e:
-        print(e)
-        generatelogs('error', f'{str(e)}', 'getbeddetails.py')
-        return jsonify({"error": "Database error"}), 500
     
     except Exception as e:
         print(e)

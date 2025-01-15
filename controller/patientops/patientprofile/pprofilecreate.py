@@ -2,7 +2,6 @@ import uuid
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 from werkzeug.utils import secure_filename
 import base64
@@ -12,17 +11,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # MongoDB connection setup
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
-
 pprofilecreate_bp = Blueprint('pprofilecreate_bp', __name__)
 
 @pprofilecreate_bp.route("/patients/profile/update", methods=["POST"])
