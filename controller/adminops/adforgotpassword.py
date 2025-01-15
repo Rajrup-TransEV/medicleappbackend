@@ -7,7 +7,6 @@ from flask import Blueprint, request, jsonify
 from lib.emailsender import email_sender
 from utils.logs import generatelogs
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 
 # Create a Blueprint for superadmin password reset
 adminpasswordreset_bp = Blueprint("adminpasswordreset_bp", __name__)
@@ -17,16 +16,9 @@ temp_storage = {}
 
 # Function to connect to MongoDB
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'adminpasswordreset.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 # Password reset logic for superadmin
 @adminpasswordreset_bp.route("/adminpasswordreset", methods=["POST"])

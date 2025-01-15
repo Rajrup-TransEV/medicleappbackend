@@ -8,7 +8,6 @@ import uuid
 import pytz
 from datetime import datetime
 from utils.logs import generatelogs
-from lib.emailsender import email_sender
 
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))
@@ -19,9 +18,6 @@ wardmanagementcreatebp = Blueprint('wardmanagementcreatebp', __name__)
 
 @wardmanagementcreatebp.route('/ops/wardmanagement', methods=['POST'])
 def wardmanagementfn():
-    # Get the current timezone
-    tz = pytz.timezone('Asia/Kolkata')
-    current_time = datetime.now(tz)
 
     # Parse incoming form data
     name = request.form.get('name')
@@ -30,15 +26,10 @@ def wardmanagementfn():
     location = request.form.get('location')
     ward_email = request.form.get('ward_email')
     ward_phoneno = request.form.get('ward_phoneno')
-
-    # # Input validation
-    # if not all([name, ward_type, capacity, location]):
-    #     return jsonify({'error': 'All fields are required: name, type, capacity, location'}), 400
-
-    # Create ward object
     try:
         capacity = int(capacity)  # Ensure capacity is an integer
     except ValueError:
+        generatelogs('error','Capacity must be a number','wardmanagementcreate.py')
         return jsonify({'error': 'Capacity must be a number'}), 400
     uuidx = str(uuid.uuid4())
     ward = {
@@ -48,7 +39,7 @@ def wardmanagementfn():
         'ward_email':ward_email,
         "waard_phoneno":ward_phoneno,
         'location': location,
-        'created_at': current_time.isoformat(),
+        "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
         'uid': uuidx
     }
 

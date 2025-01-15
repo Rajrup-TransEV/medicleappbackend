@@ -66,7 +66,8 @@ def assignbedtopatientfn():
             "room_id": room_id,
             "assigned_at": current_time,
             'patientstatus': "admit",
-            "uid": uuidx
+            "uid": uuidx,
+             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
         
         db['patientadmit'].insert_one(admission_record)

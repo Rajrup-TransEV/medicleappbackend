@@ -5,23 +5,15 @@ import jwt
 from datetime import timedelta, datetime
 import pytz
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 admin_login_bp = Blueprint('admin_login_bp', __name__)
 
 # MongoDB connection setup
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'adminops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 @admin_login_bp.route("/admins/login", methods=["POST"])
 def adminlogin():
@@ -73,20 +65,6 @@ def adminlogin():
             "message": "Login successful!",
             "token": token
         }), 200
-        
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database operation failed: {str(e)}"
-        filelocation = 'adminops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        return jsonify({"error": "Internal server error."}), 500
-        
-    except jwt.ExpiredSignatureError:
-        messagetype = 'error'
-        message = "JWT token has expired."
-        filelocation = 'adminops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        return jsonify({"error": "Session expired. Please log in again."}), 401
 
     except Exception as e:
         messagetype = 'error'

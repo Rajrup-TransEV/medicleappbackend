@@ -17,17 +17,13 @@ def appointmentfn():
     doctorid = request.form.get('doctorid')
     appoinid = request.form.get('appoinid')
 
-    # Initialize the query dictionary
     query = {key: value for key, value in {
         'doctorid': doctorid,
         'patientid': patientid,
         'appoinid': appoinid
     }.items() if value and value != 'None'}
-
-    print(query)  # Debugging output to see what query is being constructed
-
-    # Check if the query is empty, which means no valid parameters were provided
     if not query:
+        generatelogs('error',"At least one of 'doctorid', 'patientid', or 'appoinid' must be provided.",'getappoinmentdetails.py')        
         return jsonify({"error": "At least one of 'doctorid', 'patientid', or 'appoinid' must be provided."}), 400
 
     try:
@@ -42,6 +38,7 @@ def appointmentfn():
         
         # Check if any appointment details were found
         if not getappndetails_list:
+            generatelogs('error','No appointment details found associated with the provided IDs.','getappoinmentdetails.py')
             return jsonify({"message": "No appointment details found associated with the provided IDs."}), 404
         
         # Get the first result from the list (which should be the latest due to sorting)

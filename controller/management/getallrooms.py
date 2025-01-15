@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 def get_db_connection():

@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 import base64
 
@@ -52,15 +51,9 @@ def getallpatient():
                 'email': patient.get('email'),
                 # 'profile_picture': profile_picture_base64  # Add the Base64 image string here
             }
-            
-            # Append the patient's data to the list
             patient_list.append(patient_data)
-
+        generatelogs('success','patientlist fetched','getallpatient.py')
         return jsonify(patient_list), 200
-
-    except PyMongoError as e:
-        generatelogs('error', f'Database error: {str(e)}', 'getallpatient.py')
-        return jsonify({'error': 'Database error occurred'}), 500
 
     except Exception as e:
         generatelogs('error', f'An unexpected error occurred: {str(e)}', 'getallpatient.py')

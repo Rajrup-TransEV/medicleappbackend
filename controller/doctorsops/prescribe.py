@@ -4,6 +4,7 @@ import string
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
+import pytz
 from utils.logs import generatelogs
 from reportlab.lib.pagesizes import A4  # Change to A4
 from reportlab.lib.units import inch
@@ -170,7 +171,8 @@ def createprescribfn():
             "file_path": save_path,
             "patientid":patientid,
             "doctorid":doctorid,
-            "prescription_id": prescription_id   # Store the prescription ID here in MongoDB as well.
+            "prescription_id": prescription_id,
+             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 
         prescribe_collection.insert_one(prescribe_data)

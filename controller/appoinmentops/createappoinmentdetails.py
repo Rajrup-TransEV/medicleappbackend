@@ -19,7 +19,7 @@ createappoinment_bp = Blueprint('createappoinment_bp', __name__)
 def createappoinment():
     doctorid = str(request.form.get('doctorid'))
     patinetid = str(request.form.get('patinetid'))
-    appoinmenttime = str(request.form.get('appoinmenttime'))  # example date time format, 2025-01-10 15:30:00
+    appoinmenttime = str(request.form.get('appoinmenttime'))
     appointmentdetails = str(request.form.get('appointmentdetails'))
 
     try:
@@ -27,8 +27,6 @@ def createappoinment():
         appoinmentops = db['appoinments']
         patientcol = db['patients']
         doctorcol = db['doctors']
-
-        # Retrieve patient and doctor emails using uid
         patient = patientcol.find_one({"uid": patinetid})
         doctor = doctorcol.find_one({"uid": doctorid})
 
@@ -39,18 +37,17 @@ def createappoinment():
         doctor_email = doctor.get("email")
         uuidx = str(uuid.uuid4())
 
-        # Insert appointment details into the database without any formatting or processing
         appoinmentops.insert_one({
             "uid": uuidx,
             "patientid": patinetid,
-            "appoinmenttime": appoinmenttime,  # Directly assign the variable
+            "appoinmenttime": appoinmenttime,
             "appoinmentdetails": appointmentdetails,
             "doctorid": doctorid,
             'status': 'applied',
-            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()  # Directly assign current datetime as string
+            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
 
-        # Prepare email content using the appointment time directly without formatting
+    
         subject = "Appointment Confirmation"
         text = f"Dear {patient.get('firstname')},\n\nYour appointment has been successfully booked with Dr. {doctor.get('fullname')}.\n\nDetails:\nTime: {appoinmenttime}\nDetails: {appointmentdetails}\n\nThank you!"
 

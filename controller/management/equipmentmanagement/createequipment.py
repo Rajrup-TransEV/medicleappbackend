@@ -42,7 +42,8 @@ def createequipmentfn():
             "quantity":quantity,
             "equipmentprice":equipmentprice,
             "totalgst":totalgst,
-            "tottaltax":tottaltax
+            "tottaltax":tottaltax,
+             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
 
         generatelogs("success","Create equipment details","createequipment.py")

@@ -25,6 +25,7 @@ def updateappnfn():
 
     # Validate appoinid
     if not appoinid:
+        generatelogs('error','Appoinment ID is required','updateappoinmentops.py')
         return jsonify({"message": "Appoinment ID is required"}), 400
 
     try:
@@ -41,6 +42,7 @@ def updateappnfn():
         
         # Check if there are any fields to update
         if not updatedetails:
+            generatelogs('error','No fields to update','updateappoinmentops.py')
             return jsonify({"message": "No fields to update"}), 400
         
         # Perform the update operation using only appoinid

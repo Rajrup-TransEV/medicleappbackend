@@ -12,21 +12,7 @@ deleteapponbp = Blueprint('deleteapponbp',__name__)
 
 @deleteapponbp.route('/ops/appoinmentdelete',methods=['POST'])
 def deleteappnfn():
-    # patientid = request.form.get('patientid')
-    # doctorid = request.form.get('doctorid')
     appoinid = request.form.get('appoinid')
-    # Initialize the query dictionary
-    # query = {}
-    # # Populate the query based on provided parameters
-    # if doctorid and doctorid != 'None':
-    #     query['doctorid'] = doctorid
-    # if patientid and patientid != 'None':
-    #     query['patientid'] = patientid
-    # if appoinid and appoinid != 'None':
-    #     query['appoinid'] = appoinid
-    # Check if the query is empty, which means no valid parameters were provided
-    # if not query:
-    #     return jsonify({"error": "At least one of 'doctorid', 'patientid', or 'appoinid' must be provided."}), 400
     try:
         db = get_db_connection()
         appoinmentops = db['appoinments']
