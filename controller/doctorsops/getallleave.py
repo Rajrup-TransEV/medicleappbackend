@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 def get_db_connection():
@@ -40,11 +39,6 @@ def getallleave():
             leave_list.append(leave_data)
 
         return jsonify({"message": "Leave data fetched successfully", "data": leave_list}), 200
-
-    except PyMongoError as e:
-        generatelogs("error",f"Unexpected error: {str(e)}","getallleave.py")  # Log database errors
-        return jsonify({"message": "Error fetching leave data", "error": str(e)}), 500
-    
     except Exception as e:
         generatelogs("error",f"Unexpected error: {str(e)}","getallleave.py")  # Log unexpected errors
         return jsonify({"message": "Error fetching leave data", "error": str(e)}), 500

@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 import base64
 
@@ -11,16 +10,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # MongoDB connection setup
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'patientops/login.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 getdoctordetailsbyid_bp = Blueprint('getdoctordetailsbyid_bp', __name__)
 

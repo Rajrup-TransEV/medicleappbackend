@@ -4,7 +4,6 @@ import string
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 from reportlab.lib.pagesizes import A4  # Change to A4
 from reportlab.lib.units import inch
@@ -17,16 +16,9 @@ UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'prescribe.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 def wrap_text(pdf_canvas, text, max_width):
     """Wraps text to fit within a specified width."""

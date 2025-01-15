@@ -1,7 +1,6 @@
 from flask import Blueprint,jsonify,request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 def get_db_connection():
@@ -27,5 +26,5 @@ def deleteleavefn():
             return jsonify({'message': 'Leave not found'}),404
     except Exception as e:
         print(e)
-        generatelogs("error",f"{e}","deleteleave.py")
+        generatelogs("error",f"{str(e)}","deleteleave.py")
         return jsonify({'message': 'Error deleting leave'}),500

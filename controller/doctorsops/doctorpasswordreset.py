@@ -6,7 +6,6 @@ from flask import Blueprint, request, jsonify
 from lib.emailsender import email_sender
 from utils.logs import generatelogs
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 
 doctorpasswordreset_bp = Blueprint("doctorpasswordreset_bp", __name__)
 
@@ -15,16 +14,9 @@ temp_storage = {}
 
 # Function to connect to MongoDB
 def get_db_connection():
-    try:
         client = MongoClient(os.getenv('MONGODB_URI'))
         db = client[os.getenv('DB_NAME')]
         return db
-    except PyMongoError as e:
-        messagetype = 'error'
-        message = f"Database connection error: {str(e)}"
-        filelocation = 'doctorsops/doctorpasswordreset.py'
-        generatelogs(messagetype, message, filelocation)
-        raise
 
 # Password reset logic for doctor
 @doctorpasswordreset_bp.route("/doctorpasswordreset", methods=["POST"])
@@ -90,95 +82,3 @@ def docpasswordresetfn():
     except Exception as e:
         generatelogs("error", f"An error occurred: {str(e)}", "doctorsops/doctorpasswordreset.py")
         return jsonify({"message": "An error occurred. Please try again later."}), 500
-
-
-
-# import os
-# import bcrypt
-# import random
-# import time
-# import traceback
-# from flask import Blueprint, request, jsonify
-# from lib.emailsender import email_sender
-# from utils.logs import generatelogs
-# from pymongo import MongoClient
-# from pymongo.errors import PyMongoError
-
-# doctorpasswordreset_bp = Blueprint("doctorpasswordreset_bp", __name__)
-
-# temp_storage = {}
-
-# # Function to connect to MongoDB
-# def get_db_connection():
-#     try:
-#         client = MongoClient(os.getenv('MONGODB_URI'))
-#         db = client[os.getenv('DB_NAME')]
-#         return db
-#     except PyMongoError as e:
-#         messagetype = 'error'
-#         message = f"Database connection error: {str(e)}"
-#         filelocation = 'patientops/pforgotpassword.py'
-#         generatelogs(messagetype, message, filelocation)
-#         raise
-
-# # Password reset logic for doctor
-# @doctorpasswordreset_bp.route("/doctorpasswordreset", methods=["POST"])
-# def docpasswordresetfn():
-#     email = request.form.get('email')
-#     otp = request.form.get('otp')
-#     new_password = request.form.get('newpassword')
-
-#     try:
-#         db = get_db_connection()
-#         users_collection = db['doctors']
-        
-#         if email and not otp and not new_password:
-#             user = users_collection.find_one({"email": email})
-
-#             if not user:
-#                 generatelogs("error", "No doctors details found with this email.", "doctorsops/doctorpasswordreset.py")
-#                 return jsonify({"message": "No doctors details found with this email."}), 404
-            
-#             otp_generated = str(random.randint(100000, 999999))
-
-#             temp_storage[email] = {
-#                 'generatedOtp': otp_generated,
-#                 'otpExpiration': time.time() + 15 * 60
-#             }
-
-#             subject = 'OTP for Password Reset'
-#             body = f"Your OTP for password reset is {otp_generated}. This OTP is valid for 15 minutes."
-#             email_sender(email, subject, body)
-#             return jsonify({"message": "OTP sent to your email address."}), 200
-#     # Step 2: Verify OTP and reset password
-#         if otp and new_password and email:
-#             if email not in temp_storage:
-#                 generatelogs("error", "No OTP found for this email.", "doctorsops/doctorpasswordreset.py")
-#                 return jsonify({"message": "OTP expired. Please request a new OTP."}), 400
-#             otp_data = temp_storage[email]
-
-#             if 'otpExpiration' not in otp_data or 'generatedOtp' not in otp_data:
-#                 generatelogs("error", "OTP data is incomplete.", "doctorsops/doctorpasswordreset.py")
-#                 return jsonify({"message": "Invalid OTP data."}), 400
-#             if time.time() > otp_data['otpExpiration']:
-#                 del temp_storage[email]  # Clean up expired session
-#                 generatelogs("error", "OTP has expired.", "patientops/pforgotpassword.py")
-#                 return jsonify({"message": "OTP has expired."}), 400
-
-#             if otp != otp_data['generatedOtp']:
-#                 generatelogs("error", "Invalid OTP.", "patientops/pforgotpassword.py")
-#                 return jsonify({"message": "Invalid OTP."}), 400
-
-#             del temp_storage[email]
-#             hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
-#             users_collection.update_one({"email": email}, {"$set": {"password": hashed_password.decode('utf-8')}})
-#             generatelogs("success", f"Password reset successful for {email}.", "doctorsops/doctorpasswordreset.py")
-#             return jsonify({"message": "Password reset successful."}), 200
-#            # If neither condition is met, return an error
-#         generatelogs("error", "Invalid request. Provide either an email to receive an OTP or both an OTP and a new password.", "doctorsops/doctorpasswordreset.py")
-#         return jsonify({"message": "Invalid request. Provide either an email to receive an OTP or both an OTP and a new password."}), 400    
-            
-
-#     except Exception as e:
-#         generatelogs("error", f"An error occurred: {str(e)}", "doctorsops/doctorpasswordreset.py")
-#         return jsonify({"message": "An error occurred. Please try again later."}), 500
