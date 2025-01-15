@@ -71,6 +71,7 @@ from controller.staffmanagement.stafflistcreate import stafflistcreatebp
 from controller.staffmanagement.stafflist import stafflistbp
 from controller.staffmanagement.staffid import getstaffdetailsbyidbp
 from controller.staffmanagement.staffupdate import staffupdatebp
+from controller.staffmanagement.staffdelete import deletestaffxbp
 
 app = Flask(__name__)
 
@@ -175,6 +176,7 @@ app.register_blueprint(stafflistcreatebp)
 app.register_blueprint(stafflistbp)
 app.register_blueprint(getstaffdetailsbyidbp)
 app.register_blueprint(staffupdatebp)
+app.register_blueprint(deletestaffxbp)
 #websocket based routes
 
 if __name__ == '__main__':
