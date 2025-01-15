@@ -72,6 +72,7 @@ from controller.staffmanagement.stafflist import stafflistbp
 from controller.staffmanagement.staffid import getstaffdetailsbyidbp
 from controller.staffmanagement.staffupdate import staffupdatebp
 from controller.staffmanagement.staffdelete import deletestaffxbp
+from controller.management.patientadmitdetails import patientadmitdetailsbp
 
 app = Flask(__name__)
 
@@ -165,6 +166,7 @@ app.register_blueprint(getwarddetailsbyidbp)
 app.register_blueprint(assignbedtopatientbp)
 app.register_blueprint(getbeddetailsbp)
 app.register_blueprint(getallbeddetailsbp)
+app.register_blueprint(patientadmitdetailsbp)
 #equipment management
 app.register_blueprint(createequipmentbp)
 app.register_blueprint(getallequipmentbp)
