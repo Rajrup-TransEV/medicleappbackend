@@ -29,8 +29,22 @@ def assignbedtopatientfn():
         
         # Check if the patient is already admitted
         existing_admission = db['patientadmit'].find_one({"patientid": patientid})
+        
         if existing_admission:
-            return jsonify({"error": "Patient is already assigned to a bed"}), 400
+            if existing_admission['patientstatus'] == "admit":
+                return jsonify({"error": "Patient is already assigned to a bed"}), 400
+            
+            elif existing_admission['patientstatus'] == "discharged":
+      
+                # Update the status of the previous admission to 'readmitted'
+                db['patientadmit'].update_one(
+                    {"patientid": patientid},
+                    {"$set": {"patientstatus": "readmitted", "assigned_at": current_time}}
+                )
+                          # Optionally log the case of readmission
+                generatelogs("info", f"Patient {patientid} is being readmitted after discharge.", "assignedtopatient.py")
+                return generatelogs({"success":"patient hasbeen readmitted after discharge"}),201
+
         
         # Check the room's current capacity
         room = db['rooms'].find_one({"uid": room_id})
@@ -45,7 +59,7 @@ def assignbedtopatientfn():
         db['rooms'].update_one({"uid": room_id}, {"$set": {"capacity": new_capacity}})
         
         # Assign bed to patient in the 'patientadmit' collection
-        uuidx =str(uuid.uuid4())
+        uuidx = str(uuid.uuid4())
         admission_record = {
             "patientid": patientid,
             "ward_id": ward_id,
@@ -61,9 +75,9 @@ def assignbedtopatientfn():
         wardemail = ward.get("ward_email")
         wardname = ward.get("name")
         
-        room = db['rooms'].find_one({"uid": room_id})
-        room_number = room.get("room_number")
-        room_type = room.get("room_type")
+        room_details = db['rooms'].find_one({"uid": room_id})
+        room_number = room_details.get("room_number")
+        room_type = room_details.get("room_type")
         
         patientdetails = db['patients'].find_one({"uid": patientid})
         patientemail = patientdetails.get('email')
@@ -98,7 +112,7 @@ def assignbedtopatientfn():
 
         generatelogs("success", "Patient has been assigned successfully", "assignedtopatient.py")
         
-        return jsonify({"message": "Bed assigned successfully", "new_capacity": new_capacity,"admissionid":uuidx,"createdat":current_time}), 200
+        return jsonify({"message": "Bed assigned successfully", "new_capacity": new_capacity, "admissionid": uuidx, "createdat": current_time}), 200
 
     except Exception as e:
         print(e)
