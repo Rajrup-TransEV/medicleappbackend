@@ -41,6 +41,7 @@ def getallappnfn():
                 'created_at':appoinment.get('created_at'),
             }
             appoinmentlist.append(appoinment_data)
+        generatelogs("success",'Appoinment data hasbeen fetched successfully','getallappoinmentdetails.py')
         return jsonify({"message":"Appoinment data hasbeen fetched successfully","data":appoinmentlist})
     except Exception as e:
         generatelogs("error",f"{str(e)}","getallappoinmentdetails.py")

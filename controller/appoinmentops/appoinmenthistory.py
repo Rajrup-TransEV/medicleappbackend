@@ -23,28 +23,22 @@ def appointmenthisfn():
         'patientid': patientid,
         'appoinid': appoinid
     }.items() if value and value != 'None'}
-
-    print(query)  # Debugging output to see what query is being constructed
-
-    # Check if the query is empty, which means no valid parameters were provided
     if not query:
+        generatelogs('error',"At least one of 'doctorid', 'patientid', or 'appoinid' must be provided.",'appoinmenthistory.py')
         return jsonify({"error": "At least one of 'doctorid', 'patientid', or 'appoinid' must be provided."}), 400
 
     try:
         db = get_db_connection()
         appoinmentops = db['appoinments']
         
-        # Fetch all appointment details based on the constructed query
         getappndetails_cursor = appoinmentops.find(query).sort("created_at", -1)
 
-        # Convert cursor to a list
         getappndetails_list = list(getappndetails_cursor)
         
-        # Check if any appointment details were found
         if not getappndetails_list:
+            generatelogs('error','No appointment details found associated with the provided IDs','appoinmenthistory.py')
             return jsonify({"message": "No appointment details found associated with the provided IDs."}), 404
         
-        # Prepare a list to hold all appointment details with patient and doctor info
         appointments_with_details = []
 
         # Fetch patient and doctor details for each appointment
