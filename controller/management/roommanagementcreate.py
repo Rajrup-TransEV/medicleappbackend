@@ -42,8 +42,7 @@ def roommanagementfn():
         'room_number': room_number,
         'room_type': room_type,
         'capacity': capacity,
-        'created_at': current_time.isoformat(),
-        'updated_at': current_time.isoformat(),
+        "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
         'uid': uuidx  # Generate a unique ID for the room
     }
 

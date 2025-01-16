@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 
 def get_db_connection():
@@ -58,15 +57,14 @@ def staffupdatefn():
         db = get_db_connection()
         staffcol = db['staffs']
         
-        # Check if the specified staff exists
+      
         stafffind = staffcol.find_one({"uid": staffid})
         if not stafffind:
             return jsonify({'error': "No staff details found with this id"}), 404
         
-        # Update only the fields that are present in updatefields
+    
         result = staffcol.update_one({"uid": staffid}, {"$set": updatefields})
 
-        # Log success and return response
         generatelogs('info', 'Staff details have been successfully updated', 'staffupdate.py')
         return jsonify({"message": "Staff details have been updated successfully"}), 200
 

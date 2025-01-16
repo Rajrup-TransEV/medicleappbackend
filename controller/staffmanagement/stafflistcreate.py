@@ -49,7 +49,8 @@ def staffcreatefn():
             "staffcategory":staffcategory,
             "staffworkingstatus":staffworkingstatus,
             "staffsalarytdate":staffsalarytdate,
-            "staffpaymentstatus":staffpaymentstatus
+            "staffpaymentstatus":staffpaymentstatus,
+              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
         generatelogs("success","Successfully saved staff details",'stafflistcreate.py')
         return jsonify({"message":"Staff details hasbeen created successfully","data":uuidx})

@@ -1,7 +1,9 @@
+from datetime import datetime
 import uuid
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
+import pytz
 from utils.logs import generatelogs
 from werkzeug.utils import secure_filename
 import base64
@@ -103,6 +105,7 @@ def pprofilecreate():
             "phonenumber": updated_patient_data['phonenumber'],
             "address": updated_patient_data['address'],
             "email": updated_patient_data['email'],
+              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
             # "name": updated_patient_data['name'],
         }
 
