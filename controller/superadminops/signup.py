@@ -19,28 +19,21 @@ def get_db_connection():
 
 super_admin_signup_bp = Blueprint('super_admin_signup_bp', __name__)
 
-# Temporary storage for user data and OTP
 temporary_storage = {}
 
-# Function to validate email
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
 @super_admin_signup_bp.route('/superadmin/signup', methods=['POST'])
 def signup():
-    # Extracting user details from request data
     name = str(request.form.get('name'))
     email = str(request.form.get('email'))
     password = str(request.form.get('password'))
     confirm_password = str(request.form.get('confirm_password'))
-    entered_otp = request.form.get('otp')  # Check if OTP is provided
-
-    # Check if OTP is provided for verification
+    entered_otp = request.form.get('otp') 
     if entered_otp:
         if email in temporary_storage:
             user_data = temporary_storage[email]
-            
-            # Check for OTP expiration (15 minutes)
             if time.time() - user_data["created_at"] > 900:  # 900 seconds = 15 minutes
                 del temporary_storage[email]  # Remove expired entry
                 return jsonify({"error": "OTP has expired! Please resubmit your details."}), 400
