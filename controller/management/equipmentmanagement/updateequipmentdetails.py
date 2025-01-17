@@ -23,7 +23,7 @@ def updateequipmentfn():
     quantity = str(request.form.get("quantity"))
     equipmentprice = str(request.form.get("equipmentprice"))
     totalgst = str(request.form.get("totalgst"))
-    tottaltax = str(request.form.get("tottaltax"))
+    totaltax = str(request.form.get("totaltax"))
 
     updatefields = {}
     if equipmentname is not None:
@@ -44,8 +44,8 @@ def updateequipmentfn():
         updatefields['equipmentprice'] = equipmentprice
     if totalgst is not None:
         updatefields['totalgst'] = totalgst
-    if tottaltax is not None:
-        updatefields['tottaltax'] = tottaltax
+    if totaltax is not None:
+        updatefields['tottaltax'] = totaltax
     try:
         db = get_db_connection()
         equipmentcol = db['equipments']

@@ -32,7 +32,7 @@ def getallequipmentfn():
             "quantity":getequipmentdata.get('quantity'),
             "equipmentprice":getequipmentdata.get('equipmentprice'),
             "totalgst":getequipmentdata.get('totalgst'),
-            "tottaltax":getequipmentdata.get('tottaltax')
+            "totaltax":getequipmentdata.get('totaltax')
         }
         generatelogs('info','Get equipment by id data fetched','getequipmentbyid.py')
         return jsonify({"message":"Get equipment by id fetched ","data":normal_payload})
