@@ -75,6 +75,7 @@ from controller.staffmanagement.staffdelete import deletestaffxbp
 from controller.management.patientadmitdetails import patientadmitdetailsbp
 from controller.management.roomdelete import deleteroomdatabp
 from controller.management.warddelete import deletewardbp
+from controller.management.updatepatientadmit import updatepatientadmitxbp
 
 app = Flask(__name__)
 
@@ -169,6 +170,7 @@ app.register_blueprint(assignbedtopatientbp)
 app.register_blueprint(getbeddetailsbp)
 app.register_blueprint(getallbeddetailsbp)
 app.register_blueprint(patientadmitdetailsbp)
+app.register_blueprint(updatepatientadmitxbp)
 #equipment management
 app.register_blueprint(createequipmentbp)
 app.register_blueprint(getallequipmentbp)

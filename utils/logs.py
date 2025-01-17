@@ -2,7 +2,7 @@
 create logs
 """
 
-import datetime
+from datetime import datetime
 from pymongo import MongoClient
 import os
 from uuid import uuid4
@@ -47,7 +47,7 @@ def generatelogs(messagetype, message, filelocation):
             "messagetype": messagetype,
             "message": message,
             "filelocation": filelocation,
-             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
+            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 
         # Insert the log entry into the MongoDB collection
