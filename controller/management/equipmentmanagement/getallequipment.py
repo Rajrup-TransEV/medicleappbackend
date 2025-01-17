@@ -24,11 +24,11 @@ def getallequipmentfn():
         for equipment in getallequipments:
             payloaddata = {
                 'uid':equipment.get('uid'),
-                "equipments":equipment.get('equipmentname'),
+                "equipmentname":equipment.get('equipmentname'),
                 "equipmentdetails":equipment.get('equipmentdetails'),
                 "vendorname":equipment.get('vendorname'),
                 "vendordetails":equipment.get('vendordetails'),
-                "equipmentvendorassociatedid":equipment.get('equipmentvendorassid'),
+                "equipmentvendorassoid":equipment.get('equipmentvendorassid'),
                 "purchasedat":equipment.get('purchasedat'),
                 "quantity":equipment.get('quantity'),
                 "equipmentprice":equipment.get('equipmentprice'),
