@@ -25,7 +25,7 @@ def createequipmentfn():
     quantity = str(request.form.get("quantity"))
     equipmentprice = str(request.form.get("equipmentprice"))
     totalgst = str(request.form.get("totalgst"))
-    tottaltax = str(request.form.get("tottaltax"))
+    totaltax = str(request.form.get("totaltax"))
 
     try:
         db = get_db_connection()
@@ -42,7 +42,7 @@ def createequipmentfn():
             "quantity":quantity,
             "equipmentprice":equipmentprice,
             "totalgst":totalgst,
-            "tottaltax":tottaltax,
+            "totaltax":totaltax,
              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
 
