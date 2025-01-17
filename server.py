@@ -76,6 +76,9 @@ from controller.management.patientadmitdetails import patientadmitdetailsbp
 from controller.management.roomdelete import deleteroomdatabp
 from controller.management.warddelete import deletewardbp
 from controller.management.updatepatientadmit import updatepatientadmitxbp
+from controller.labops.labtestdata import labtestdatabp
+
+
 
 app = Flask(__name__)
 
@@ -185,6 +188,9 @@ app.register_blueprint(staffupdatebp)
 app.register_blueprint(deletestaffxbp)
 app.register_blueprint(deleteroomdatabp)
 app.register_blueprint(deletewardbp)
+#lab test data
+app.register_blueprint(labtestdatabp)
+
 #websocket based routes
 
 if __name__ == '__main__':
