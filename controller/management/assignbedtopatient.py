@@ -27,26 +27,22 @@ def assignbedtopatientfn():
     try:
         db = get_db_connection()
         
-        # Check if the patient is already admitted
+        # Check if the patient is already admitted or discharged
         existing_admission = db['patientadmit'].find_one({"patientid": patientid})
-        
         if existing_admission:
             if existing_admission['patientstatus'] == "admit":
                 return jsonify({"error": "Patient is already assigned to a bed"}), 400
             
             elif existing_admission['patientstatus'] == "discharged":
-      
                 # Update the status of the previous admission to 'readmitted'
                 db['patientadmit'].update_one(
                     {"patientid": patientid},
                     {"$set": {"patientstatus": "readmitted", "assigned_at": current_time}}
                 )
-                          # Optionally log the case of readmission
                 generatelogs("info", f"Patient {patientid} is being readmitted after discharge.", "assignedtopatient.py")
-                return generatelogs({"success":"patient hasbeen readmitted after discharge"}),201
-
+                return jsonify({"message": "Patient has been readmitted successfully"}), 200
         
-        # Check the room's current capacity
+        # If no existing admission, proceed with new admission
         room = db['rooms'].find_one({"uid": room_id})
         if not room:
             return jsonify({"error": "Room not found"}), 404
@@ -67,7 +63,7 @@ def assignbedtopatientfn():
             "assigned_at": current_time,
             'patientstatus': "admit",
             "uid": uuidx,
-             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
+            "created_at": current_time.isoformat()
         }
         
         db['patientadmit'].insert_one(admission_record)
