@@ -77,6 +77,9 @@ from controller.management.roomdelete import deleteroomdatabp
 from controller.management.warddelete import deletewardbp
 from controller.management.updatepatientadmit import updatepatientadmitxbp
 from controller.labops.labtestdata import labtestdatabp
+from controller.labops.labreportgetall import labreportgetallbp
+from controller.labops.labreportgetbyid import labreportbyidbp
+from controller.labops.labdelete import labdeletebp
 
 
 
@@ -190,6 +193,9 @@ app.register_blueprint(deleteroomdatabp)
 app.register_blueprint(deletewardbp)
 #lab test data
 app.register_blueprint(labtestdatabp)
+app.register_blueprint(labreportgetallbp)
+app.register_blueprint(labreportbyidbp)
+app.register_blueprint(labdeletebp)
 
 #websocket based routes
 

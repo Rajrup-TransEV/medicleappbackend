@@ -30,13 +30,11 @@ def labtestdatafn():
         patient = db['patients'].find_one({"uid":patientid})
         patientname = patient.get('firstname')
         patientage = patient.get('age')
-        patientheight = patient.get('height')
         reportcol.insert_one({
             "uid":uuidx,
             "labphyreportid":labphyreportid,
             "patientname":patientname,
             "patientage":patientage,
-            "patientheight":patientheight,
             "patientsymptoms":patientsymptoms,
             "doctorreferal":doctorreferal,
             "typeoftest":typeoftest,
@@ -44,7 +42,7 @@ def labtestdatafn():
              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
         generatelogs("success","lab test data created","labtestdata.py")
-        return jsonify({"message":"Lab test data hasbeen created successfully"}),200
+        return jsonify({"message":"Lab test data hasbeen created successfully","data":uuidx}),200
     except Exception as e:
         print(e)
         generatelogs('error',f'{str(e)}','labtestdata.py')
