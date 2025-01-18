@@ -14,7 +14,7 @@ def get_db_connection():
 
 labdeletebp = Blueprint('labdeletebp',__name__)
 
-@labdeletebp.route('/ops/',methods=['POST'])
+@labdeletebp.route('/ops/deletelabs',methods=['POST'])
 def labdeletefn():
     labreportid = str(request.form.get('labreportid'))
     try:
@@ -23,7 +23,7 @@ def labdeletefn():
         findonereport = reportcol.find_one({"uid":labreportid})
         if findonereport:
             reportcol.delete_one({"uid":labreportid})
-            return jsonify({"message":"Data delted successfully"})
+            return jsonify({"message":"Data deleted successfully"})
         else:
             return jsonify({"error":"no report get"})
     except Exception as e:
