@@ -80,8 +80,9 @@ from controller.labops.labtestdata import labtestdatabp
 from controller.labops.labreportgetall import labreportgetallbp
 from controller.labops.labreportgetbyid import labreportbyidbp
 from controller.labops.labdelete import labdeletebp
-
-
+from controller.supportops.supportcreate import supportcreatebp
+from controller.supportops.getsupportall import getsupportallbp
+from controller.supportops.getsupportdetailsbyid import getsupportdetailsbyidbp
 
 app = Flask(__name__)
 
@@ -196,7 +197,10 @@ app.register_blueprint(labtestdatabp)
 app.register_blueprint(labreportgetallbp)
 app.register_blueprint(labreportbyidbp)
 app.register_blueprint(labdeletebp)
-
+# SUPPORT OPS
+app.register_blueprint(supportcreatebp)
+app.register_blueprint(getsupportallbp)
+app.register_blueprint(getsupportdetailsbyidbp)
 #websocket based routes
 
 if __name__ == '__main__':
