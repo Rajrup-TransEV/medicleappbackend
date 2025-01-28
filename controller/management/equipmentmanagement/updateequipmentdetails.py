@@ -45,7 +45,7 @@ def updateequipmentfn():
     if totalgst is not None:
         updatefields['totalgst'] = totalgst
     if totaltax is not None:
-        updatefields['totaltax'] = totaltax
+        updatefields['totaltax'] = totaltax #spelling mistake fixed
     try:
         db = get_db_connection()
         equipmentcol = db['equipments']
