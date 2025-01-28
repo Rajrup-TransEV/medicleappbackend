@@ -19,6 +19,20 @@ def getallsupportfn():
     try:
         db = get_db_connection()
         supportcol = db['support']
+        supports = supportcol.find()
+        result = []
+        for support in supports:
+            normalpayload = {
+                'uid': support.get('uid'),
+                'name':support.get('name'),
+                'email':support.get('email'),
+                'phone':support.get('phone'),
+                'issuetype':support.get('issuetype'),
+                'message':support.get('message')
+            }
+            result.append(normalpayload)
+        generatelogs('success','all support fetched','getsupportall.py')
+        return jsonify({"message":"all support data fetched",'data':result})
     except Exception as e:
         print(e)
         generatelogs('error',f'{str(e)}','getsupportall.py')

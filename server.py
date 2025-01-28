@@ -83,7 +83,7 @@ from controller.labops.labdelete import labdeletebp
 from controller.supportops.supportcreate import supportcreatebp
 from controller.supportops.getsupportall import getsupportallbp
 from controller.supportops.getsupportdetailsbyid import getsupportdetailsbyidbp
-
+from controller.supportops.deletesupport import deletesupportdetailsbp
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -201,6 +201,7 @@ app.register_blueprint(labdeletebp)
 app.register_blueprint(supportcreatebp)
 app.register_blueprint(getsupportallbp)
 app.register_blueprint(getsupportdetailsbyidbp)
+app.register_blueprint(deletesupportdetailsbp)
 #websocket based routes
 
 if __name__ == '__main__':
