@@ -30,7 +30,7 @@ def homecarecreatefn():
     patientid = str(request.form.get('patientid'))
     timefrom = str(request.form.get('timefrom'))
     timeto = str(request.form.get('timeto'))
-
+    
     try:
         db = get_db_connection()
         homecare = db['homecare']

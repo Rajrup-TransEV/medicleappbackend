@@ -85,7 +85,7 @@ from controller.supportops.getsupportall import getsupportallbp
 from controller.supportops.getsupportdetailsbyid import getsupportdetailsbyidbp
 from controller.supportops.deletesupport import deletesupportdetailsbp
 from controller.management.homecaremanagement.createhomecare import createhomecaremanagementbp
-
+from controller.management.homecaremanagement.gethomecaredetailsbypatientid import gethomecaredetailsbyidbp
 
 app = Flask(__name__)
 
@@ -207,6 +207,7 @@ app.register_blueprint(getsupportdetailsbyidbp)
 app.register_blueprint(deletesupportdetailsbp)
 #Home care management
 app.register_blueprint(createhomecaremanagementbp)
+app.register_blueprint(gethomecaredetailsbyidbp)
 
 #websocket based routes
 
