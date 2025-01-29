@@ -84,6 +84,11 @@ from controller.supportops.supportcreate import supportcreatebp
 from controller.supportops.getsupportall import getsupportallbp
 from controller.supportops.getsupportdetailsbyid import getsupportdetailsbyidbp
 from controller.supportops.deletesupport import deletesupportdetailsbp
+from controller.management.homecaremanagement.createhomecare import createhomecaremanagementbp
+from controller.management.homecaremanagement.gethomecaredetailsbypatientid import gethomecaredetailsbyidbp
+from controller.management.homecaremanagement.gethomecarebyid import gethomecarebyuidbp
+from controller.management.homecaremanagement.updathomecare import updatehomecarebp
+
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
@@ -202,6 +207,11 @@ app.register_blueprint(supportcreatebp)
 app.register_blueprint(getsupportallbp)
 app.register_blueprint(getsupportdetailsbyidbp)
 app.register_blueprint(deletesupportdetailsbp)
+#Home care management
+app.register_blueprint(createhomecaremanagementbp)
+app.register_blueprint(gethomecaredetailsbyidbp)
+app.register_blueprint(gethomecarebyuidbp)
+app.register_blueprint(updatehomecarebp)
 #websocket based routes
 
 if __name__ == '__main__':
