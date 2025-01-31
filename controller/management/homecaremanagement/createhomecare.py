@@ -54,6 +54,7 @@ def homecarecreatefn():
             homecare.insert_one(normalpayload)
             return jsonify({
                 "message":" home care data created successfully"
+                ,"homecareid":uuidx            
             })
         else:
             return jsonify({"message":"No data hasbeen found with the staff id"})
