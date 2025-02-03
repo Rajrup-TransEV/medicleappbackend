@@ -11,6 +11,10 @@ import time
 from werkzeug.utils import secure_filename  # Import secure_filename for safe file handling
 from lib.emailsender import email_sender
 from utils.logs import generatelogs
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # MongoDB connection setup
 def get_db_connection():

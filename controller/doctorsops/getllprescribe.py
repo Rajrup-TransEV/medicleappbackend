@@ -6,6 +6,10 @@ import os
 from pymongo import MongoClient
 from utils.logs import generatelogs
 import base64
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

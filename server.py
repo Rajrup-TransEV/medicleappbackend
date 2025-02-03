@@ -88,6 +88,10 @@ from controller.management.homecaremanagement.createhomecare import createhomeca
 from controller.management.homecaremanagement.gethomecaredetailsbypatientid import gethomecaredetailsbyidbp
 from controller.management.homecaremanagement.gethomecarebyid import gethomecarebyuidbp
 from controller.management.homecaremanagement.updathomecare import updatehomecarebp
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
 

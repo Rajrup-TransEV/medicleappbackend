@@ -9,6 +9,11 @@ from uuid import uuid4
 import logging
 
 import pytz
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 # Set up basic logging configuration
 logging.basicConfig(level=logging.INFO)

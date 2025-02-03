@@ -10,6 +10,10 @@ import random
 import time
 from lib.emailsender import email_sender
 from utils.logs import generatelogs
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # MongoDB connection setup
 def get_db_connection():

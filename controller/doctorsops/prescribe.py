@@ -12,6 +12,10 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor
 from datetime import datetime
 import textwrap
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

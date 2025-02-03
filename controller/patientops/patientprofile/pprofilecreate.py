@@ -7,6 +7,10 @@ import pytz
 from utils.logs import generatelogs
 from werkzeug.utils import secure_filename
 import base64
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 UPLOAD_FOLDER = 'uploads/patientprofilepictures'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

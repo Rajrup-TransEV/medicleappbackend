@@ -7,6 +7,10 @@ from flask import Blueprint, request, jsonify
 from lib.emailsender import email_sender
 from utils.logs import generatelogs
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # Create a Blueprint for superadmin password reset
 patientpasswordreset_bp = Blueprint("patientpasswordreset_bp", __name__)
