@@ -6,6 +6,10 @@ import pytz
 from datetime import datetime
 from utils.logs import generatelogs
 from lib.emailsender import email_sender
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))

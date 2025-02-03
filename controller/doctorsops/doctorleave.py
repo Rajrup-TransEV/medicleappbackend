@@ -8,6 +8,11 @@ import os
 from pymongo import MongoClient
 import pytz
 from utils.logs import generatelogs
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 def get_db_connection():
         client = MongoClient(os.getenv('MONGODB_URI'))

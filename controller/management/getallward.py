@@ -2,6 +2,10 @@ from flask import Blueprint, jsonify
 import os
 from pymongo import MongoClient
 from utils.logs import generatelogs
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))

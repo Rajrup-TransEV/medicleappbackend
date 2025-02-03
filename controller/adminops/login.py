@@ -6,6 +6,10 @@ from datetime import timedelta, datetime
 import pytz
 from pymongo import MongoClient
 from utils.logs import generatelogs
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 admin_login_bp = Blueprint('admin_login_bp', __name__)
 

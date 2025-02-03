@@ -6,6 +6,10 @@ from flask import Blueprint, request, jsonify
 from lib.emailsender import email_sender
 from utils.logs import generatelogs
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 doctorpasswordreset_bp = Blueprint("doctorpasswordreset_bp", __name__)
 
