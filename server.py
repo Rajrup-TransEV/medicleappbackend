@@ -89,6 +89,8 @@ from controller.management.homecaremanagement.gethomecaredetailsbypatientid impo
 from controller.management.homecaremanagement.gethomecarebyid import gethomecarebyuidbp
 from controller.management.homecaremanagement.updathomecare import updatehomecarebp
 from dotenv import load_dotenv
+from controller.faq.faqcreate import faqcreatebp
+from controller.faq.faqgetall import faqgetallbp
 
 
 load_dotenv()
@@ -216,6 +218,9 @@ app.register_blueprint(createhomecaremanagementbp)
 app.register_blueprint(gethomecaredetailsbyidbp)
 app.register_blueprint(gethomecarebyuidbp)
 app.register_blueprint(updatehomecarebp)
+#faq create
+app.register_blueprint(faqcreatebp)
+app.register_blueprint(faqgetallbp)
 #websocket based routes
 
 if __name__ == '__main__':
