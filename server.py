@@ -95,6 +95,9 @@ from controller.faq.faqupdate import faqupdatebp
 from controller.faq.faqdelete import faqdeletebp
 from controller.survey.applicationsurvey.surveycreate import surveycreatebp
 from controller.survey.applicationsurvey.getallsurveydata import getallsurveybp
+from controller.survey.medicalsurvey.medicalsurveycreate import medicalsurveycreatebp
+from controller.survey.medicalsurvey.getallms import getallmsbp
+
 
 load_dotenv()
 
@@ -229,6 +232,10 @@ app.register_blueprint(faqdeletebp)
 #survey
 app.register_blueprint(surveycreatebp)
 app.register_blueprint(getallsurveybp)
+
+#medical survey
+app.register_blueprint(medicalsurveycreatebp)
+app.register_blueprint(getallmsbp)
 #websocket based routes
 
 if __name__ == '__main__':
