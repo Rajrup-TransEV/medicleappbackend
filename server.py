@@ -89,7 +89,10 @@ from controller.management.homecaremanagement.gethomecaredetailsbypatientid impo
 from controller.management.homecaremanagement.gethomecarebyid import gethomecarebyuidbp
 from controller.management.homecaremanagement.updathomecare import updatehomecarebp
 from dotenv import load_dotenv
-
+from controller.faq.faqcreate import faqcreatebp
+from controller.faq.faqgetall import faqgetallbp
+from controller.faq.faqupdate import faqupdatebp
+from controller.faq.faqdelete import faqdeletebp
 
 load_dotenv()
 
@@ -216,6 +219,11 @@ app.register_blueprint(createhomecaremanagementbp)
 app.register_blueprint(gethomecaredetailsbyidbp)
 app.register_blueprint(gethomecarebyuidbp)
 app.register_blueprint(updatehomecarebp)
+#faq create
+app.register_blueprint(faqcreatebp)
+app.register_blueprint(faqgetallbp)
+app.register_blueprint(faqupdatebp)
+app.register_blueprint(faqdeletebp)
 #websocket based routes
 
 if __name__ == '__main__':
