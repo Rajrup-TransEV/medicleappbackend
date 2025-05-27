@@ -98,6 +98,7 @@ from controller.survey.medicalsurvey.medicalsurveycreate import medicalsurveycre
 from controller.survey.medicalsurvey.getallms import getallmsbp
 from controller.management.homecaremanagement.gethomecaredetbydocid import gethomecarebydocidbp
 from controller.management.homecaremanagement.getdatabypatienceid import gethomecarebypatientidbp
+from controller.management.homecaremanagement.getallhomecare import getallhomecarebp
 
 
 load_dotenv()
@@ -226,6 +227,7 @@ app.register_blueprint(gethomecarebyuidbp)
 app.register_blueprint(updatehomecarebp)
 app.register_blueprint(gethomecarebydocidbp)
 app.register_blueprint(gethomecarebypatientidbp)
+app.register_blueprint(getallhomecarebp)
 #faq create
 app.register_blueprint(faqcreatebp)
 app.register_blueprint(faqgetallbp)
