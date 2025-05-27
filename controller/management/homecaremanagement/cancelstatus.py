@@ -1,13 +1,9 @@
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 import os
-import uuid
 import pytz
 from datetime import datetime
-from utils.logs import generatelogs
-from lib.emailsender import email_sender
 from dotenv import load_dotenv
-
 
 load_dotenv()
 
@@ -17,7 +13,6 @@ def get_db_connection():
     return db
 
 cancelstatusbp = Blueprint("cancelstatusbp", __name__)
-
 
 @cancelstatusbp.route("/management/homecare/cancelstatus", methods=["POST"])
 def cancelstatusfn():
@@ -33,17 +28,18 @@ def cancelstatusfn():
         tz = pytz.timezone('Asia/Kolkata')
         current_time = datetime.now(tz)
 
-        # Parse 'timefrom' from the DB
+        # 'timefrom' is saved as a string like "2025-05-27 16:00:00"
         scheduled_time_str = record.get('timefrom')
         if not scheduled_time_str:
             return jsonify({"error": "Scheduled time not found"}), 400
 
         try:
-            # Attempt to parse datetime (update format accordingly if needed)
-            scheduled_time = datetime.strptime(scheduled_time_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
-        except ValueError:
+            scheduled_time = datetime.strptime(scheduled_time_str, "%Y-%m-%d %H:%M:%S")
+            scheduled_time = tz.localize(scheduled_time)
+        except Exception:
             return jsonify({"error": "Invalid datetime format in 'timefrom'. Expected 'YYYY-MM-DD HH:MM:SS'"}), 400
 
+        # Check if within 1 hour
         time_difference = scheduled_time - current_time
         if time_difference.total_seconds() < 3600:
             return jsonify({"message": "Cannot cancel within 1 hour of the home care visit time"}), 403
