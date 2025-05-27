@@ -45,32 +45,30 @@ def homecarecreatefn():
         homecare = db['homecare']
         existingstuff_check = db['staffs'].find_one({"uid":assignedstaffid})
         uuidx = str(uuid.uuid4())
-        if existingstuff_check:
-            normalpayload = {
-                "uid":uuidx,
-                "patientname":patientname,
-                "patientdetails":patientdetails,
-                "patientphonenum":patientphonenum,
-                "patinetaddress":patinetaddress,
-                "patientientguardian":patientientguardian,
-                "patientientguardianphno":patientientguardianphno,
-                "refrencedoctorname":refrencedoctorname,
-                "patientid":patientid,
-                "timefrom":timefrom,
-                "timeto":timeto,
-                "reason":reason,
-                "status":status,
-                "doctorid":doctorid,
-                "caretype":caretype,
-                "createdat":current_time
-            }
-            homecare.insert_one(normalpayload)
-            return jsonify({
-                "message":" home care data created successfully"
-                ,"homecareid":uuidx            
-            })
-        else:
-            return jsonify({"message":"No data hasbeen found with the staff id"})
+        normalpayload = {
+            "uid":uuidx,
+            "patientname":patientname,
+            "patientdetails":patientdetails,
+            "patientphonenum":patientphonenum,
+            "patinetaddress":patinetaddress,
+            "patientientguardian":patientientguardian,
+            "patientientguardianphno":patientientguardianphno,
+            "refrencedoctorname":refrencedoctorname,
+            "patientid":patientid,
+            "timefrom":timefrom,
+            "timeto":timeto,
+            "reason":reason,
+            "status":status,
+            "doctorid":doctorid,
+            "caretype":caretype,
+            "createdat":current_time
+        }
+        homecare.insert_one(normalpayload)
+        return jsonify({
+            "message":" home care data created successfully"
+            ,"homecareid":uuidx            
+        })
+     
     except Exception as e:
         print(e)
         return jsonify({'message':f'{str(e)}'})
