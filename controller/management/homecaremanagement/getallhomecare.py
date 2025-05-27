@@ -8,7 +8,6 @@ from utils.logs import generatelogs
 from lib.emailsender import email_sender
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 def get_db_connection():
@@ -25,11 +24,12 @@ def getallhomecarefn():
     try:
         db = get_db_connection()
         homecarecollection = db['homecare']
-        homecaredata = homecarecollection.find()
-        homecarelist = []
-        for homecare in homecaredata:
-            homecarelist.append(homecare)
+        
+        # Exclude `_id` using projection
+        homecaredata = homecarecollection.find({}, {"_id": 0})
+        homecarelist = list(homecaredata)
+
         return jsonify(homecarelist)
     except Exception as e:
         print(e)
-        return jsonify({'message':f'{str(e)}'})
+        return jsonify({'message': f'{str(e)}'})
