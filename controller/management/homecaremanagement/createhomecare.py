@@ -48,6 +48,7 @@ def homecarecreatefn():
         normalpayload = {
             "uid":uuidx,
             "patientname":patientname,
+            "assignedstaffid":assignedstaffid,
             "patientdetails":patientdetails,
             "patientphonenum":patientphonenum,
             "patinetaddress":patinetaddress,
