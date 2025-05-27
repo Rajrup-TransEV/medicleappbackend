@@ -28,6 +28,10 @@ def updatehomecarefn():
     patientid = str(request.form.get('patientid'))
     timefrom = str(request.form.get('timefrom'))
     timeto = str(request.form.get('timeto'))
+    reason = str(request.form.get('reason'))
+    status = str(request.form.get('status'))
+    doctorid = str(request.form.get('doctorid'))
+    caretype = str(request.form.get('caretype'))
 
     try:
         db = get_db_connection()
@@ -55,6 +59,14 @@ def updatehomecarefn():
             update_details['timefrom'] = timefrom
         if timeto:
             update_details['timeto'] = timeto
+        if reason:
+            update_details['reason'] = reason
+        if status:
+            update_details['status'] = status
+        if doctorid:
+            update_details['doctorid'] = doctorid
+        if caretype:
+            update_details['caretype'] = caretype
 
         result = homecare.update_one({'uid':homeuid},{"$set":update_details})
         return jsonify({"data":update_details,"message":"data update success"})

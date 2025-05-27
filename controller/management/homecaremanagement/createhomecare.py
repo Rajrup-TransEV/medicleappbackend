@@ -34,6 +34,11 @@ def homecarecreatefn():
     patientid = str(request.form.get('patientid'))
     timefrom = str(request.form.get('timefrom'))
     timeto = str(request.form.get('timeto'))
+    reason = str(request.form.get('reason'))
+    status = str(request.form.get('status'))
+    doctorid = str(request.form.get('doctorid'))
+    caretype = str(request.form.get('caretype'))
+
     
     try:
         db = get_db_connection()
@@ -53,6 +58,10 @@ def homecarecreatefn():
                 "patientid":patientid,
                 "timefrom":timefrom,
                 "timeto":timeto,
+                "reason":reason,
+                "status":status,
+                "doctorid":doctorid,
+                "caretype":caretype,
                 "createdat":current_time
             }
             homecare.insert_one(normalpayload)
