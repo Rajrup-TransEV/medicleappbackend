@@ -8,7 +8,6 @@ from utils.logs import generatelogs
 from lib.emailsender import email_sender
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 def get_db_connection():
@@ -24,7 +23,11 @@ def gethomecarebydocidfn():
         db = get_db_connection()
         homecare = db['homecare']
         doctorid = str(request.form.get('doctorid'))
-        result = homecare.find({"doctorid": doctorid})
+
+        # Use projection to exclude _id field
+        result_cursor = homecare.find({"doctorid": doctorid}, {"_id": 0})
+        result = list(result_cursor)
+
         return jsonify({"data": result})
     except Exception as e:
         print(e)
