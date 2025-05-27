@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 import os
-import uuid
 import pytz
 from datetime import datetime
 from utils.logs import generatelogs
@@ -21,17 +20,29 @@ gethomecarebypatientidbp = Blueprint("gethomecarebypatientidbp", __name__)
 def gethomecarebypatientidfn():
     try:
         db = get_db_connection()
-        homecare = db['homecare']
+        homecare_col = db['homecare']
+        doctors_col = db['doctors']
+
         patientid = str(request.form.get('patientid'))
-        result_cursor = homecare.find({"patientid": patientid})
-        
-        # Remove _id from each document
+        homecare_cursor = homecare_col.find({"patientid": patientid})
+
         result = []
-        for doc in result_cursor:
+        for doc in homecare_cursor:
             doc.pop('_id', None)
-            result.append(doc)
+            doctor_info = {}
+
+            doctorid = doc.get("doctorid")
+            if doctorid:
+                doctor = doctors_col.find_one({"uid": doctorid}, {"_id": 0})
+                if doctor:
+                    doctor_info = doctor
+
+            result.append({
+                "homecare": doc,
+                "doctor": doctor_info
+            })
 
         return jsonify({"data": result})
     except Exception as e:
         print(e)
-        return jsonify({'error': f'{str(e)}'})
+        return jsonify({'error': f'{str(e)}'}), 500

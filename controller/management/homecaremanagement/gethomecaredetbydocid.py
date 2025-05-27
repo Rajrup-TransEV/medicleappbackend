@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 import os
-import uuid
 import pytz
 from datetime import datetime
 from utils.logs import generatelogs
@@ -21,14 +20,34 @@ gethomecarebydocidbp = Blueprint("gethomecarebydocidbp", __name__)
 def gethomecarebydocidfn():
     try:
         db = get_db_connection()
-        homecare = db['homecare']
+        homecare_col = db['homecare']
+        patients_col = db['patients']
+        doctors_col = db['doctors']
+
         doctorid = str(request.form.get('doctorid'))
 
-        # Use projection to exclude _id field
-        result_cursor = homecare.find({"doctorid": doctorid}, {"_id": 0})
-        result = list(result_cursor)
+        # Get doctor details (only once)
+        doctor = doctors_col.find_one({"uid": doctorid}, {"_id": 0})
+        if not doctor:
+            return jsonify({'error': 'Doctor not found'}), 404
 
-        return jsonify({"data": result})
+        # Get all homecare entries for the doctor
+        homecares = homecare_col.find({"doctorid": doctorid}, {"_id": 0})
+        enriched_homecares = []
+
+        for entry in homecares:
+            patientid = entry.get("patientid")
+            patient = patients_col.find_one({"uid": patientid}, {"_id": 0})
+
+            enriched_entry = {
+                "homecare": entry,
+                "patient": patient if patient else {},
+                "doctor": doctor
+            }
+            enriched_homecares.append(enriched_entry)
+
+        return jsonify({"data": enriched_homecares})
+
     except Exception as e:
         print(e)
-        return jsonify({'error': f'{str(e)}'})
+        return jsonify({'error': f'{str(e)}'}), 500
