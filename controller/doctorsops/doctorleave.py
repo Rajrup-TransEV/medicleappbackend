@@ -1,7 +1,7 @@
 """
 doctor side leave operations
 """
-import datetime
+from datetime import datetime
 import uuid
 from flask import Blueprint,jsonify,request
 import os
