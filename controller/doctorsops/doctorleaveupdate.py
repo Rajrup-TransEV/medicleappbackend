@@ -58,7 +58,7 @@ def update_leave():
         
         # Update the record in the database
         doctor_leave_collection.update_one(query, {"$set": update_fields})
-        generatelogs('success','doctorleave hasbeen updated successfully'),200
+        generatelogs('success','doctorleave hasbeen updated successfully','doctorleaveupdate.py')
         return jsonify({"message": "Doctor leave has been updated successfully!"}), 200
     
     except Exception as e:
