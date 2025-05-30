@@ -15,7 +15,7 @@ def get_db_connection():
 
 getallleavebydocidbp = Blueprint('getallleavebydocidbp', __name__)
 
-@getallleavebydocidbp.route('/doctors/getallleave', methods=['POST'])
+@getallleavebydocidbp.route('/doctors/getallleavebydocid', methods=['POST'])
 def get_all_leaves():
     doctorid = str(request.form.get('doctorid'))
     
@@ -27,7 +27,7 @@ def get_all_leaves():
         leavedatas = leavecol.find({"doctorid": doctorid})
         
         # Check if any leave records were found
-        if leavedatas.count() == 0:
+        if leavedatas == None:
             return jsonify({"error": "No data has been found"}), 404
         
         resultleave = []
