@@ -13,60 +13,37 @@ def get_db_connection():
 
 updatehomecarebp = Blueprint('updatehomecarebp', __name__)
 
+def get_valid_form_field(field_name):
+    val = request.form.get(field_name)
+    return val.strip() if val and val.strip() != "" else None
+
 @updatehomecarebp.route('/ops/updatehomecare', methods=['POST'])
 def updatehomecarefn():
-    homeuid = str(request.form.get('homeuid'))
-    assignedstaffid = str(request.form.get('assignedstaffid'))
-    patientname = str(request.form.get('patientname'))
-    patientdetails = str(request.form.get('patientdetails'))
-    patientphonenum = str(request.form.get('patientphonenum'))
-    patinetaddress = str(request.form.get('patinetaddress'))
-    patientientguardian = str(request.form.get('patientientguardian'))
-    patientientguardianphno = str(request.form.get('patientientguardianphno'))
-    refrencedoctorname = str(request.form.get('refrencedoctorname'))
-    patientid = str(request.form.get('patientid'))
-    timefrom = str(request.form.get('timefrom'))
-    timeto = str(request.form.get('timeto'))
-    reason = str(request.form.get('reason'))
-    status = str(request.form.get('status'))
-    doctorid = str(request.form.get('doctorid'))
-    caretype = str(request.form.get('caretype'))
+    homeuid = request.form.get('homeuid')
+    if not homeuid or homeuid.strip() == "":
+        return jsonify({"error": "Missing or invalid homeuid"}), 400
+    homeuid = homeuid.strip()
+
+    # Fields to check for update
+    fields = [
+        'assignedstaffid', 'patientname', 'patientdetails', 'patientphonenum',
+        'patinetaddress', 'patientientguardian', 'patientientguardianphno',
+        'refrencedoctorname', 'patientid', 'timefrom', 'timeto',
+        'reason', 'status', 'doctorid', 'caretype'
+    ]
+
+    update_details = {}
+    for field in fields:
+        val = get_valid_form_field(field)
+        if val:
+            update_details[field] = val
+
+    if not update_details:
+        return jsonify({"error": "No valid fields provided to update"}), 400
 
     try:
         db = get_db_connection()
         homecare = db['homecare']
-        update_details = {}
-
-        if assignedstaffid:
-            update_details['assignedstaffid'] = assignedstaffid
-        if patientname:
-            update_details['patientname'] = patientname
-        if patientdetails:
-            update_details['patientdetails'] = patientdetails
-        if patientphonenum:
-            update_details['patientphonenum'] = patientphonenum
-        if patinetaddress:
-            update_details['patinetaddress'] = patinetaddress
-        if patientientguardian:
-            update_details['patientientguardian'] = patientientguardian
-        if patientientguardianphno:
-            update_details['patientientguardianphno'] = patientientguardianphno
-        if refrencedoctorname:
-            update_details['refrencedoctorname'] = refrencedoctorname
-        if patientid:
-            update_details['patientid'] = patientid
-        if timefrom:
-            update_details['timefrom'] = timefrom
-        if timeto:
-            update_details['timeto'] = timeto
-        if reason:
-            update_details['reason'] = reason
-        if status:
-            update_details['status'] = status
-        if doctorid:
-            update_details['doctorid'] = doctorid
-        if caretype:
-            update_details['caretype'] = caretype
 
         updated_document = homecare.find_one_and_update(
             {'uid': homeuid},
@@ -75,6 +52,7 @@ def updatehomecarefn():
         )
 
         if updated_document:
+            updated_document.pop('_id', None)  # Remove ObjectId for JSON serialization
             return jsonify({
                 "message": "Data update success",
                 "data": updated_document
