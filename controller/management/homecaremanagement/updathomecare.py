@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from utils.logs import generatelogs
 from dotenv import load_dotenv
-
 
 load_dotenv()
 
@@ -12,9 +11,9 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
-updatehomecarebp = Blueprint('updatehomecarebp',__name__)
+updatehomecarebp = Blueprint('updatehomecarebp', __name__)
 
-@updatehomecarebp.route('/ops/updatehomecare',methods=['POST'])
+@updatehomecarebp.route('/ops/updatehomecare', methods=['POST'])
 def updatehomecarefn():
     homeuid = str(request.form.get('homeuid'))
     assignedstaffid = str(request.form.get('assignedstaffid'))
@@ -37,6 +36,7 @@ def updatehomecarefn():
         db = get_db_connection()
         homecare = db['homecare']
         update_details = {}
+
         if assignedstaffid:
             update_details['assignedstaffid'] = assignedstaffid
         if patientname:
@@ -68,8 +68,20 @@ def updatehomecarefn():
         if caretype:
             update_details['caretype'] = caretype
 
-        result = homecare.update_one({'uid':homeuid},{"$set":update_details})
-        return jsonify({"data":update_details,"message":"data update success"})
+        updated_document = homecare.find_one_and_update(
+            {'uid': homeuid},
+            {'$set': update_details},
+            return_document=ReturnDocument.AFTER
+        )
+
+        if updated_document:
+            return jsonify({
+                "message": "Data update success",
+                "data": updated_document
+            })
+        else:
+            return jsonify({"error": "Document not found"}), 404
+
     except Exception as e:
         print(e)
-        return jsonify({'error':f'{str(e)}'})
+        return jsonify({'error': str(e)}), 500
