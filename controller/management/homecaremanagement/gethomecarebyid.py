@@ -32,7 +32,16 @@ def gethomecarefn():
             "patientid":details['patientid'],
             "timefrom":details['timefrom'],
             "timeto":details['timeto'],
-            "createdat":details['createdat']
+            "createdat":details['createdat'],
+            "updatedat":details['updatedat'],
+            "doctorid":details['doctorid'],
+            "caretype":details['caretype'],
+            "assignedstaffid":details['assignedstaffid'],
+            "reason":details['reason'],
+            "assignedstaffname":details['assignedstaffname'],
+            "assignedstaffphonenum":details['assignedstaffphonenum'],
+            "assignedstaffemail":details['assignedstaffemail'],
+            "status":details['status']
         }
         return jsonify({'message':"data fetched",'data':normalpayload})
     except Exception as e:
