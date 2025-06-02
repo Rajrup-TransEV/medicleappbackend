@@ -100,6 +100,7 @@ from controller.management.homecaremanagement.gethomecaredetbydocid import getho
 from controller.management.homecaremanagement.getdatabypatienceid import gethomecarebypatientidbp
 from controller.management.homecaremanagement.getallhomecare import getallhomecarebp
 from controller.management.homecaremanagement.cancelstatus import cancelstatusbp
+from controller.guestlogin.guestlogin import guest_login_bp
 
 load_dotenv()
 
@@ -241,6 +242,9 @@ app.register_blueprint(getallsurveybp)
 #medical survey
 app.register_blueprint(medicalsurveycreatebp)
 app.register_blueprint(getallmsbp)
+#guest login
+app.register_blueprint(guest_login_bp)
+
 #websocket based routes
 
 if __name__ == '__main__':
