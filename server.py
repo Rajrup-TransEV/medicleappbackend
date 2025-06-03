@@ -89,6 +89,7 @@ from controller.supportops.deletesupport import deletesupportdetailsbp
 from controller.management.homecaremanagement.createhomecare import createhomecaremanagementbp
 from controller.management.homecaremanagement.gethomecarebyid import gethomecarebyuidbp
 from controller.management.homecaremanagement.updathomecare import updatehomecarebp
+from controller.management.homecaremanagement.deletehomecare import deletehomecarebp
 from dotenv import load_dotenv
 from controller.faq.faqcreate import faqcreatebp
 from controller.faq.faqgetall import faqgetallbp
@@ -234,6 +235,7 @@ app.register_blueprint(gethomecarebydocidbp)
 app.register_blueprint(gethomecarebypatientidbp)
 app.register_blueprint(getallhomecarebp)
 app.register_blueprint(cancelstatusbp)
+app.register_blueprint(deletehomecarebp)
 #faq create
 app.register_blueprint(faqcreatebp)
 app.register_blueprint(faqgetallbp)
