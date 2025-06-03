@@ -79,7 +79,9 @@ from controller.management.updatepatientadmit import updatepatientadmitxbp
 from controller.labops.labtestdata import labtestdatabp
 from controller.labops.labreportgetall import labreportgetallbp
 from controller.labops.labreportgetbyid import labreportbyidbp
+from controller.labops.labupdate import labupdatebp
 from controller.labops.labdelete import labdeletebp
+from controller.labops.labreportbypatinetid import labreportbypatientidbp
 from controller.supportops.supportcreate import supportcreatebp
 from controller.supportops.getsupportall import getsupportallbp
 from controller.supportops.getsupportdetailsbyid import getsupportdetailsbyidbp
@@ -216,7 +218,9 @@ app.register_blueprint(deletewardbp)
 app.register_blueprint(labtestdatabp)
 app.register_blueprint(labreportgetallbp)
 app.register_blueprint(labreportbyidbp)
+app.register_blueprint(labupdatebp)
 app.register_blueprint(labdeletebp)
+app.register_blueprint(labreportbypatientidbp)
 # SUPPORT OPS
 app.register_blueprint(supportcreatebp)
 app.register_blueprint(getsupportallbp)
