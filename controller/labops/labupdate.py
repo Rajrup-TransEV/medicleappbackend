@@ -18,7 +18,7 @@ def labupdatefn():
     try:
         labid = request.form.get('labid')
         if not labid:
-            generatelogs('warning', 'Missing labid in request')
+            generatelogs('warning', 'Missing labid in request',"labupdate.py")
             return jsonify({"success": False, "message": "labid is required"}), 400
 
         updatefields = {}
@@ -31,17 +31,17 @@ def labupdatefn():
                 updatefields[field] = str(value)
 
         if not updatefields:
-            generatelogs('warning', f'No valid fields to update for labid {labid}')
+            generatelogs('warning', f'No valid fields to update for labid {labid}',"labupdate.py")
             return jsonify({"success": False, "message": "No valid fields provided for update"}), 400
 
         db = get_db_connection()
         result = db['labreports'].update_one({"uid": labid}, {"$set": updatefields})
 
         if result.matched_count == 0:
-            generatelogs('warning', f'No document found for labid {labid}')
+            generatelogs('warning', f'No document found for labid {labid}',"labupdate.py")
             return jsonify({"success": False, "message": "Lab report not found"}), 404
 
-        generatelogs('info', f'Lab report {labid} updated with {updatefields}')
+        generatelogs('info', f'Lab report {labid} updated with {updatefields}',"labupdate.py")
         return jsonify({
             "success": True,
             "message": "Lab report updated successfully",
@@ -49,5 +49,5 @@ def labupdatefn():
         }), 200
 
     except Exception as e:
-        generatelogs('error', f"Exception during lab update: {str(e)}")
+        generatelogs('error', f"Exception during lab update: {str(e)}","labupdate.py")
         return jsonify({"success": False, "message": "Internal server error"}), 500
