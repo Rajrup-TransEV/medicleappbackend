@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from utils.logs import generatelogs
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 def get_db_connection():
@@ -12,35 +11,43 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
-labupdatebp = Blueprint('labupdatebp',__name__)
+labupdatebp = Blueprint('labupdatebp', __name__)
 
-@labupdatebp.route('/ops/labupdate',methods=['POST'])
+@labupdatebp.route('/ops/labupdate', methods=['POST'])
 def labupdatefn():
-    labid = str(request.form.get('labid'))
-    patientid = str(request.form.get('patientid'))
-    labphyreportid = str(request.form.get('labphyreportid'))
-    patientsymptoms = str(request.form.get('patientsymptoms'))
-    doctorreferal = str(request.form.get('doctorreferal'))
-    typeoftest = str(request.form.get('typeoftest'))
-    finalreport = str(request.form.get('finalreport'))
-
-    updatefields = {}
-    if patientid is not None:
-        updatefields['patientid'] = patientid
-    if labphyreportid is not None:
-        updatefields['labphyreportid'] = labphyreportid
-    if patientsymptoms is not None:
-        updatefields['patientsymptoms'] = patientsymptoms
-    if doctorreferal is not None:
-        updatefields['doctorreferal'] = doctorreferal
-    if typeoftest is not None:
-        updatefields['typeoftest'] = typeoftest
-    if finalreport is not None:
-        updatefields['finalreport'] = finalreport
     try:
+        labid = request.form.get('labid')
+        if not labid:
+            generatelogs('warning', 'Missing labid in request')
+            return jsonify({"success": False, "message": "labid is required"}), 400
+
+        updatefields = {}
+        optional_fields = ['patientid', 'labphyreportid', 'patientsymptoms', 'doctorreferal', 'typeoftest', 'finalreport']
+        
+        # Only include fields that are not None and not empty
+        for field in optional_fields:
+            value = request.form.get(field)
+            if value not in [None, '']:
+                updatefields[field] = str(value)
+
+        if not updatefields:
+            generatelogs('warning', f'No valid fields to update for labid {labid}')
+            return jsonify({"success": False, "message": "No valid fields provided for update"}), 400
+
         db = get_db_connection()
-        labcol = db['labreports'].update_one({"uid":labid},{"$set":updatefields})
-        # generatelogs('info','')
+        result = db['labreports'].update_one({"uid": labid}, {"$set": updatefields})
+
+        if result.matched_count == 0:
+            generatelogs('warning', f'No document found for labid {labid}')
+            return jsonify({"success": False, "message": "Lab report not found"}), 404
+
+        generatelogs('info', f'Lab report {labid} updated with {updatefields}')
+        return jsonify({
+            "success": True,
+            "message": "Lab report updated successfully",
+            "updated_fields": updatefields
+        }), 200
+
     except Exception as e:
-        print(e)
-        generatelogs('error')
+        generatelogs('error', f"Exception during lab update: {str(e)}")
+        return jsonify({"success": False, "message": "Internal server error"}), 500
