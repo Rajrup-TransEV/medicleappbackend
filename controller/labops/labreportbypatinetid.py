@@ -35,11 +35,11 @@ def labreportbypatientidfn():
                 "finalreport":labreportdata['finalreport'],
                 "createdat":labreportdata['created_at']
             }
-            generatelogs("Lab Report By Patient ID",normalpayload)
+            generatelogs("Lab Report By Patient ID",normalpayload,"labreportbypatientid.py")
             return jsonify({"message":"Lab Report By Patient ID","data":normalpayload}),200
         else:
-            generatelogs("Lab Report By Patient ID",{"patientid":patientid})
+            generatelogs("Lab Report By Patient ID","Lab Report Not Found","labreportbypatientid.py")
             return jsonify({"message":"Lab Report By Patient ID","data":None}),404
     except PyMongoError as e:
-        generatelogs("Lab Report By Patient ID",{"patientid":patientid,"error":str(e)})
+        generatelogs("Lab Report By Patient ID",{"patientid":patientid,"error":str(e)},"labreportbypatientid.py")
         return jsonify({"message":"Lab Report By Patient ID","data":None}),500
