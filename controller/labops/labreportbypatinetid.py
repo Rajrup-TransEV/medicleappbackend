@@ -22,7 +22,7 @@ def labreportbypatientidfn():
     try:
         db = get_db_connection()
         labreportcol = db['labreports']
-        labreportdata = labreportcol.find_one({"patientid":patientid})
+        labreportdata = labreportcol.find({"patientid":patientid})
         if labreportdata:
             normalpayload = {
                 'labreportid': str(labreportdata['uid']),
