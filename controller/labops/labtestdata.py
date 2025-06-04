@@ -39,6 +39,7 @@ def labtestdatafn():
             "labphyreportid":labphyreportid,
             "patientname":patientname,
             "patientage":patientage,
+            "patientid":patientid,
             "patientsymptoms":patientsymptoms,
             "doctorreferal":doctorreferal,
             "typeoftest":typeoftest,
