@@ -27,7 +27,8 @@ def labreportfn():
         result = []
         for i in allreports:
             normalpayload = {
-                'uid':i.get('labphyreportid'),
+                'uid': str(i.get('uid')),
+                'hospitalgeneratedreportid':i.get('labphyreportid'),
                 'patientname':i.get('patientname'),
                 'patientage':i.get('patientage'),
                 'patientheight':i.get('patientheight'),
