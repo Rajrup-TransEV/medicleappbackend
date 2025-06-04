@@ -104,6 +104,10 @@ from controller.management.homecaremanagement.getdatabypatienceid import gethome
 from controller.management.homecaremanagement.getallhomecare import getallhomecarebp
 from controller.management.homecaremanagement.cancelstatus import cancelstatusbp
 from controller.guestlogin.guestlogin import guest_login_bp
+from controller.billingmanagement.createbill import createbillbp
+from controller.billingmanagement.updatebill import update_billbp
+from controller.billingmanagement.getallbill import getallbillbp
+from controller.billingmanagement.getbillbypatientemail import getbillbypatientemailbp
 
 load_dotenv()
 
@@ -250,7 +254,11 @@ app.register_blueprint(medicalsurveycreatebp)
 app.register_blueprint(getallmsbp)
 #guest login
 app.register_blueprint(guest_login_bp)
-
+#billing
+app.register_blueprint(createbillbp)
+app.register_blueprint(update_billbp)
+app.register_blueprint(getallbillbp)
+app.register_blueprint(getbillbypatientemailbp)
 #websocket based routes
 
 if __name__ == '__main__':
