@@ -23,7 +23,7 @@ def updatebillfn():
     billing_collection = db['billing']
 
     try:
-        bill_id = str(request.form.get('bill_id'))
+        bill_id = str(request.form.get('billid'))
         if not bill_id:
             return jsonify({"status": False, "message": "Bill ID is required"}), 400
 

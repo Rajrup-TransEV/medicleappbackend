@@ -23,12 +23,12 @@ def getbillbypatientemailfn():
 
     try:
         # Extract patient UID from request
-        patient_uid = request.json.get('patient_uid')
-        if not patient_uid:
+        patientemailid = request.json.get('patientemailid')
+        if not patientemailid:
             return jsonify({"status": False, "message": "Patient UID is required"}), 400
 
         # Fetch all bills for the given patient UID
-        bills_cursor = billing_collection.find({"patient_uid": patient_uid})
+        bills_cursor = billing_collection.find({"patient_email": patientemailid})
         bills = []
         for bill in bills_cursor:
             bill.pop('_id', None)  # Remove MongoDB's default ID field

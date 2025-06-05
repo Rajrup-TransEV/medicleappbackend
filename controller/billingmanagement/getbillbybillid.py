@@ -23,7 +23,7 @@ def getbillbybillidfn():
 
     try:
         # Extract bill ID from request
-        bill_id = request.json.get('bill_id')
+        bill_id = request.json.get('billid')
         if not bill_id:
             return jsonify({"status": False, "message": "Bill ID is required"}), 400
 

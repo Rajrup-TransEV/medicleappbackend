@@ -16,7 +16,7 @@ def get_db_connection():
 
 getallbillbp = Blueprint('getallbillbp', __name__)
 
-@getallbillbp.route('/billing/getallbill', methods=['POST'])
+@getallbillbp.route('/billing/getallbill', methods=['GET'])
 def getallbillfn():
     db = get_db_connection()
     billing_collection = db['billing']

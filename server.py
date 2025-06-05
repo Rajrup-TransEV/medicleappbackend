@@ -107,7 +107,8 @@ from controller.guestlogin.guestlogin import guest_login_bp
 from controller.billingmanagement.createbill import createbillbp
 from controller.billingmanagement.updatebill import update_billbp
 from controller.billingmanagement.getallbill import getallbillbp
-from controller.billingmanagement.getbillbypatientemail import getbillbypatientemailbp
+from controller.billingmanagement.getbillbyemailid import getbillbypatientemailbp
+from controller.billingmanagement.getbillbybillid import getbillbybillidbp
 
 load_dotenv()
 
@@ -259,6 +260,7 @@ app.register_blueprint(createbillbp)
 app.register_blueprint(update_billbp)
 app.register_blueprint(getallbillbp)
 app.register_blueprint(getbillbypatientemailbp)
+app.register_blueprint(getbillbybillidbp)
 #websocket based routes
 
 if __name__ == '__main__':

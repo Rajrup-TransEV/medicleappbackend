@@ -166,6 +166,6 @@ Hospital Admin
     email_sender(patientemailid, email_subject, email_body)
 
     # Log the billing creation
-    generatelogs(f"Billing created for {patientemailid} by {doctoremailid} with Bill ID {bill_id}")
+    generatelogs('success', f"Billing created for {patientemailid} by {doctoremailid} with Bill ID {bill_id}", 'billingops/createbill.py')
 
     return jsonify({"status": True, "message": "Bill created successfully", "bill_id": bill_id})
