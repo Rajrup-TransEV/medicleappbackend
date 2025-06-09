@@ -124,6 +124,7 @@ def createbillfn():
         "insurance_coverage_percent": insurance_coverage_percent,
         "insurance_coverage_amount": insurance_coverage_amount,
         "final_amount_payable": final_amount_payable,
+        "final_amount": final_amount_payable,  # New field added
 
         # Payment
         "payment_method": payment_method,

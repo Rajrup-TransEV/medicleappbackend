@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # DB connection
-
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))
     db = client[os.getenv('DB_NAME')]
@@ -99,6 +98,7 @@ def updatebillfn():
             "discount_amount": discount_amount,
             "insurance_coverage_amount": insurance_coverage_amount,
             "final_amount_payable": final_amount_payable,
+            "final_amount": final_amount_payable,  # <--- Added here
             "updated_at": now.isoformat()
         })
 
