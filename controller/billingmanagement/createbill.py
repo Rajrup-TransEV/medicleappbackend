@@ -26,7 +26,7 @@ def createbillfn():
 
     # Extracting form data
     patientemailid = str(request.form.get('patientemailid'))
-    doctoremailid = str(request.form.get('doctoremailid'))  # new
+    doctoremailid = str(request.form.get('doctoremailid'))
     purpose = str(request.form.get('purpose'))
     rooms = str(request.form.get('rooms'))
     treatmenttype = str(request.form.get('treatmenttype'))
@@ -39,7 +39,7 @@ def createbillfn():
     insurance_coverage_percent = float(request.form.get('insurance_coverage_percent', 0))
     payment_method = request.form.get('payment_method', 'cash')
     notes = request.form.get('notes', '')
-    created_by = request.form.get('created_by', 'system')  # Could be admin UID
+    created_by = request.form.get('created_by', 'system')
 
     # Fetch patient
     patient = patients_collection.find_one({"email": patientemailid})
@@ -72,14 +72,9 @@ def createbillfn():
     room_charge = room_cost.get(rooms.lower(), 1000) * int(treatmentduration)
     treatment_charge = treatment_costs.get(treatmenttype.lower(), 1000)
 
-    # Total before any deductions
     gross_total = room_charge + treatment_charge + medicine_charge + lab_charge + other_charges
-
-    # Apply discount
     discount_amount = (discount_percent / 100) * gross_total
     after_discount = gross_total - discount_amount
-
-    # Apply insurance
     insurance_coverage_amount = (insurance_coverage_percent / 100) * after_discount
     final_amount_payable = after_discount - insurance_coverage_amount
 
@@ -124,7 +119,7 @@ def createbillfn():
         "insurance_coverage_percent": insurance_coverage_percent,
         "insurance_coverage_amount": insurance_coverage_amount,
         "final_amount_payable": final_amount_payable,
-        "final_amount": final_amount_payable,  # New field added
+        "final_amount": final_amount_payable,
 
         # Payment
         "payment_method": payment_method,
@@ -166,7 +161,12 @@ Hospital Admin
 """
     email_sender(patientemailid, email_subject, email_body)
 
-    # Log the billing creation
     generatelogs('success', f"Billing created for {patientemailid} by {doctoremailid} with Bill ID {bill_id}", 'billingops/createbill.py')
 
-    return jsonify({"status": True, "message": "Bill created successfully", "bill_id": bill_id})
+    return jsonify({
+        "status": True,
+        "message": "Bill created successfully",
+        "bill_id": bill_id,
+        "gross_total": gross_total,
+        "final_amount": final_amount_payable
+    }), 200
