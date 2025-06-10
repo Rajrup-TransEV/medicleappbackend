@@ -23,7 +23,7 @@ def getallmsfn():
     try:
         db = get_db_connection()
         mscol = db['medicalsurvey']
-        mss  = mscol.find_one()
+        mss  = mscol.find()
         result=[]
         for ms in mss:
             normalpayload = {
