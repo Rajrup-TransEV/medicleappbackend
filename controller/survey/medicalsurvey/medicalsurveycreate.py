@@ -76,8 +76,8 @@ def medicalsurveyfn():
             'pincode':pincode
         })
         generatelogs('success','medical survey hasbeen created','medicalsurverycreate.py')
-        return jsonify({'message':'medical survey hasbeen saved','surveyid':uuidx})
+        return jsonify({'message':'medical survey hasbeen saved'})
     except Exception as e:
         print(e)
-        generatelogs('error',f'{str(e)}','medicalsurverycreate.py')
+        generatelogs('error','medical survey create failed','medicalsurverycreate.py')
         return jsonify({'error',f'{str(e)}'}),500

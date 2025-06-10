@@ -21,7 +21,7 @@ surveycreatebp  = Blueprint('surveycreatebp',__name__)
 @surveycreatebp.route("/ops/surveycreate",methods=['POST'])
 def surveyfn():
     required_fields = [
-        'name', "email", "ratingnumber", "feedbackmessage", "associatedadminid", "feedbacktype"
+        'name', "email", "ratingnumber", "feedbackmessage", "feedbacktype"
     ]
     form_data = {field: request.form.get(field) for field in required_fields}
     
@@ -34,7 +34,6 @@ def surveyfn():
     email = str(form_data["email"])
     ratingnumber = str(form_data["ratingnumber"])
     feedbackmessage = str(form_data["feedbackmessage"])
-    associatedadminid = str(form_data["associatedadminid"])
     feedbacktype = str(form_data["feedbacktype"])
 
     try:
@@ -47,13 +46,12 @@ def surveyfn():
            "email":email,
            "ratingnumber":ratingnumber,
            "feedbackmessage":feedbackmessage,
-           "associatedadminid":associatedadminid,
            "feedbacktype":feedbacktype
         })
         generatelogs('success',"survey create",'surveycreate.py')
-        return jsonify({"message":"survey create success",'data':uuidx}),200
+        return jsonify({"message":"survey create success"}),200
 
     except Exception as e:
         print(e)
-        generatelogs('error',f'{str(e)}','surveycreate.py')
+        generatelogs('error',"survey create failed",'surveycreate.py')
         return jsonify({'error',f'{str(e)}'}),500

@@ -48,5 +48,5 @@ def getallmsfn():
         return jsonify({'message':'all of the data hasbeen fetched successfully','data':result}),200
     except Exception as e:
         print(e)
-        generatelogs('error',f'{str(e)}','getallms.py')
+        generatelogs('error','all of the data stored hasbeen fetched','getallms.py')
         return jsonify({'message':'Internal server error'}),500

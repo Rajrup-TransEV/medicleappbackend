@@ -35,9 +35,9 @@ def getallsurveyfn():
                 'feedbacktype':survey.get('feedbacktype')
             }
             result.append(normalpayload)
-        generatelogs('success','survey data fetched successfully')
+        generatelogs('success','survey data fetched successfully','getallsurveydata.py')
         return jsonify({"message":"management","data":result}),200
     except Exception as e:
         print(e)
-        generatelogs('error',f'{str(e)}','getallsurveydata.py')
+        generatelogs('error',"survey data fetch failed","getallsurveydata.py")
         return jsonify({'error':f'{str(e)}'}),500
