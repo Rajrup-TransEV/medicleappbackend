@@ -28,7 +28,7 @@ def medicalsurveyfn():
         'membercount', 
         'gurdian_of_the_house',
         'number_of_sick_persons',
-        'name_of_the_sick_persons'
+        'name_of_the_sick_persons',
         'reason_of_sickness',
         'medical_remedy',
         'district', 
