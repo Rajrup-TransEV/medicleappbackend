@@ -109,6 +109,11 @@ from controller.billingmanagement.updatebill import update_billbp
 from controller.billingmanagement.getallbill import getallbillbp
 from controller.billingmanagement.getbillbyemailid import getbillbypatientemailbp
 from controller.billingmanagement.getbillbybillid import getbillbybillidbp
+from controller.patientops.patientprofile.updateprescribeaccessupdate import prescribeaccessupdate_bp
+from controller.patientops.patientprofile.updatelabdataaccess import labdataaccessupdate_bp
+from controller.guestlogin.allguessaccessprescribedata import allguestaccessprescribedata_bp
+from controller.guestlogin.allguestaccesslabdata import allguestaccesslabdata_bp
+
 
 load_dotenv()
 
@@ -128,8 +133,6 @@ limiter = Limiter(
 )
 
 socketio = SocketIO(app, cors_allowed_origins="*")
-
-
 
 @app.route("/", methods=['GET'])
 def index():
@@ -154,6 +157,8 @@ app.register_blueprint(getprofiebyid_bp) #/patients/profile/getbyid
 app.register_blueprint(getallpatient_bp) #/patientops/getallpatient
 app.register_blueprint(deleteprofile_bp) #/patientops/deleteprofile
 app.register_blueprint(patientviewbp)
+app.register_blueprint(prescribeaccessupdate_bp)
+app.register_blueprint(labdataaccessupdate_bp)
 #patient profile route ends
 #doctor routes
 app.register_blueprint(doctorsignup_bp) #/doctor/signup
@@ -255,6 +260,8 @@ app.register_blueprint(medicalsurveycreatebp)
 app.register_blueprint(getallmsbp)
 #guest login
 app.register_blueprint(guest_login_bp)
+app.register_blueprint(allguestaccessprescribedata_bp)
+app.register_blueprint(allguestaccesslabdata_bp)
 #billing
 app.register_blueprint(createbillbp)
 app.register_blueprint(update_billbp)

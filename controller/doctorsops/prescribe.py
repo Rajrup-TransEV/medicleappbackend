@@ -176,6 +176,7 @@ def createprescribfn():
             "patientid":patientid,
             "doctorid":doctorid,
             "prescription_id": prescription_id,
+            "guestaccess":"no",
              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 

@@ -44,6 +44,7 @@ def labtestdatafn():
             "doctorreferal":doctorreferal,
             "typeoftest":typeoftest,
             "finalreport":finalreport,
+            "guestaccess":"no",
              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
         generatelogs("success","lab test data created","labtestdata.py")
