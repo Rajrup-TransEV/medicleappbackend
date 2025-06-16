@@ -18,7 +18,7 @@ def get_db_connection():
 
 allguestaccessprescribedata_bp = Blueprint('allguestaccessprescribedata_bp', __name__)
 
-@allguestaccessprescribedata_bp.route('/guestlogin/allguestaccessprescribedata', methods=["GET"])
+@allguestaccessprescribedata_bp.route('/guestlogin/allguestaccessprescribedata', methods=["POST"])
 def allguestaccessprescribedata():
     try:
         patient_id = request.form.get('patientid')

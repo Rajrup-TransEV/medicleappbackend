@@ -16,7 +16,7 @@ def get_db_connection():
 
 allguestaccesslabdata_bp = Blueprint('allguestaccesslabdata_bp', __name__)
 
-@allguestaccesslabdata_bp.route('/guestlogin/allguestaccesslabdata', methods=["GET"])
+@allguestaccesslabdata_bp.route('/guestlogin/allguestaccesslabdata', methods=["POST"])
 def allguestaccesslabdatafn():
     try:
         patient_id = request.form.get('patientid')
