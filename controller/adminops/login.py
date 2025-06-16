@@ -26,31 +26,40 @@ def is_valid_work_email(email):
 
     blocked_domains = [
         "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "rediffmail.com",
-       "aol.com", "icloud.com", "mail.com", "gmx.com", "yandex.com"
+        "aol.com", "icloud.com", "mail.com", "gmx.com", "yandex.com"
     ]
     domain = email.lower().split('@')[-1]
     return domain not in blocked_domains
 
 @admin_login_bp.route("/admins/login", methods=["POST"])
 def adminlogin():
-    email = str(request.form.get('email'))
+    raw_email = str(request.form.get('email'))
     password = str(request.form.get('password'))
 
     # Basic validation
-    if not email or not password:
+    if not raw_email or not password:
         generatelogs('error', "Email and password are required!", 'adminops/login.py')
         return jsonify({"error": "Email and password are required!"}), 400
 
     # Check if the email is from a personal domain
-    if not is_valid_work_email(email):
-        generatelogs('error', f"Login attempt with disallowed email domain: {email}", 'adminops/login.py')
+    if not is_valid_work_email(raw_email):
+        generatelogs('error', f"Login attempt with disallowed email domain: {raw_email}", 'adminops/login.py')
         return jsonify({"error": "Only work email addresses are allowed for login!"}), 400
+
+    # Modify email to add 'admin' before @
+    email_parts = raw_email.split('@')
+    if len(email_parts) != 2:
+        generatelogs('error', f"Invalid email format: {raw_email}", 'adminops/login.py')
+        return jsonify({"error": "Invalid email format!"}), 400
+
+    # Append 'admin' before '@'
+    modified_email = f"{email_parts[0]}admin@{email_parts[1]}"
 
     try:
         db = get_db_connection()
         users_collection = db['admins']
 
-        user = users_collection.find_one({"email": email})
+        user = users_collection.find_one({"email": modified_email})
         if not user:
             generatelogs('error', "User not found!", 'adminops/login.py')
             return jsonify({"error": "Invalid credentials!"}), 401
