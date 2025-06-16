@@ -25,17 +25,21 @@ def get_db_connection():
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
-def generate_token(contact, role='guest'):
+def generate_token(contact, role='guest', patient_uid=None):
     ist = timezone('Asia/Kolkata')
     now_ist = datetime.now(ist)
     exp_ist = now_ist + timedelta(hours=24)
-    
+
     payload = {
         'sub': contact,
         'role': role,
         'iat': int(now_ist.timestamp()),
         'exp': int(exp_ist.timestamp())
     }
+
+    if patient_uid:
+        payload['patientuid'] = patient_uid
+
     return jwt.encode(payload, os.getenv('JWT_SECRET'), algorithm='HS256')
 
 @guest_login_bp.route('/guest/login', methods=['POST'])
@@ -54,11 +58,9 @@ def guest_login():
     guest_db = db['guestlogins']
     patients = db['patients']
 
-    # Determine hospital contact
     hospital_contact = hospital_email if hospital_email else hospital_mobile
     patient_contact = patient_email if patient_email else patient_mobile
 
-    # Insert hospital contact into guest login DB if not already
     if not guest_db.find_one({"$or": [{"email": hospital_email}, {"mobile": hospital_mobile}]}):
         guest_record = {
             "email": hospital_email if hospital_email else None,
@@ -68,7 +70,6 @@ def guest_login():
         guest_db.insert_one(guest_record)
         generatelogs('info', f"New guest hospital contact saved: {guest_record}", 'patientops/guest_login.py')
 
-    # Check if patient contact exists
     query = {"$or": [{"email": patient_email}, {"mobile": patient_mobile}]}
     user = patients.find_one(query)
 
@@ -76,7 +77,6 @@ def guest_login():
         generatelogs('error', f"No patient found for contact: {patient_contact}", 'patientops/guest_login.py')
         return jsonify({"error": "Patient not found."}), 404
 
-    # OTP Verification block
     if entered_otp:
         otp_entry = guest_otp_storage.get(patient_contact)
 
@@ -91,8 +91,10 @@ def guest_login():
             generatelogs('error', f"Invalid OTP attempt {entered_otp} for {patient_contact}", 'patientops/guest_login.py')
             return jsonify({"error": "Invalid OTP."}), 400
 
-        token = generate_token(hospital_contact)
+        patient_uid = user.get('uid')
+        token = generate_token(hospital_contact, patient_uid=patient_uid)
         del guest_otp_storage[patient_contact]
+
         generatelogs('success', f"Guest login successful for {hospital_contact} using patient {patient_contact}", 'patientops/guest_login.py')
         return jsonify({
             "message": "Guest login successful.",
@@ -100,6 +102,7 @@ def guest_login():
             "session": {
                 "contact": hospital_contact,
                 "role": "guest",
+                "patient_uid": patient_uid,
                 "expires_in": "24 hours"
             }
         }), 200
