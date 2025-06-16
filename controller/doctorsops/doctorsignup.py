@@ -33,7 +33,19 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Function to validate email
 def is_valid_email(email):
-    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
+    # Regex to validate general email structure
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return False
+
+    # List of personal email domains to reject
+    blocked_domains = [
+        "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "rediffmail.com",
+       "aol.com", "icloud.com",  "mail.com", "gmx.com", "yandex.com"
+    ]
+
+    domain = email.lower().split('@')[-1]
+    return domain not in blocked_domains
+
 
 @doctorsignup_bp.route("/doctor/signup", methods=['POST'])
 def doctorsignupfn():

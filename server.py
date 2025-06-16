@@ -113,6 +113,8 @@ from controller.patientops.patientprofile.updateprescribeaccessupdate import pre
 from controller.patientops.patientprofile.updatelabdataaccess import labdataaccessupdate_bp
 from controller.guestlogin.allguessaccessprescribedata import allguestaccessprescribedata_bp
 from controller.guestlogin.allguestaccesslabdata import allguestaccesslabdata_bp
+from controller.survey.applicationsurvey.deleteappsurvey import deleteappsurveybp
+from controller.survey.medicalsurvey.deletemedicalsurvey import deletemedicalsurveybp
 
 
 load_dotenv()
@@ -254,10 +256,12 @@ app.register_blueprint(faqdeletebp)
 #survey
 app.register_blueprint(surveycreatebp)
 app.register_blueprint(getallsurveybp)
+app.register_blueprint(deleteappsurveybp)
 
 #medical survey
 app.register_blueprint(medicalsurveycreatebp)
 app.register_blueprint(getallmsbp)
+app.register_blueprint(deletemedicalsurveybp)
 #guest login
 app.register_blueprint(guest_login_bp)
 app.register_blueprint(allguestaccessprescribedata_bp)
