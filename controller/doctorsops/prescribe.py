@@ -67,7 +67,7 @@ def createprescribfn():
         hospitalname = str(request.form.get('hospitalname'))
         doctorid = str(request.form.get('doctorid'))
         patientid = str(request.form.get('patientid'))
-        dateandtime = "Tuesday, January 07, 2025, 3 PM IST"  # Updated date and time
+        dateandtime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         diagonistics = str(request.form.get('diagonistics'))
 
         # Save the file path to MongoDB
