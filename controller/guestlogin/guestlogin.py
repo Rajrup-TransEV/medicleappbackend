@@ -36,7 +36,7 @@ def generate_token(contact, role='guest'):
         'iat': int(now_ist.timestamp()),
         'exp': int(exp_ist.timestamp())
     }
-    return jwt.encode(payload, os.getenv('JWT_SECRET_KEY'), algorithm='HS256')
+    return jwt.encode(payload, os.getenv('JWT_SECRET'), algorithm='HS256')
 
 @guest_login_bp.route('/guest/login', methods=['POST'])
 def guest_login():
