@@ -21,7 +21,7 @@ allguestaccessprescribedata_bp = Blueprint('allguestaccessprescribedata_bp', __n
 @allguestaccessprescribedata_bp.route('/guestlogin/allguestaccessprescribedata', methods=["GET"])
 def allguestaccessprescribedata():
     try:
-        patient_id = request.args.get("patientid")  # use args for GET request
+        patient_id = request.form.get('patientid')
         if not patient_id:
             return jsonify({"error": "Missing 'patientid' in query parameters"}), 400
 
