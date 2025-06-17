@@ -1,0 +1,29 @@
+from datetime import datetime
+import uuid
+from flask import Blueprint, jsonify, request
+import os
+from pymongo import MongoClient
+import pytz
+from utils.logs import generatelogs
+from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def get_db_connection():
+    client = MongoClient(os.getenv('MONGODB_URI'))
+    db = client[os.getenv('DB_NAME')]
+    return db
+
+showallnotify_bp = Blueprint('showallnotify_bp', __name__)
+
+@showallnotify_bp.route("/notify/show/all", methods=["GET"])
+def showallnotify():
+    try:
+        db = get_db_connection()
+        notification_collection = db['notifications']
+        notifications = notification_collection.find()
+        return jsonify([notification for notification in notifications]), 200
+    except Exception as e:
+        generatelogs("Error fetching notifications",f'{str(e)}','showallnotify.py')
+        return jsonify({"error": "An error occurred while fetching notifications"}), 500

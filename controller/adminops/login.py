@@ -46,20 +46,20 @@ def adminlogin():
         generatelogs('error', f"Login attempt with disallowed email domain: {raw_email}", 'adminops/login.py')
         return jsonify({"error": "Only work email addresses are allowed for login!"}), 400
 
-    # Modify email to add 'admin' before @
-    email_parts = raw_email.split('@')
-    if len(email_parts) != 2:
-        generatelogs('error', f"Invalid email format: {raw_email}", 'adminops/login.py')
-        return jsonify({"error": "Invalid email format!"}), 400
+    # # Modify email to add 'admin' before @
+    # email_parts = raw_email.split('@')
+    # if len(email_parts) != 2:
+    #     generatelogs('error', f"Invalid email format: {raw_email}", 'adminops/login.py')
+    #     return jsonify({"error": "Invalid email format!"}), 400
 
-    # Append 'admin' before '@'
-    modified_email = f"{email_parts[0]}admin@{email_parts[1]}"
+    # # Append 'admin' before '@'
+    # modified_email = f"{email_parts[0]}admin@{email_parts[1]}"
 
     try:
         db = get_db_connection()
         users_collection = db['admins']
 
-        user = users_collection.find_one({"email": modified_email})
+        user = users_collection.find_one({"email": raw_email})
         if not user:
             generatelogs('error', "User not found!", 'adminops/login.py')
             return jsonify({"error": "Invalid credentials!"}), 401
