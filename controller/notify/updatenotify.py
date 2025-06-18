@@ -58,7 +58,6 @@ def updatenotify():
         )
 
         if result.modified_count > 0:
-            generatelogs("Notification updated successfully", update_details, "updatenotify.py")
             return jsonify({
                 "message": "Notification updated successfully",
                 "notification": update_details  # _id is not included here
@@ -67,5 +66,4 @@ def updatenotify():
             return jsonify({"message": "No matching notification found or no changes made"}), 404
 
     except Exception as e:
-        generatelogs("Error updating notification", f'{str(e)}', 'updatenotify.py')
         return jsonify({"error": "An error occurred while updating notification"}), 500

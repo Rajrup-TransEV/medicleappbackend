@@ -43,12 +43,7 @@ def notificationcreate():
             "created_at": created_at,
         }
         notification_collection.insert_one(notification_data)
-
-        # Log the creation
-        generatelogs("Notification created successfully", notification_data,"notificationcreate.py")
-
         return jsonify({"message": "Notification created successfully", "notification": notification_data}), 201
 
     except Exception as e:
-        generatelogs("Error creating notification",f'{str(e)}',"notificationcreate.py")
         return jsonify({"error": "An error occurred while creating the notification"}), 500
