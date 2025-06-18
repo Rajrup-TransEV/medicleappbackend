@@ -23,7 +23,14 @@ def showallnotify():
         db = get_db_connection()
         notification_collection = db['notifications']
         notifications = notification_collection.find()
-        return jsonify([notification for notification in notifications]), 200
+
+        # Remove _id from each notification
+        result = []
+        for notification in notifications:
+            notification.pop('_id', None)  # Safely remove _id if present
+            result.append(notification)
+
+        return jsonify(result), 200
     except Exception as e:
-        generatelogs("Error fetching notifications",f'{str(e)}','showallnotify.py')
-        return jsonify({"error": "An error occurred while fetching notifications"}), 500 
+        generatelogs("Error fetching notifications", f'{str(e)}', 'showallnotify.py')
+        return jsonify({"error": "An error occurred while fetching notifications"}), 500
