@@ -42,8 +42,13 @@ def notificationcreate():
             "notificationstatus": "active",
             "created_at": created_at,
         }
-        notification_collection.insert_one(notification_data)
+        result = notification_collection.insert_one(notification_data)
+
+        # Remove MongoDB's internal _id if it's added back to notification_data
+        notification_data.pop('_id', None)
+
         return jsonify({"message": "Notification created successfully", "notification": notification_data}), 201
 
     except Exception as e:
+        print(e)
         return jsonify({"error": "An error occurred while creating the notification"}), 500
