@@ -24,12 +24,23 @@ def updatenotify():
     try:
         db = get_db_connection()
         notification_collection = db['notifications']
-        uid = str(request.form.get('notificationuid'))
-        notificationfind = notification_collection.find_one({"uid":uid})
-        if not notificationfind:
-            return jsonify({"message":"no data found associated with the id"}),404
-        update_details = {}
         
+        uid = str(request.form.get('notificationuid'))
+        if not uid:
+            return jsonify({"message": "notificationuid is required"}), 400
+
+        notificationfind = notification_collection.find_one({"uid": uid})
+        if not notificationfind:
+            return jsonify({"message": "No data found associated with the ID"}), 404
+
+        # Extract form fields
+        notificationtitle = request.form.get('notificationtitle')
+        notificationdescription = request.form.get('notificationdescription')
+        notificationtype = request.form.get('notificationtype')
+        notificationadminid = request.form.get('notificationadminid')
+        notificationstatus = request.form.get('notificationstatus')
+
+        update_details = {}
         if notificationtitle:
             update_details['notificationtitle'] = notificationtitle
         if notificationdescription:
@@ -40,14 +51,21 @@ def updatenotify():
             update_details['notificationadminid'] = notificationadminid
         if notificationstatus:
             update_details['notificationstatus'] = notificationstatus
-        
-        result = notification_collection.update_one({"uid":uid},{"$set":update_details})
+
+        result = notification_collection.update_one(
+            {"uid": uid},
+            {"$set": update_details}
+        )
+
         if result.modified_count > 0:
-            generatelogs("Notification updated successfully",update_details,"updatenotify.py")
-            return jsonify({"message":"Notification updated successfully","notification":update_details}),200
+            generatelogs("Notification updated successfully", update_details, "updatenotify.py")
+            return jsonify({
+                "message": "Notification updated successfully",
+                "notification": update_details  # _id is not included here
+            }), 200
         else:
-            return jsonify({"message":"No matching notification found or no changes made"}),404
-        
+            return jsonify({"message": "No matching notification found or no changes made"}), 404
+
     except Exception as e:
-        generatelogs("Error fetching notifications",f'{str(e)}','updatenotify.py')
-        return jsonify({"error": "An error occurred while fetching notifications"}), 500
+        generatelogs("Error updating notification", f'{str(e)}', 'updatenotify.py')
+        return jsonify({"error": "An error occurred while updating notification"}), 500
