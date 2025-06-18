@@ -115,7 +115,11 @@ from controller.guestlogin.allguessaccessprescribedata import allguestaccesspres
 from controller.guestlogin.allguestaccesslabdata import allguestaccesslabdata_bp
 from controller.survey.applicationsurvey.deleteappsurvey import deleteappsurveybp
 from controller.survey.medicalsurvey.deletemedicalsurvey import deletemedicalsurveybp
-
+from controller.notify.notificationcreate import notifybp
+from controller.notify.updatenotify import updatenotifybp
+from controller.notify.deletenotify import deletenotifybp
+from controller.notify.showactivenotify import showactivenotify_bp
+from controller.notify.showallnotify import showallnotify_bp
 
 load_dotenv()
 
@@ -272,6 +276,12 @@ app.register_blueprint(update_billbp)
 app.register_blueprint(getallbillbp)
 app.register_blueprint(getbillbypatientemailbp)
 app.register_blueprint(getbillbybillidbp)
+#notify
+app.register_blueprint(notifybp)
+app.register_blueprint(updatenotifybp)
+app.register_blueprint(deletenotifybp)
+app.register_blueprint(showactivenotify_bp)
+app.register_blueprint(showallnotify_bp)
 #websocket based routes
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@ def notificationcreate():
         db = get_db_connection()
         notification_collection = db['notifications']
         notification_data = {
-            "notification_id": str(uuid.uuid4()),
+            "uid": str(uuid.uuid4()),
             "notificationtitle": notificationtitle,
             "notificationdescription": notificationdescription,
             "notificationtype": notificationtype,

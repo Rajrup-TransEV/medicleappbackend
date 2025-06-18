@@ -26,4 +26,4 @@ def showallnotify():
         return jsonify([notification for notification in notifications]), 200
     except Exception as e:
         generatelogs("Error fetching notifications",f'{str(e)}','showallnotify.py')
-        return jsonify({"error": "An error occurred while fetching notifications"}), 500
+        return jsonify({"error": "An error occurred while fetching notifications"}), 500 
