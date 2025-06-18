@@ -22,8 +22,10 @@ def deletenotify():
     try:
         db = get_db_connection()
         notification_collection = db['notifications']
-        uid = str(request.form.get('notificationuid'))
+        uid = request.form.get('notificationuid')
+        print(uid)
         notificationfind = notification_collection.find_one({"uid":uid})
+        print(notificationfind)
         if not notificationfind:
             return jsonify({"message":"no data found associated with the id"}),404
         result = notification_collection.delete_one({"uid":uid})
