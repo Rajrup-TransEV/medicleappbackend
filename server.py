@@ -121,6 +121,8 @@ from controller.notify.deletenotify import deletenotifybp
 from controller.notify.showactivenotify import showactivenotify_bp
 from controller.notify.showallnotify import showallnotify_bp
 from controller.notify.unseennotifyupdate import unseennotifyupdatebp
+from controller.notify.showunseennotify import showunseennotify_bp
+
 
 load_dotenv()
 
@@ -284,6 +286,7 @@ app.register_blueprint(deletenotifybp)
 app.register_blueprint(showactivenotify_bp)
 app.register_blueprint(showallnotify_bp)
 app.register_blueprint(unseennotifyupdatebp)
+app.register_blueprint(showunseennotify_bp)
 #websocket based routes
 
 if __name__ == '__main__':
