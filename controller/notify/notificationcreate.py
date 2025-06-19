@@ -40,6 +40,7 @@ def notificationcreate():
             "notificationtype": notificationtype,
             "notificationadminid": notificationadminid,
             "notificationstatus": "active",
+            "seennotify": "false",
             "created_at": created_at,
         }
         result = notification_collection.insert_one(notification_data)
