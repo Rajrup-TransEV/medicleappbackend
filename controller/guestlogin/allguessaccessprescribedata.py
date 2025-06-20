@@ -37,7 +37,7 @@ def allguestaccessprescribedata():
         result = []
         for i in allreports:
             normalpayload = {
-                'uid': str(i.get('uid')),
+                'prescription_id': str(i.get('prescription_id')),
                 "hospitalname": i.get('hospitalname'),
                 "patientfullname": i.get('patientfullname'),
                 "dateandtime": i.get('dateandtime'),
@@ -45,7 +45,6 @@ def allguestaccessprescribedata():
                 "file_path": i.get('file_path'),
                 "patientid": i.get('patientid'),
                 "doctorid": i.get('doctorid'),
-                "prescription_id": i.get('prescription_id'),
                 'created_at': i.get('created_at')
             }
 

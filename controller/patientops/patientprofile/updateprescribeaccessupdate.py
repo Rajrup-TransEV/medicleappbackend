@@ -28,7 +28,7 @@ def prescribeaccessupdatefn():
     try:
         db = get_db_connection()
         prescribecol = db['prescribe']
-        prescribecol.update_one({"patientid": patientid,"uid": prescribeid}, {"$set": update_fields})
+        prescribecol.update_one({"patientid": patientid,"prescription_id": prescribeid}, {"$set": update_fields})
         return jsonify({"message": "Prescribe access updated successfully"}), 200
     except Exception as e:
         generatelogs('error', str(e), 'doctorsops/prescribeaccessupdate.py')
