@@ -19,6 +19,7 @@ labdataaccessupdate_bp = Blueprint('labdataaccessupdate_bp', __name__)
 @labdataaccessupdate_bp.route("/patientops/labdataaccessupdate", methods=["POST"])
 def labdataaccessupdatefn():
     patientid = str(request.form.get('patientid'))
+    labid = str(request.form.get('labid'))
     if not patientid:
         return jsonify({"error": "patientid is required"}), 400
     update_fields = {
@@ -27,7 +28,7 @@ def labdataaccessupdatefn():
     try:
         db = get_db_connection()
         labcol = db['labreports']
-        labcol.update_one({"patientid": patientid}, {"$set": update_fields})
+        labcol.update_one({"patientid": patientid,"uid": labid}, {"$set": update_fields})
         return jsonify({"message": "Lab data access updated successfully"}), 200
     except Exception as e:
         generatelogs('error', str(e), 'doctorsops/labdataaccessupdate.py')
