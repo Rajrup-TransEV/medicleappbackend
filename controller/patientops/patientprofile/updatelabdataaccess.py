@@ -26,7 +26,7 @@ def labdataaccessupdatefn():
     }
     try:
         db = get_db_connection()
-        labcol = db['labdata']
+        labcol = db['labreports']
         labcol.update_one({"patientid": patientid}, {"$set": update_fields})
         return jsonify({"message": "Lab data access updated successfully"}), 200
     except Exception as e:
