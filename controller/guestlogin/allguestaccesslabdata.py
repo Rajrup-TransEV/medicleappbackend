@@ -39,7 +39,6 @@ def allguestaccesslabdatafn():
                 'hospitalgeneratedreportid': i.get('labphyreportid'),
                 'patientname': i.get('patientname'),
                 'patientage': i.get('patientage'),
-                'patientheight': i.get('height'),
                 'patientsymptoms': i.get('patientsymptoms'),
                 'doctorreferal': i.get('doctorreferal'),
                 'typeoftest': i.get('typeoftest'),
