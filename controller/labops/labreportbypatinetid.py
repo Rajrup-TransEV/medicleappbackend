@@ -40,6 +40,7 @@ def labreportbypatientidfn():
                     "doctorreferal": labreportdata.get('doctorreferal', ''),
                     "typeoftest": labreportdata.get('typeoftest', ''),
                     "finalreport": labreportdata.get('finalreport', ''),
+                    "guestaccess": labreportdata.get('guestaccess', ''),
                     "createdat": labreportdata.get('created_at', '')
                 }
                 all_reports.append(normalpayload)
