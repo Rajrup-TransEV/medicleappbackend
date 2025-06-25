@@ -16,30 +16,28 @@ def get_db_connection():
 
 getbillbypatientemailbp = Blueprint('getbillbypatientemailbp', __name__)
 
+
+
 @getbillbypatientemailbp.route('/billing/getbillbypatientemail', methods=['POST'])
 def getbillbypatientemailfn():
     db = get_db_connection()
     billing_collection = db['billing']
 
     try:
-        # Extract patient UID from request
         patientemailid = request.json.get('patientemailid')
-        if not patientemailid:
-            return jsonify({"status": False, "message": "Patient UID is required"}), 400
-
-        # Fetch all bills for the given patient UID
         bills_cursor = billing_collection.find({"patient_email": patientemailid})
+        bills_list = list(bills_cursor)
+
+        if not bills_list:
+            return jsonify({"status": False, "message": "No billing records found for this patient email"}), 404
+
         bills = []
-        for bill in bills_cursor:
+        for bill in bills_list:
             bill.pop('_id', None)  # Remove MongoDB's default ID field
             bills.append(bill)
 
-        if bills:
-            generatelogs('success', f'Fetched {len(bills)} billing records successfully', 'billingops/getbillbypatientid.py')
-            return jsonify({"status": True, "bills": bills}), 200
-        else:
-            generatelogs('info', 'No billing records found for patient UID: ' + patient_uid, 'billingops/getbillbypatientid.py')
-            return jsonify({"status": False, "message": "No billing records found for this patient"}), 404
+        generatelogs('success', f'Fetched {len(bills)} billing records successfully', 'billingops/getbillbypatientid.py')
+        return jsonify({"status": True, "bills": bills}), 200
 
     except Exception as e:
         generatelogs('error', f'Error fetching billing records: {str(e)}', 'billingops/getbillbypatientid.py')
