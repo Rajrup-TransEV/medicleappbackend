@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from utils.logs import generatelogs
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 def get_db_connection():
@@ -19,13 +18,10 @@ def patientadmitstatus():
     patientid = request.form.get("patientid")
     try:
         db = get_db_connection()
-        
-        # Fetch patient details
+    
         patientdetails = db['patients'].find_one({"uid": patientid})
         if not patientdetails:
             return jsonify({"error": "Patient not found"}), 404
-        
-        # Extracting patient details safely
         patientemail = patientdetails.get('email')
         patientfirstname = patientdetails.get('firstname')
         patientage = patientdetails.get('age')
@@ -70,7 +66,8 @@ def patientadmitstatus():
             'wardemail': wardemail,
             'wardname': wardname,
             'room_number': room_number,
-            'room_type': room_type
+            'room_type': room_type,
+            'admitdate': admitcol.get('assigned_at')
         }
         
         generatelogs('success', 'Patient details have been fetched', 'patientadmitstats.py')
