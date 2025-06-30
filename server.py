@@ -124,7 +124,8 @@ from controller.notify.unseennotifyupdate import unseennotifyupdatebp
 from controller.notify.showunseennotify import showunseennotify_bp
 from controller.discharge.pdops import pdopsbp
 from controller.discharge.getallpadops import getallpadops_bp
-
+from controller.discharge.deletepadops import deletepadops_bp
+from controller.discharge.getdisdetailsp import getdisdetailsp_bp
 load_dotenv()
 
 app = Flask(__name__)
@@ -291,6 +292,8 @@ app.register_blueprint(showunseennotify_bp)
 #discharge
 app.register_blueprint(pdopsbp)
 app.register_blueprint(getallpadops_bp)
+app.register_blueprint(deletepadops_bp)
+app.register_blueprint(getdisdetailsp_bp)
 #websocket based routes
 
 if __name__ == '__main__':
