@@ -26,7 +26,7 @@ def faciliticreatefn():
     department_head_name = str(request.form.get('department_head_name'))
     department_officialemail = str(request.form.get('department_officialemail'))
     department_official_phoneno = str(request.form.get('department_official_phoneno'))
-    department_status = str(request.form.get('department_status'))
+    department_status = str(request.form.get('departmentstatus'))
     department_opentime = str(request.form.get('department_opentime'))
     department_closetime = str(request.form.get('department_closetime'))
 
@@ -68,3 +68,5 @@ def faciliticreatefn():
         print(e)
         generatelogs('error', f'{str(e)}', 'facilityopscreate.py')
         return jsonify({'error': 'Internal server error'}), 500
+
+
