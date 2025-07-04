@@ -26,6 +26,8 @@ def getdoctordetaillsbyid():
     try:
         db = get_db_connection()
         doctor_collection = db['doctors']
+        timetable_collection = db['doctortimetable']
+
         doctor = doctor_collection.find_one({"uid": doctorid})
         if not doctor:
             return jsonify({"error": "Doctor not found!"}), 404
@@ -41,6 +43,16 @@ def getdoctordetaillsbyid():
                 profile_picture_data = base64.b64encode(img_file.read()).decode('utf-8')
         else:
             profile_picture_data = None
+         # Get doctor schedule (all dates)
+        doctor_schedules = list(timetable_collection.find({"doctorid": doctorid}))
+        schedule_data = [
+            {
+                "date": schedule.get("date"),
+                "slots": schedule.get("schedule")  # List of slot dicts
+            }
+            for schedule in doctor_schedules
+        ]
+
         normal_payload = {
             "uid":doctor.get('uid'),
             "fullname":doctor.get('fullname'),
@@ -58,7 +70,8 @@ def getdoctordetaillsbyid():
             "leaveto": leaveto,
             "reason": reason,
             "profilepictures": profile_picture_data,
-            "role": doctor.get('userrole')
+            "role": doctor.get('userrole'),
+            "timetable": schedule_data if schedule_data else None 
         }
         return jsonify({"message":"Doctor data hasbeen fetched successfully","data":normal_payload}), 200
     except Exception as e:
