@@ -23,6 +23,7 @@ def patientadmitstatus():
         if not patientdetails:
             return jsonify({"error": "Patient not found"}), 404
         patientemail = patientdetails.get('email')
+        print(patientemail)
         patientfirstname = patientdetails.get('firstname')
         patientage = patientdetails.get('age')
         patientgender = patientdetails.get('gender')
@@ -54,7 +55,12 @@ def patientadmitstatus():
         
         room_number = room_details.get("room_number")
         room_type = room_details.get("room_type")
-        
+
+        dischargecol = db['discharge'].find_one({"patientemailid": patientemail})
+        if not dischargecol:
+            return jsonify({"error": "No discharge record found for this patient"}), 404
+        dischargetime = dischargecol.get('patientdischarge_time')
+        dischargedate = dischargecol.get('patientdischarge_date')
         # Prepare response payload
         normal_payload = {
             'patientemail': patientemail,
@@ -67,7 +73,9 @@ def patientadmitstatus():
             'wardname': wardname,
             'room_number': room_number,
             'room_type': room_type,
-            'admitdate': admitcol.get('assigned_at')
+            'admitdate': admitcol.get('assigned_at'),
+            'dischargetime': dischargetime,
+            'dischargedate': dischargedate
         }
         
         generatelogs('success', 'Patient details have been fetched', 'patientadmitstats.py')
