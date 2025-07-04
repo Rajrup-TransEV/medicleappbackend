@@ -126,6 +126,9 @@ from controller.discharge.pdops import pdopsbp
 from controller.discharge.getallpadops import getallpadops_bp
 from controller.discharge.deletepadops import deletepadops_bp
 from controller.discharge.getdisdetailsp import getdisdetailsp_bp
+from controller.doctorsops.doctortimetable import doctortimetablebp
+from controller.doctorsops.doctortimetableupdate import doctortimetableupdatebp
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -186,6 +189,8 @@ app.register_blueprint(updatedoctordata_bp) #/doctors/profile/update
 app.register_blueprint(deletedoctor_bp) #/doctorsops/deletedoctor
 app.register_blueprint(getallleavebydocidbp)#'/doctors/leave
 app.register_blueprint(lessdocbp)
+app.register_blueprint(doctortimetablebp)
+app.register_blueprint(doctortimetableupdatebp)
 #doctor route ends
 #admin routes
 app.register_blueprint(deleteadminaccountbp)

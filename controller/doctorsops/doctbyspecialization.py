@@ -22,37 +22,48 @@ getdoctorbyspc_bp = Blueprint('getdoctorbyspc_bp', __name__)
 
 @getdoctorbyspc_bp.route("/doctors/getdoctorbyspc", methods=["POST"])
 def get_doctor_details_by_specialization():
-    # Normalize specialization input to lowercase
     doctorspecialization = str(request.form.get('doctorspecialization')).lower()
-    
+
     try:
         db = get_db_connection()
         doctor_collection = db['doctors']
-        
-        # Fetch doctors by specialization
+        leave_collection = db['doctorleave']
+        timetable_collection = db['doctortimetable']
+
         doctors = list(doctor_collection.find({"specialization": doctorspecialization}))
-        
+
         if not doctors:
             return jsonify({"error": "No doctors found!"}), 404
-        
-        leave_collection = db['doctorleave']
+
         doctor_data_list = []
 
         for doctor in doctors:
-            # Fetch leave details for each doctor
-            doctor_leaves = list(leave_collection.find({"doctorid": doctor.get('uid')}))
-            leaves_data = []
+            doctorid = doctor.get('uid')
 
-            for leave in doctor_leaves:
-                leaves_data.append({
-                    "leaveid":leave.get('uid'),
+            # Get doctor leaves
+            doctor_leaves = list(leave_collection.find({"doctorid": doctorid}))
+            leaves_data = [
+                {
+                    "leaveid": leave.get('uid'),
                     "leavefrom": leave.get('leavefrom'),
                     "leaveto": leave.get('leaveto'),
                     "reason": leave.get('reason'),
                     "status": leave.get('status')
-                })
+                }
+                for leave in doctor_leaves
+            ]
 
-            # Prepare profile picture data
+            # Get doctor schedule (all dates)
+            doctor_schedules = list(timetable_collection.find({"doctorid": doctorid}))
+            schedule_data = [
+                {
+                    "date": schedule.get("date"),
+                    "slots": schedule.get("schedule")  # List of slot dicts
+                }
+                for schedule in doctor_schedules
+            ]
+
+            # Encode profile picture if exists
             profile_picture_path = doctor.get('profilepictures')
             if profile_picture_path and os.path.exists(profile_picture_path):
                 with open(profile_picture_path, "rb") as img_file:
@@ -60,9 +71,9 @@ def get_doctor_details_by_specialization():
             else:
                 profile_picture_data = None
 
-            # Prepare normal payload for the doctor
+            # Assemble response payload
             normal_payload = {
-                "uid": doctor.get('uid'),
+                "uid": doctorid,
                 "fullname": doctor.get('fullname'),
                 "gender": doctor.get('gender'),
                 "address": doctor.get('address'),
@@ -75,17 +86,14 @@ def get_doctor_details_by_specialization():
                 "phonenumber": doctor.get('phonenumber'),
                 "profilepictures": profile_picture_data,
                 "role": doctor.get('userrole'),
-                "leaves": leaves_data if leaves_data else None  # Include leaves data in the payload
+                "leaves": leaves_data if leaves_data else None,
+                "timetable": schedule_data if schedule_data else None  # Include timetable
             }
-            
-            # Append each doctor's data to the list
+
             doctor_data_list.append(normal_payload)
 
         return jsonify({"message": "Doctor data has been fetched successfully", "data": doctor_data_list}), 200
 
     except Exception as e:
-        messagetype = 'error'
-        message = f"Error while fetching doctor data: {str(e)}"
-        filelocation = 'doctbyspecialization.py'
-        generatelogs(messagetype, message, filelocation)
+        generatelogs('error', f"Error while fetching doctor data: {str(e)}", 'doctbyspecialization.py')
         return jsonify({"error": str(e)}), 500
