@@ -136,7 +136,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {
     "origins": "*",  # Change '*' to specific origins in production
     "allow_headers": ["Content-Type", "Authorization"],
-    "methods": ["GET", "POST", "OPTIONS"]
+    "methods": ["GET", "POST", "OPTIONS","PATCH","DELETE","PUT"]
 }})
 
 # Initialize the Limiter
