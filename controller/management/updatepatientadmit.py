@@ -28,10 +28,7 @@ def updateadmitfn():
         admitfindbyid = admitops.find_one({"uid":admitid})
         if admitfindbyid:
             result = admitops.update({"uid": admitid}, {"$set": {"patientstatus": patientstatus}})
-            return jsonify({"message":"data updated"}),200
-        else:
-            print("no data found associated with the id")
-            return jsonify({"error":"no data found"}),404
+        return jsonify({"message": "Patient status updated successfully"}), 200
     except Exception as e:
         print(e)
         generatelogs('error', f'{str(e)}', 'updatepatientadmit.py')
