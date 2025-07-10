@@ -130,6 +130,7 @@ from controller.doctorsops.doctortimetable import doctortimetablebp
 from controller.doctorsops.doctortimetableupdate import doctortimetableupdatebp
 from controller.emergency_services.emservice import emservicebp
 from controller.emergency_services.allemservices import getallservicesbp
+from controller.emergency_services.emservicebyid import emservicebyidbp
 
 load_dotenv()
 
@@ -304,6 +305,7 @@ app.register_blueprint(getdisdetailsp_bp)
 #emergency service
 app.register_blueprint(emservicebp)
 app.register_blueprint(getallservicesbp)
+app.register_blueprint(emservicebyidbp)
 #websocket based routes
 
 if __name__ == '__main__':
