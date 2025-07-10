@@ -33,6 +33,7 @@ def emservice():
     roomno = str(request.form.get('roomno'))
     bedno = str(request.form.get('bedno'))
     patientstatus = str(request.form.get('patientstatus'))
+    admissiontime = str(request.form.get('admissiontime'))
     try:
         db = get_db_connection()
         emservicecol = db['emservice']
@@ -50,6 +51,7 @@ def emservice():
             "roomno": roomno,
             "bedno": bedno,
             "patientstatus": patientstatus,
+            "admissiontime": admissiontime,
             "created_at": current_time.isoformat()
         })
         generatelogs("success", "Emergency service created successfully", "emservice.py")
@@ -57,5 +59,3 @@ def emservice():
     except Exception as e:
         generatelogs('error', f'{str(e)}', 'emservice.py')
         return jsonify({"error": "Internal server error"}), 500
-        
-    return jsonify({"message": "Emergency service created successfully"}), 200

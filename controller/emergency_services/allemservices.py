@@ -37,7 +37,8 @@ def getallservicesfn():
                 'roomno':allservice.get('roomno'),
                 'bedno':allservice.get('bedno'),
                 'patientstatus':allservice.get('patientstatus'),
-                'created_at':allservice.get('created_at')
+                'created_at':allservice.get('created_at'),
+                'admissiontime':allservice.get('admissiontime')
             }
             results.append(payloaddata)
         generatelogs('success','all services data hasbeen fetched','getallservices.py')
