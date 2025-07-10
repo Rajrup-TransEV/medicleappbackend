@@ -48,7 +48,7 @@ def emserviceupdate():
         if admissiontime:
             updated_fields['admissiontime'] = admissiontime
 
-        emservicecol.update_one({"uid": uid}, {"$set": updated_fields})
+        emservicecol.update_one({"uid": emserviceid}, {"$set": updated_fields})
         generatelogs("success", "Emergency service updated successfully", "emserviceupdate.py")
         return jsonify({"message": "Emergency service updated successfully"}), 200
     except Exception as e:
