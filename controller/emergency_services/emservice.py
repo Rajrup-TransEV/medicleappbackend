@@ -42,10 +42,6 @@ def emservice():
             "patientgurdianphone": patientgurdianphone,
             "priority": priority,
             "assigned_doctor": assigned_doctor,
-            "assigned_staff": assigned_staff,
-            "wardno": wardno,
-            "roomno": roomno,
-            "bedno": bedno,
             "patientstatus": patientstatus,
             "admissiontime": admissiontime,
             "created_at": current_time.isoformat()
