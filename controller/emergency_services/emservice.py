@@ -28,10 +28,6 @@ def emservice():
     patientgurdianphone = str(request.form.get('patientgurdianphone'))
     priority = str(request.form.get('priority'))
     assigned_doctor = str(request.form.get('assigned_doctor'))
-    assigned_staff = str(request.form.get('assigned_staff'))
-    wardno = str(request.form.get('wardno'))
-    roomno = str(request.form.get('roomno'))
-    bedno = str(request.form.get('bedno'))
     patientstatus = str(request.form.get('patientstatus'))
     admissiontime = str(request.form.get('admissiontime'))
     try:

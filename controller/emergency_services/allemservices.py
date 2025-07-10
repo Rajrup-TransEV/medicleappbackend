@@ -32,10 +32,6 @@ def getallservicesfn():
                 'patientgurdianphone':allservice.get('patientgurdianphone'),
                 'priority':allservice.get('priority'),
                 'assigned_doctor':allservice.get('assigned_doctor'),
-                'assigned_staff':allservice.get('assigned_staff'),
-                'wardno':allservice.get('wardno'),
-                'roomno':allservice.get('roomno'),
-                'bedno':allservice.get('bedno'),
                 'patientstatus':allservice.get('patientstatus'),
                 'created_at':allservice.get('created_at'),
                 'admissiontime':allservice.get('admissiontime')
