@@ -128,6 +128,8 @@ from controller.discharge.deletepadops import deletepadops_bp
 from controller.discharge.getdisdetailsp import getdisdetailsp_bp
 from controller.doctorsops.doctortimetable import doctortimetablebp
 from controller.doctorsops.doctortimetableupdate import doctortimetableupdatebp
+from controller.emergency_services.emservice import emservicebp
+from controller.emergency_services.allemservices import getallservicesbp
 
 load_dotenv()
 
@@ -299,6 +301,9 @@ app.register_blueprint(pdopsbp)
 app.register_blueprint(getallpadops_bp)
 app.register_blueprint(deletepadops_bp)
 app.register_blueprint(getdisdetailsp_bp)
+#emergency service
+app.register_blueprint(emservicebp)
+app.register_blueprint(getallservicesbp)
 #websocket based routes
 
 if __name__ == '__main__':
