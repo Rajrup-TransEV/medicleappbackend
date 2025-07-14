@@ -1,3 +1,22 @@
+from flask import Blueprint, jsonify, request
+import os
+from pymongo import MongoClient
+from utils.logs import generatelogs
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+# MongoDB connection setup
+def get_db_connection():
+        client = MongoClient(os.getenv('MONGODB_URI'))
+        db = client[os.getenv('DB_NAME')]
+        return db
+
+lessdocbp = Blueprint('lessdocbp',__name__)
+
+
 @lessdocbp.route('/selectivedoctordata', methods=['POST'])
 def lessdocbpfn():
     doctorspecialization = str(request.form.get('doctorspecialization')).lower()
