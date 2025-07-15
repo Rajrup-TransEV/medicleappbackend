@@ -33,7 +33,14 @@ def is_valid_email(email):
 @signup_bp.route('/patients/signup', methods=['POST'])
 def signup():
     # Extracting user details from request data
+    firstname = request.form.get('firstname')
+    lastname = request.form.get('lastname')
+    gender = str(request.form.get('gender'))
+    dob = str(request.form.get('dob'))
+    address = str(request.form.get('address'))
     email = str(request.form.get('email'))
+    age = str(request.form.get('age'))
+    phonenumber = str(request.form.get('phonenumber'))
     password = str(request.form.get('password'))
     confirm_password = str(request.form.get('confirm_password'))
     entered_otp = request.form.get('otp')  # Check if OTP is provided
@@ -56,7 +63,14 @@ def signup():
                 
                 user_data_to_store = {
                     "uid": str(uuid.uuid4()),
+                    "firstname": firstname,
+                    "lastname": lastname,
+                    "gender": gender,
+                    "dob": dob,
+                    "address": address,
                     "email": email,
+                    "age": age,
+                    "phonenumber": phonenumber,
                     "password": user_data["password"],
                     "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
                     "profilepictures": 'none',
