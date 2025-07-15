@@ -23,6 +23,7 @@ def gethomecarebypatientidfn():
         db = get_db_connection()
         homecare_col = db['homecare']
         doctors_col = db['doctors']
+        staff_col = db['staff']  # Added staff collection
 
         patientid = str(request.form.get('patientid'))
         homecare_cursor = homecare_col.find({"patientid": patientid})
@@ -31,6 +32,7 @@ def gethomecarebypatientidfn():
         for doc in homecare_cursor:
             doc.pop('_id', None)
             doctor_info = {}
+            staff_info = {}
 
             # Attach doctor details
             doctorid = doc.get("doctorid")
@@ -38,6 +40,17 @@ def gethomecarebypatientidfn():
                 doctor = doctors_col.find_one({"uid": doctorid}, {"_id": 0})
                 if doctor:
                     doctor_info = doctor
+
+            # Attach staff details from assignedstaffid
+            assignedstaffid = doc.get("assignedstaffid")
+            if assignedstaffid:
+                staff = staff_col.find_one({"uid": assignedstaffid}, {"_id": 0, "staffname": 1, "email": 1})
+                if staff:
+                    staff_info = staff
+                else:
+                    staff_info = {"error": "Staff not found"}
+            else:
+                staff_info = {"info": "No staff assigned"}
 
             # Handle base64 encoding of attachments
             attachments_data = []
@@ -65,7 +78,8 @@ def gethomecarebypatientidfn():
 
             result.append({
                 "homecare": doc,
-                "doctor": doctor_info
+                "doctor": doctor_info,
+                "assigned_staff": staff_info  # Included staff details in response
             })
 
         return jsonify({"data": result}), 200
