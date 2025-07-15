@@ -35,39 +35,32 @@ def pprofilecreate():
         if not patient:
             return jsonify({"error": "Patient not found!"}), 404
 
-        # Only update fields that are present and not empty
-        fields_to_check = [
-            'firstname', 'lastname', 'age', 'bloodgroup', 'weight', 'height',
-            'gender', 'dob', 'phonenumber', 'address', 'email'
-        ]
-
+        # Update only non-empty fields
         update_fields = {}
-        for field in fields_to_check:
+        for field in ['firstname', 'lastname', 'age', 'bloodgroup', 'weight', 'height',
+                      'gender', 'dob', 'phonenumber', 'address', 'email']:
             value = request.form.get(field)
-            if value not in [None, '']:  # Ignore empty or None values
+            if value not in [None, '']:
                 update_fields[field] = value
 
-        # Handle profile picture if provided
+        # Handle profile picture
         profilepicture = request.files.get('profilepicture')
         if profilepicture:
             filename = secure_filename(profilepicture.filename)
             uniquefilename = f"{uuid.uuid4()}_{filename}"
             filepath = os.path.join(UPLOAD_FOLDER, uniquefilename)
-
             with open(filepath, 'wb') as img_file:
                 img_file.write(profilepicture.read())
-
-            update_fields['profilepicture'] = filepath
+            update_fields['profilepicture'] = filepath  # Store only the path
 
         if not update_fields:
             return jsonify({"error": "No valid fields provided for update."}), 400
 
-        # Perform the update
-        result = patient_collection.update_one({"uid": patientid}, {"$set": update_fields})
+        # Update DB
+        patient_collection.update_one({"uid": patientid}, {"$set": update_fields})
 
-        # Fetch the updated document
+        # Fetch updated document
         updated_patient_data = patient_collection.find_one({"uid": patientid})
-
         updated_data = {
             "firstname": updated_patient_data.get('firstname', ''),
             "lastname": updated_patient_data.get('lastname', ''),
@@ -83,8 +76,10 @@ def pprofilecreate():
             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 
-        if 'profilepicture' in updated_patient_data and os.path.exists(updated_patient_data['profilepicture']):
-            with open(updated_patient_data['profilepicture'], 'rb') as img_file:
+        # Add base64-encoded image to response only (not stored in DB)
+        pic_path = updated_patient_data.get('profilepicture')
+        if pic_path and os.path.exists(pic_path):
+            with open(pic_path, 'rb') as img_file:
                 encoded_image = base64.b64encode(img_file.read()).decode('utf-8')
                 updated_data['profilepicture'] = encoded_image
 
