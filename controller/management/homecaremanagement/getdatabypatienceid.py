@@ -23,7 +23,7 @@ def gethomecarebypatientidfn():
         db = get_db_connection()
         homecare_col = db['homecare']
         doctors_col = db['doctors']
-        staff_col = db['staff']  # Added staff collection
+        staff_col = db['staffs']  # Added staff collection
 
         patientid = str(request.form.get('patientid'))
         homecare_cursor = homecare_col.find({"patientid": patientid})
