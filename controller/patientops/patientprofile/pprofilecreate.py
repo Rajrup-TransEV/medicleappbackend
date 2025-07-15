@@ -9,118 +9,90 @@ from werkzeug.utils import secure_filename
 import base64
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 UPLOAD_FOLDER = 'uploads/patientprofilepictures'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# MongoDB connection setup
 def get_db_connection():
-        client = MongoClient(os.getenv('MONGODB_URI'))
-        db = client[os.getenv('DB_NAME')]
-        return db
+    client = MongoClient(os.getenv('MONGODB_URI'))
+    db = client[os.getenv('DB_NAME')]
+    return db
+
 pprofilecreate_bp = Blueprint('pprofilecreate_bp', __name__)
 
 @pprofilecreate_bp.route("/patients/profile/update", methods=["POST"])
 def pprofilecreate():
-    # Retrieve form data
-    firstname = request.form.get('firstname')
-    lastname = request.form.get('lastname')
-    age = request.form.get('age')
-    bloodgroup = request.form.get('bloodgroup')
-    weight = request.form.get('weight')
-    height = request.form.get('height')
-    gender = request.form.get('gender')
-    dob = request.form.get('dob')
-    phonenumber = request.form.get('phonenumber')
-    address = request.form.get('address')
-    email = request.form.get('email')
-    # name = request.form.get('name')
-
-    # Handle file upload
-    profilepicture = request.files.get('profilepicture')  # Get the uploaded file
-    patientid = str(request.form.get('patientid'))
-
-    update_fields = {}
-    
     try:
         db = get_db_connection()
         patient_collection = db['patients']
-        patient = patient_collection.find_one({"uid": patientid})
 
+        patientid = request.form.get('patientid')
+        if not patientid:
+            return jsonify({"error": "Missing patient ID."}), 400
+
+        patient = patient_collection.find_one({"uid": patientid})
         if not patient:
             return jsonify({"error": "Patient not found!"}), 404
-        
-        # Update fields only if they are provided and not None
-        if firstname is not None:
-            update_fields['firstname'] = firstname
-        if lastname is not None:
-            update_fields['lastname'] = lastname
-        if age is not None:
-            update_fields['age'] = age
-        if bloodgroup is not None:
-            update_fields['bloodgroup'] = bloodgroup
-        if weight is not None:
-            update_fields['weight'] = weight
-        if height is not None:
-            update_fields['height'] = height
-        if gender is not None:
-            update_fields['gender'] = gender
-        if dob is not None:
-            update_fields['dob'] = dob
-        if phonenumber is not None:
-            update_fields['phonenumber'] = phonenumber
-        if address is not None:
-            update_fields['address'] = address
-        if email is not None:
-            update_fields['email'] = email
-        # if name is not None:
-        #     update_fields['name'] = name
-        
-        # Handle profile picture upload if provided
+
+        # Only update fields that are present and not empty
+        fields_to_check = [
+            'firstname', 'lastname', 'age', 'bloodgroup', 'weight', 'height',
+            'gender', 'dob', 'phonenumber', 'address', 'email'
+        ]
+
+        update_fields = {}
+        for field in fields_to_check:
+            value = request.form.get(field)
+            if value not in [None, '']:  # Ignore empty or None values
+                update_fields[field] = value
+
+        # Handle profile picture if provided
+        profilepicture = request.files.get('profilepicture')
         if profilepicture:
             filename = secure_filename(profilepicture.filename)
             uniquefilename = f"{uuid.uuid4()}_{filename}"
             filepath = os.path.join(UPLOAD_FOLDER, uniquefilename)
 
-            # Save the profile picture in binary mode
-            with open(filepath, 'wb') as img_file:  # Open the file in write-binary mode
-                img_file.write(profilepicture.read())  # Write the content of the uploaded file
-            
-            update_fields['profilepicture'] = filepath  # Save the path to the database
+            with open(filepath, 'wb') as img_file:
+                img_file.write(profilepicture.read())
 
-        # Update the patient record in the database only with non-null fields
+            update_fields['profilepicture'] = filepath
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields provided for update."}), 400
+
+        # Perform the update
         result = patient_collection.update_one({"uid": patientid}, {"$set": update_fields})
 
-        # Fetch updated patient data from database after updating it
+        # Fetch the updated document
         updated_patient_data = patient_collection.find_one({"uid": patientid})
 
-        # Prepare updated data including base64 encoded image if available
         updated_data = {
-            "firstname": updated_patient_data['firstname'],
-            "lastname": updated_patient_data['lastname'],
-            "age": updated_patient_data['age'],
-            "bloodgroup": updated_patient_data['bloodgroup'],
-            "weight": updated_patient_data['weight'],
-            "height": updated_patient_data['height'],
-            "gender": updated_patient_data['gender'],
-            "dob": updated_patient_data['dob'],
-            "phonenumber": updated_patient_data['phonenumber'],
-            "address": updated_patient_data['address'],
-            "email": updated_patient_data['email'],
-              "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
-            # "name": updated_patient_data['name'],
+            "firstname": updated_patient_data.get('firstname', ''),
+            "lastname": updated_patient_data.get('lastname', ''),
+            "age": updated_patient_data.get('age', ''),
+            "bloodgroup": updated_patient_data.get('bloodgroup', ''),
+            "weight": updated_patient_data.get('weight', ''),
+            "height": updated_patient_data.get('height', ''),
+            "gender": updated_patient_data.get('gender', ''),
+            "dob": updated_patient_data.get('dob', ''),
+            "phonenumber": updated_patient_data.get('phonenumber', ''),
+            "address": updated_patient_data.get('address', ''),
+            "email": updated_patient_data.get('email', ''),
+            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 
-        # Encode profile picture to base64 if it exists in the database
         if 'profilepicture' in updated_patient_data and os.path.exists(updated_patient_data['profilepicture']):
             with open(updated_patient_data['profilepicture'], 'rb') as img_file:
                 encoded_image = base64.b64encode(img_file.read()).decode('utf-8')
-                updated_data['profilepicture'] = encoded_image  # Add base64 image to response
+                updated_data['profilepicture'] = encoded_image
 
-        return jsonify({"message": "Patient profile updated successfully!", "updateddata": updated_data}), 200
-   
+        return jsonify({
+            "message": "Patient profile updated successfully!",
+            "updateddata": updated_data
+        }), 200
+
     except Exception as e:
         generatelogs('error', f'Error occurred: {str(e)}', 'patientops/profile.py')
         return jsonify({"error": "An error occurred while updating the profile."}), 500
