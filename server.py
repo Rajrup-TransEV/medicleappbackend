@@ -136,6 +136,8 @@ from controller.labops.labbook import labbookbp
 from controller.labops.labbookupdate import labbookupdatebp
 from controller.labops.labbookingofpatient import labbookofapatientbp
 from controller.labops.getalllabbook import getalllabbookbp
+from controller.doctorsops.appointmentfees import appointmentfeesbp
+from controller.doctorsops.getallappointmentfees import getallappointmentfeesbp
 
 load_dotenv()
 
@@ -200,6 +202,8 @@ app.register_blueprint(getallleavebydocidbp)#'/doctors/leave
 app.register_blueprint(lessdocbp)
 app.register_blueprint(doctortimetablebp)
 app.register_blueprint(doctortimetableupdatebp)
+app.register_blueprint(appointmentfeesbp)
+app.register_blueprint(getallappointmentfeesbp)
 #doctor route ends
 #admin routes
 app.register_blueprint(deleteadminaccountbp)
