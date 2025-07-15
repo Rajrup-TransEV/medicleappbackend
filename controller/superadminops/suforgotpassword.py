@@ -31,6 +31,10 @@ def passwordresetfn():
     email = request.form.get('email')
     otp = request.form.get('otp')
     new_password = request.form.get('newpassword')
+    
+    if len(new_password) < 6:
+        generatelogs('error', f"Password too short for {email}.", 'superadminops/suforgotpassword.py')
+        return jsonify({"error": "Password must be at least 6 characters long!"}), 400
 
     try:
         db = get_db_connection()

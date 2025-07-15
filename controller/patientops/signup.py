@@ -114,6 +114,10 @@ def signup():
     except Exception as e:
         generatelogs('error', f"Database error: {str(e)}", 'patientops/signup.py')
         return jsonify({"error": "Internal server error."}), 500
+    
+    if len(password) < 6:
+        generatelogs('error', f"Password too short for {email}.", 'patientops/signup.py')
+        return jsonify({"error": "Password must be at least 6 characters long!"}), 400
 
     # Generate 6-digit OTP
     otp = random.randint(100000, 999999)

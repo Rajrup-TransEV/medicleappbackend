@@ -76,6 +76,10 @@ def doctorsignupfn():
     else:
         profile_picture_path = 'none'  # Default if no file is uploaded
 
+    if len(password) < 6:
+        generatelogs('error', f"Password too short for {email}.", 'doctorsignup.py')
+        return jsonify({"error": "Password must be at least 6 characters long!"}), 400
+
     # Check if OTP is provided for verification
     if entered_otp:
         if email in temporary_storage:

@@ -48,6 +48,10 @@ def adminsignup():
     password = str(request.form.get('password'))
     confirm_password = str(request.form.get('confirm_password'))
     entered_otp = request.form.get('otp')  # Check if OTP is provided
+    
+    if len(password) < 6:
+        generatelogs('error', f"Password too short for {email}.", 'adminops/signup.py')
+        return jsonify({"error": "Password must be at least 6 characters long!"}), 400
 
     # Modify email to add admin suffix before @
     email_parts = raw_email.split('@')
