@@ -134,6 +134,7 @@ from controller.emergency_services.emservicebyid import emservicebyidbp
 from controller.emergency_services.emserviceupdate import emserviceupdatebp
 from controller.labops.labbook import labbookbp
 from controller.labops.labbookupdate import labbookupdatebp
+from controller.labops.labbookingofpatient import labbookofapatientbp
 
 load_dotenv()
 
@@ -256,6 +257,7 @@ app.register_blueprint(labupdatebp)
 app.register_blueprint(labdeletebp)
 app.register_blueprint(labreportbypatientidbp)
 app.register_blueprint(labbookbp)
+app.register_blueprint(labbookofapatientbp)
 # SUPPORT OPS
 app.register_blueprint(supportcreatebp)
 app.register_blueprint(getsupportallbp)
