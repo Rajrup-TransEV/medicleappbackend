@@ -132,7 +132,8 @@ from controller.emergency_services.emservice import emservicebp
 from controller.emergency_services.allemservices import getallservicesbp
 from controller.emergency_services.emservicebyid import emservicebyidbp
 from controller.emergency_services.emserviceupdate import emserviceupdatebp
-from controller.patientops.pfupdatedata import pfupdatedata_bp
+from controller.labops.labbook import labbookbp
+from controller.labops.labbookupdate import labbookupdatebp
 
 load_dotenv()
 
@@ -178,7 +179,7 @@ app.register_blueprint(deleteprofile_bp) #/patientops/deleteprofile
 app.register_blueprint(patientviewbp)
 app.register_blueprint(prescribeaccessupdate_bp)
 app.register_blueprint(labdataaccessupdate_bp)
-app.register_blueprint(pfupdatedata_bp)
+app.register_blueprint(labbookupdatebp)
 #patient profile route ends
 #doctor routes
 app.register_blueprint(doctorsignup_bp) #/doctor/signup
@@ -254,6 +255,7 @@ app.register_blueprint(labreportbyidbp)
 app.register_blueprint(labupdatebp)
 app.register_blueprint(labdeletebp)
 app.register_blueprint(labreportbypatientidbp)
+app.register_blueprint(labbookbp)
 # SUPPORT OPS
 app.register_blueprint(supportcreatebp)
 app.register_blueprint(getsupportallbp)
