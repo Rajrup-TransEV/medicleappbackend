@@ -1,10 +1,7 @@
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 import os
-import pytz
-from datetime import datetime
-from utils.logs import generatelogs
-from lib.emailsender import email_sender
+import base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,29 +22,55 @@ def gethomecarebydocidfn():
         doctors_col = db['doctors']
 
         doctorid = str(request.form.get('doctorid'))
+        if not doctorid:
+            return jsonify({'error': 'doctorid is required'}), 400
 
-        # Get doctor details (only once)
+        # Get doctor details
         doctor = doctors_col.find_one({"uid": doctorid}, {"_id": 0})
         if not doctor:
             return jsonify({'error': 'Doctor not found'}), 404
 
-        # Get all homecare entries for the doctor
+        # Fetch homecare records assigned to this doctor
         homecares = homecare_col.find({"doctorid": doctorid}, {"_id": 0})
         enriched_homecares = []
 
         for entry in homecares:
-            patientid = entry.get("patientid")
-            patient = patients_col.find_one({"uid": patientid}, {"_id": 0})
+            # Handle attachments
+            attachments_data = []
+            for filepath in entry.get('attachments', []):
+                try:
+                    if os.path.exists(filepath):
+                        with open(filepath, "rb") as f:
+                            encoded = base64.b64encode(f.read()).decode('utf-8')
+                            attachments_data.append({
+                                "filename": os.path.basename(filepath),
+                                "data": encoded
+                            })
+                    else:
+                        attachments_data.append({
+                            "filename": os.path.basename(filepath),
+                            "error": "File not found"
+                        })
+                except Exception as file_err:
+                    attachments_data.append({
+                        "filename": os.path.basename(filepath),
+                        "error": str(file_err)
+                    })
 
-            enriched_entry = {
+            entry['attachments'] = attachments_data
+
+            # Get patient data
+            patientid = entry.get("patientid")
+            patient = patients_col.find_one({"uid": patientid}, {"_id": 0}) if patientid else {}
+
+            enriched_homecares.append({
                 "homecare": entry,
                 "patient": patient if patient else {},
                 "doctor": doctor
-            }
-            enriched_homecares.append(enriched_entry)
+            })
 
-        return jsonify({"data": enriched_homecares})
+        return jsonify({"data": enriched_homecares}), 200
 
     except Exception as e:
         print(e)
-        return jsonify({'error': f'{str(e)}'}), 500
+        return jsonify({'error': f'Error: {str(e)}'}), 500

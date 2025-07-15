@@ -4,8 +4,7 @@ import os
 import uuid
 import pytz
 from datetime import datetime
-from utils.logs import generatelogs
-from lib.emailsender import email_sender
+import base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,15 +20,44 @@ getallhomecarebp = Blueprint("getallhomecarebp", __name__)
 def getallhomecarefn():
     tz = pytz.timezone('Asia/Kolkata')
     current_time = datetime.now(tz)
+    
     try:
         db = get_db_connection()
         homecarecollection = db['homecare']
         
-        # Exclude `_id` using projection
         homecaredata = homecarecollection.find({}, {"_id": 0})
-        homecarelist = list(homecaredata)
+        homecarelist = []
 
-        return jsonify(homecarelist)
+        for entry in homecaredata:
+            attachments_data = []
+            if 'attachments' in entry:
+                for filepath in entry['attachments']:
+                    try:
+                        if os.path.exists(filepath):
+                            with open(filepath, "rb") as f:
+                                encoded_file = base64.b64encode(f.read()).decode('utf-8')
+                                filename = os.path.basename(filepath)
+                                attachments_data.append({
+                                    "filename": filename,
+                                    "data": encoded_file
+                                })
+                        else:
+                            attachments_data.append({
+                                "filename": os.path.basename(filepath),
+                                "error": "File not found"
+                            })
+                    except Exception as file_error:
+                        attachments_data.append({
+                            "filename": os.path.basename(filepath),
+                            "error": str(file_error)
+                        })
+
+                entry['attachments'] = attachments_data
+            
+            homecarelist.append(entry)
+
+        return jsonify(homecarelist), 200
+
     except Exception as e:
         print(e)
-        return jsonify({'message': f'{str(e)}'})
+        return jsonify({'message': f'Error: {str(e)}'}), 500
