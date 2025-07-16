@@ -74,14 +74,16 @@ def createbillfn():
     now = datetime.now(ist)
     bill_id = str(uuid.uuid4())
 
-    # Billing calculation using only frontend values
+    # Total calculation
     gross_total = room_charge + treatment_charge + medicine_charge + lab_charge + other_charges + fees_amount
-    discount_amount = (discount_percent / 100) * gross_total
-    after_discount = gross_total - discount_amount
-    insurance_coverage_amount = (insurance_coverage_percent / 100) * after_discount
-    final_amount_payable = after_discount - insurance_coverage_amount
 
-    # Create billing document
+    # Correct percentage-based calculations
+    discount_amount = round((discount_percent * gross_total) / 100, 2)
+    after_discount = gross_total - discount_amount
+    insurance_coverage_amount = round((insurance_coverage_percent * after_discount) / 100, 2)
+    final_amount_payable = round(after_discount - insurance_coverage_amount, 2)
+
+    # Build bill data
     bill_data = {
         "bill_id": bill_id,
         "created_at": now.isoformat(),
@@ -167,7 +169,11 @@ Details:
 
     email_sender(patientemailid, email_subject, email_body)
 
-    generatelogs('success', f"Billing created for {patientemailid} by {doctoremailid if doctoremailid else 'N/A'} with Bill ID {bill_id}", 'billingops/createbill.py')
+    generatelogs(
+        'success',
+        f"Billing created for {patientemailid} by {doctoremailid if doctoremailid else 'N/A'} with Bill ID {bill_id}",
+        'billingops/createbill.py'
+    )
 
     return jsonify({
         "status": True,
