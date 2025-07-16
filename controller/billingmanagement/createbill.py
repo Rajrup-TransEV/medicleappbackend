@@ -16,7 +16,6 @@ def get_db_connection():
     return db
 
 createbillbp = Blueprint('createbillbp', __name__)
-
 @createbillbp.route('/billing/createbill', methods=['POST'])
 def createbillfn():
     db = get_db_connection()
@@ -24,9 +23,8 @@ def createbillfn():
     patients_collection = db['patients']
     doctors_collection = db['doctors']
 
-    # Extracting form data
     patientemailid = str(request.form.get('patientemailid'))
-    doctoremailid = str(request.form.get('doctoremailid'))
+    doctoremailid = request.form.get('doctoremailid')
     purpose = str(request.form.get('purpose'))
     rooms = str(request.form.get('rooms'))
     treatmenttype = str(request.form.get('treatmenttype'))
@@ -47,9 +45,12 @@ def createbillfn():
     if not patient:
         return jsonify({"status": False, "message": "Patient not found"}), 404
 
-    # Fetch doctor
-    doctor = doctors_collection.find_one({"email": doctoremailid})
-    
+    # Fetch doctor only if doctoremailid is provided
+    doctor = None
+    if doctoremailid:
+        doctoremailid = str(doctoremailid)
+        doctor = doctors_collection.find_one({"email": doctoremailid})
+
     # Billing calculations
     bill_id = str(uuid.uuid4())
     ist = pytz.timezone('Asia/Kolkata')
@@ -82,7 +83,7 @@ def createbillfn():
         "created_at": now.isoformat(),
         "status": "pending",
         "purpose": purpose,
-
+        
         # Patient Info
         "patient_uid": patient["uid"],
         "patient_name": f"{patient['firstname']} {patient['lastname']}",
@@ -91,14 +92,14 @@ def createbillfn():
         "patient_gender": patient.get("gender"),
         "patient_age": patient.get("age"),
 
-        # Doctor Info
-        "doctor_uid": doctor["uid"] if doctor["uid"] else None,
-        "doctor_name": doctor["fullname"] if doctor["fullname"] else None,
-        "doctor_email": doctoremailid if doctoremailid else None,
-        "doctor_phone": doctor.get("phonenumber") if doctor.get("phonenumber") else None,
-        "department": doctor.get("specialization") if doctor.get("specialization") else None,
-        "qualification": doctor.get("qualification") if doctor.get("qualification") else None,
-        "license_number": doctor.get("license_number") if doctor.get("license_number") else None,
+        # Doctor Info (conditionally filled)
+        "doctor_uid": doctor.get("uid") if doctor else None,
+        "doctor_name": doctor.get("fullname") if doctor else None,
+        "doctor_email": doctoremailid if doctor else None,
+        "doctor_phone": doctor.get("phonenumber") if doctor else None,
+        "department": doctor.get("specialization") if doctor else None,
+        "qualification": doctor.get("qualification") if doctor else None,
+        "license_number": doctor.get("license_number") if doctor else None,
 
         # Treatment Info
         "room_type": rooms,
@@ -151,16 +152,16 @@ Details:
 - Discount: {discount_percent}% (-₹{discount_amount})
 - Insurance: {insurance_coverage_percent}% (-₹{insurance_coverage_amount})
 - Final Amount Payable: ₹{final_amount_payable}
-- Doctor: {doctor['fullname']} ({doctor['specialization']})
-
-Please visit the billing counter or use online payment via {payment_method}.
-
-Regards,  
-Hospital Admin
 """
+
+    if doctor:
+        email_body += f"\n- Doctor: {doctor['fullname']} ({doctor.get('specialization', 'N/A')})"
+
+    email_body += "\n\nPlease visit the billing counter or use online payment via {}.\n\nRegards,  \nHospital Admin".format(payment_method)
+
     email_sender(patientemailid, email_subject, email_body)
 
-    generatelogs('success', f"Billing created for {patientemailid} by {doctoremailid} with Bill ID {bill_id}", 'billingops/createbill.py')
+    generatelogs('success', f"Billing created for {patientemailid} by {doctoremailid if doctoremailid else 'N/A'} with Bill ID {bill_id}", 'billingops/createbill.py')
 
     return jsonify({
         "status": True,
