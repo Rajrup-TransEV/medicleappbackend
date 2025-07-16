@@ -32,7 +32,7 @@ def labbookfn():
         booking_time = request.form.get('booking_time')  # Expecting ISO format
         doctor_reference = str(request.form.get('doctor_reference'))
         patient_email = str(request.form.get('email'))
-
+        labtesttype = str(request.form.get('labtesttype', ''))
         if not all([labbookname, cause, booking_time, doctor_reference, patient_email]):
             return jsonify({"error": "Missing required fields"}), 400
 
@@ -75,6 +75,7 @@ def labbookfn():
             'patient_firstname': first_name,
             'patient_lastname': last_name,
             'patient_phone': phone_number,
+            'labtesttype': labtesttype,
             'attachment_path': attachment_path,
             'created_at': datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
