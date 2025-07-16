@@ -34,6 +34,7 @@ def createbillfn():
     medicine_charge = float(request.form.get('medicine_charge', 0))
     lab_charge = float(request.form.get('lab_charge', 0))
     other_charges = float(request.form.get('other_charges', 0))
+    fees_amount = float(request.form.get('fees_amount', 0))
     discount_percent = float(request.form.get('discount_percent', 0))
     insurance_provider = request.form.get('insurance_provider', None)
     insurance_coverage_percent = float(request.form.get('insurance_coverage_percent', 0))
@@ -48,9 +49,7 @@ def createbillfn():
 
     # Fetch doctor
     doctor = doctors_collection.find_one({"email": doctoremailid})
-    if not doctor:
-        return jsonify({"status": False, "message": "Doctor not found"}), 404
-
+    
     # Billing calculations
     bill_id = str(uuid.uuid4())
     ist = pytz.timezone('Asia/Kolkata')
@@ -72,7 +71,7 @@ def createbillfn():
     room_charge = room_cost.get(rooms.lower(), 1000) * int(treatmentduration)
     treatment_charge = treatment_costs.get(treatmenttype.lower(), 1000)
 
-    gross_total = room_charge + treatment_charge + medicine_charge + lab_charge + other_charges
+    gross_total = room_charge + treatment_charge + medicine_charge + lab_charge + other_charges + fees_amount
     discount_amount = (discount_percent / 100) * gross_total
     after_discount = gross_total - discount_amount
     insurance_coverage_amount = (insurance_coverage_percent / 100) * after_discount
