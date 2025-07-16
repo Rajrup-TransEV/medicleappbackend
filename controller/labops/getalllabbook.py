@@ -19,7 +19,7 @@ def get_db_connection():
 
 getalllabbookbp = Blueprint('getalllabbookbp',__name__)
 
-@getalllabbookbp.route('/getalllabbook',methods=['POST'])
+@getalllabbookbp.route('/getalllabbook',methods=['GET'])
 def getalllabbookfn():
     try:
         db = get_db_connection()
