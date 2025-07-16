@@ -46,7 +46,7 @@ def labbookupdatefn():
             update_details['doctor_reference'] = doctor_reference
         if patient_email:
             # Lookup new patient details
-            patient_col = db['patient']
+            patient_col = db['patients']
             patient = patient_col.find_one({'email': patient_email})
             if not patient:
                 generatelogs('error', f"Patient with email {patient_email} not found", "labbookupdate.py")
