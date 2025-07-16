@@ -15,7 +15,20 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
+def safe_float(value, default=0.0):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+def safe_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
 createbillbp = Blueprint('createbillbp', __name__)
+
 @createbillbp.route('/billing/createbill', methods=['POST'])
 def createbillfn():
     db = get_db_connection()
@@ -23,19 +36,26 @@ def createbillfn():
     patients_collection = db['patients']
     doctors_collection = db['doctors']
 
+    # Required inputs
     patientemailid = str(request.form.get('patientemailid'))
     doctoremailid = request.form.get('doctoremailid')
     purpose = str(request.form.get('purpose'))
-    rooms = str(request.form.get('rooms'))
-    treatmenttype = str(request.form.get('treatmenttype'))
-    treatmentduration = str(request.form.get('treatmentduration'))
-    medicine_charge = float(request.form.get('medicine_charge', 0))
-    lab_charge = float(request.form.get('lab_charge', 0))
-    other_charges = float(request.form.get('other_charges', 0))
-    fees_amount = float(request.form.get('fees_amount', 0))
-    discount_percent = float(request.form.get('discount_percent', 0))
-    insurance_provider = request.form.get('insurance_provider', None)
-    insurance_coverage_percent = float(request.form.get('insurance_coverage_percent', 0))
+
+    # Optional inputs from frontend
+    rooms = request.form.get('rooms', '').strip().lower()
+    treatmenttype = request.form.get('treatmenttype', '').strip().lower()
+    treatmentduration = safe_int(request.form.get('treatmentduration'))
+
+    # Charges must come from frontend
+    room_charge = safe_float(request.form.get('room_charge'))
+    treatment_charge = safe_float(request.form.get('treatment_charge'))
+    medicine_charge = safe_float(request.form.get('medicine_charge'))
+    lab_charge = safe_float(request.form.get('lab_charge'))
+    other_charges = safe_float(request.form.get('other_charges'))
+    fees_amount = safe_float(request.form.get('fees_amount'))
+    discount_percent = safe_float(request.form.get('discount_percent'))
+    insurance_provider = request.form.get('insurance_provider')
+    insurance_coverage_percent = safe_float(request.form.get('insurance_coverage_percent'))
     payment_method = request.form.get('payment_method', 'cash')
     notes = request.form.get('notes', '')
     created_by = request.form.get('created_by', 'system')
@@ -45,45 +65,29 @@ def createbillfn():
     if not patient:
         return jsonify({"status": False, "message": "Patient not found"}), 404
 
-    # Fetch doctor only if doctoremailid is provided
+    # Fetch doctor only if provided
     doctor = None
     if doctoremailid:
-        doctoremailid = str(doctoremailid)
-        doctor = doctors_collection.find_one({"email": doctoremailid})
+        doctor = doctors_collection.find_one({"email": str(doctoremailid)})
 
-    # Billing calculations
-    bill_id = str(uuid.uuid4())
     ist = pytz.timezone('Asia/Kolkata')
     now = datetime.now(ist)
+    bill_id = str(uuid.uuid4())
 
-    room_cost = {
-        "general": 1000,
-        "semi-private": 2000,
-        "private": 3000
-    }
-
-    treatment_costs = {
-        "physiotherapy": 1500,
-        "surgery": 15000,
-        "consultation": 500,
-        "medication": 1000
-    }
-
-    room_charge = room_cost.get(rooms.lower(), 1000) * int(treatmentduration)
-    treatment_charge = treatment_costs.get(treatmenttype.lower(), 1000)
-
+    # Billing calculation using only frontend values
     gross_total = room_charge + treatment_charge + medicine_charge + lab_charge + other_charges + fees_amount
     discount_amount = (discount_percent / 100) * gross_total
     after_discount = gross_total - discount_amount
     insurance_coverage_amount = (insurance_coverage_percent / 100) * after_discount
     final_amount_payable = after_discount - insurance_coverage_amount
 
+    # Create billing document
     bill_data = {
         "bill_id": bill_id,
         "created_at": now.isoformat(),
         "status": "pending",
         "purpose": purpose,
-        
+
         # Patient Info
         "patient_uid": patient["uid"],
         "patient_name": f"{patient['firstname']} {patient['lastname']}",
@@ -92,7 +96,7 @@ def createbillfn():
         "patient_gender": patient.get("gender"),
         "patient_age": patient.get("age"),
 
-        # Doctor Info (conditionally filled)
+        # Doctor Info (optional)
         "doctor_uid": doctor.get("uid") if doctor else None,
         "doctor_name": doctor.get("fullname") if doctor else None,
         "doctor_email": doctoremailid if doctor else None,
@@ -104,15 +108,16 @@ def createbillfn():
         # Treatment Info
         "room_type": rooms,
         "treatment_type": treatmenttype,
-        "treatment_duration_days": int(treatmentduration),
+        "treatment_duration_days": treatmentduration,
         "room_charge": room_charge,
         "treatment_charge": treatment_charge,
         "medicine_charge": medicine_charge,
         "lab_charge": lab_charge,
         "other_charges": other_charges,
+        "fees_amount": fees_amount,
         "gross_total": gross_total,
 
-        # Billing Adjustments
+        # Adjustments
         "discount_percent": discount_percent,
         "discount_amount": discount_amount,
         "insurance_provider": insurance_provider,
@@ -121,7 +126,7 @@ def createbillfn():
         "final_amount_payable": final_amount_payable,
         "final_amount": final_amount_payable,
 
-        # Payment
+        # Payment Info
         "payment_method": payment_method,
         "payment_status": "pending",
 
@@ -132,7 +137,7 @@ def createbillfn():
 
     billing_collection.insert_one(bill_data)
 
-    # Send confirmation email
+    # Email notification
     email_subject = f"Hospital Billing Confirmation - Bill ID {bill_id}"
     email_body = f"""
 Dear {patient['firstname']},
@@ -142,13 +147,14 @@ Your bill has been generated.
 Details:
 - Bill ID: {bill_id}
 - Purpose: {purpose}
-- Room: {rooms}
-- Treatment: {treatmenttype} for {treatmentduration} day(s)
+- Room: {rooms or 'N/A'}
+- Treatment: {treatmenttype or 'N/A'} for {treatmentduration} day(s)
 - Room Charges: ₹{room_charge}
 - Treatment Charges: ₹{treatment_charge}
 - Medicines: ₹{medicine_charge}
 - Lab Charges: ₹{lab_charge}
 - Other Charges: ₹{other_charges}
+- Fees: ₹{fees_amount}
 - Discount: {discount_percent}% (-₹{discount_amount})
 - Insurance: {insurance_coverage_percent}% (-₹{insurance_coverage_amount})
 - Final Amount Payable: ₹{final_amount_payable}
@@ -157,7 +163,7 @@ Details:
     if doctor:
         email_body += f"\n- Doctor: {doctor['fullname']} ({doctor.get('specialization', 'N/A')})"
 
-    email_body += "\n\nPlease visit the billing counter or use online payment via {}.\n\nRegards,  \nHospital Admin".format(payment_method)
+    email_body += f"\n\nPlease visit the billing counter or use online payment via {payment_method}.\n\nRegards,\nHospital Admin"
 
     email_sender(patientemailid, email_subject, email_body)
 
