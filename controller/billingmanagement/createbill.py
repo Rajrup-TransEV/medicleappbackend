@@ -92,13 +92,13 @@ def createbillfn():
         "patient_age": patient.get("age"),
 
         # Doctor Info
-        "doctor_uid": doctor["uid"],
-        "doctor_name": doctor["fullname"],
-        "doctor_email": doctoremailid,
-        "doctor_phone": doctor.get("phonenumber"),
-        "department": doctor.get("specialization"),
-        "qualification": doctor.get("qualification"),
-        "license_number": doctor.get("license_number"),
+        "doctor_uid": doctor["uid"] if doctor["uid"] else None,
+        "doctor_name": doctor["fullname"] if doctor["fullname"] else None,
+        "doctor_email": doctoremailid if doctoremailid else None,
+        "doctor_phone": doctor.get("phonenumber") if doctor.get("phonenumber") else None,
+        "department": doctor.get("specialization") if doctor.get("specialization") else None,
+        "qualification": doctor.get("qualification") if doctor.get("qualification") else None,
+        "license_number": doctor.get("license_number") if doctor.get("license_number") else None,
 
         # Treatment Info
         "room_type": rooms,
