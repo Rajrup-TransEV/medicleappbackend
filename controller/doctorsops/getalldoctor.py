@@ -35,6 +35,7 @@ def getalldoctor():
         db = get_db_connection()
         doctor_collection = db['doctors']
         timetable_collection = db['doctortimetable']
+        appointmentfees_collections = db['appointmentfees']
 
         doctors = doctor_collection.find()
 
@@ -51,7 +52,18 @@ def getalldoctor():
                     "schedule": t.get("schedule")
                 })
 
-            # Prepare doctor data including timetable
+            # Fetch appointment fees for this doctor
+            appointmentfees = list(appointmentfees_collections.find({"doctoremail": doctor.get("email")}))
+            formatted_appointmentfees = []
+            for af in appointmentfees:
+                formatted_appointmentfees.append({
+                    "uid": af.get("uid"),
+                    "doctoremail": af.get("doctoremail"),
+                    "appointmentfees": af.get("appointmentfees"),
+                    "created_at": af.get("created_at")
+                })
+
+            # Prepare doctor data including timetable and appointment fees
             doctor_data = {
                 'uid': doctor.get('uid'),
                 'fullname': doctor.get('fullname'),
@@ -64,7 +76,8 @@ def getalldoctor():
                 'license_number': doctor.get('license_number'),
                 'email': doctor.get('email'),
                 'phonenumber': doctor.get('phonenumber'),
-                'timetable': formatted_timetables
+                'timetable': formatted_timetables,
+                'appointmentfees': formatted_appointmentfees
             }
 
             doctor_list.append(doctor_data)
