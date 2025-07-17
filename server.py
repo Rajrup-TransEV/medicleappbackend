@@ -139,6 +139,8 @@ from controller.labops.getalllabbook import getalllabbookbp
 from controller.doctorsops.appointmentfees import appointmentfeesbp
 from controller.doctorsops.getallappointmentfees import getallappointmentfeesbp
 from controller.doctorsops.docappointmentfees import doctorappointmentfeesbp
+from controller.search.search import searchbp
+
 
 load_dotenv()
 
@@ -322,6 +324,8 @@ app.register_blueprint(emservicebp)
 app.register_blueprint(getallservicesbp)
 app.register_blueprint(emservicebyidbp)
 app.register_blueprint(emserviceupdatebp)
+#search
+app.register_blueprint(searchbp)
 #websocket based routes
 
 if __name__ == '__main__':
