@@ -6,7 +6,7 @@ import os
 from pymongo import MongoClient
 import pytz
 from utils.logs import generatelogs
-from reportlab.lib.pagesizes import A4  # Change to A4
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor
@@ -14,45 +14,36 @@ from datetime import datetime
 import textwrap
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 UPLOAD_FOLDER = 'uploads/medicaldirectory/prescribe/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db_connection():
-        client = MongoClient(os.getenv('MONGODB_URI'))
-        db = client[os.getenv('DB_NAME')]
-        return db
+    client = MongoClient(os.getenv('MONGODB_URI'))
+    db = client[os.getenv('DB_NAME')]
+    return db
 
 def wrap_text(pdf_canvas, text, max_width):
     """Wraps text to fit within a specified width."""
     wrapped_lines = []
-    # Wrap text to 100 characters initially
     initial_wrap = textwrap.wrap(text, width=95)
 
     for line in initial_wrap:
-        # Further wrap based on canvas width
         while pdf_canvas.stringWidth(line, 'Helvetica', 12) > max_width:
-            # Split the line at the last space within max_width
-            split_index = max_width // 6  # Rough estimate of average character width
+            split_index = max_width // 6
             while split_index > 0 and line[split_index] != ' ':
                 split_index -= 1
-            
-            if split_index == 0:  # No spaces found; break at max width
+            if split_index == 0:
                 split_index = len(line)
-
             wrapped_lines.append(line[:split_index])
-            line = line[split_index:].lstrip()  # Remove leading space for next line
-
-        if line:  # Add any remaining part of the line
+            line = line[split_index:].lstrip()
+        if line:
             wrapped_lines.append(line)
-
     return wrapped_lines
 
 def generate_prescription_id(length=6):
-    """Generate a random alphanumeric ID of specified length."""
-    characters = string.ascii_letters + string.digits  # Letters and digits
+    characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
 prescribe_bp = Blueprint('prescribe_bp', __name__)
@@ -60,111 +51,102 @@ prescribe_bp = Blueprint('prescribe_bp', __name__)
 @prescribe_bp.route('/createprescription', methods=['POST'])
 def createprescribfn():
     try:
-        # Generate a unique prescription ID
         prescription_id = generate_prescription_id()
 
-        # Retrieve form data
         hospitalname = str(request.form.get('hospitalname'))
         doctorid = str(request.form.get('doctorid'))
         patientid = str(request.form.get('patientid'))
         dateandtime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         diagonistics = str(request.form.get('diagonistics'))
+        medicine = str(request.form.get('medicine'))
 
-        # Save the file path to MongoDB
         db = get_db_connection()
         prescribe_collection = db['prescribe']
         doctor_collection = db['doctors']
         doctor = doctor_collection.find_one({"uid": doctorid})
-        
         doctorfullname = doctor['fullname']
         docqualification = doctor['qualification']
         docspecialization = doctor['specialization']
-        
+
         patientcollection = db['patients']
         patients = patientcollection.find_one({"uid": patientid})
-        
         patientfirstname = patients['firstname']
         patientlastname = patients['lastname']
 
-        # Generate a unique filename and save path
         unique_filename = f"prescription_{uuid.uuid4().hex}.pdf"
         save_path = os.path.join(UPLOAD_FOLDER, unique_filename)
 
-        # Generate PDF dynamically with A4 size
         pdf = canvas.Canvas(save_path, pagesize=A4)
         width, height = A4
 
-        # Header Section with a modern look
-        pdf.setFillColor(HexColor("#4A90E2"))  # Blue header background
+        # Header
+        pdf.setFillColor(HexColor("#4A90E2"))
         pdf.rect(0, height - 120, width, 120, fill=1)
-
-        # Hospital Logo (left side)
-        pdf.drawImage('./static/logo.jpg', 20, height - 100, width=80, height=80)  # Adjust path and size as needed
-
-        # Hospital Name (centered in header)
+        pdf.drawImage('./static/logo.jpg', 20, height - 100, width=80, height=80)
         pdf.setFont("Helvetica-Bold", 24)
-        pdf.setFillColor(HexColor("#FFFFFF"))  # White text
+        pdf.setFillColor(HexColor("#FFFFFF"))
         pdf.drawCentredString(width / 2, height - 70, hospitalname)
-
-        # Prescription ID (in small caps below hospital name)
         pdf.setFont("Helvetica", 12)
-        pdf.drawCentredString(width / 2, height - 90, f"Prescription ID: {prescription_id.lower()}")  # Small caps
+        pdf.drawCentredString(width / 2, height - 90, f"Prescription ID: {prescription_id.lower()}")
 
-        # Doctor Details Section below header
+        # Doctor Info
         pdf.setFont("Helvetica", 14)
-        pdf.setFillColor(HexColor("#333333"))  # Dark text color
-
+        pdf.setFillColor(HexColor("#333333"))
         pdf.drawString(20, height - 150, f"Doctor: {doctorfullname}")
         pdf.drawString(20, height - 170, f"Qualification: {docqualification}")
         pdf.drawString(20, height - 190, f"Specialization: {docspecialization}")
 
-        # Patient Details Section
+        # Patient Info
         pdf.setFont("Helvetica-Bold", 16)
-        
-        # Centered Patient Details Title
-        pdf.drawString(20 ,height -220 , "Patient Details:")
+        pdf.drawString(20, height - 220, "Patient Details:")
+        pdf.setFont("Helvetica", 14)
+        pdf.drawString(20, height - 240, f"Name: {patientfirstname} {patientlastname}")
 
-        pdf.setFont("Helvetica",14)
-        pdf.drawString(20 ,height -240 , f"Name: {patientfirstname} {patientlastname}")
-
-        # Diagnostics Section
-        pdf.setFont("Helvetica-Bold",16)
-        
+        # Diagnostics
+        pdf.setFont("Helvetica-Bold", 16)
         diagnostics_title = "Diagnostics:"
         title_width = pdf.stringWidth(diagnostics_title, "Helvetica-Bold", 16)
-        
-        # Centered title for diagnostics section
-        pdf.drawString((width - title_width) / 2, height - 260, diagnostics_title)  
+        pdf.drawString((width - title_width) / 2, height - 260, diagnostics_title)
 
-        pdf.setFont("Helvetica",12)
-
-        # Wrap diagnostics text to fit within the page width (100 characters per line)
-        diagnostics_lines = wrap_text(pdf, diagonistics,max_width=width-40)
-        
-        for i,line in enumerate(diagnostics_lines):
+        pdf.setFont("Helvetica", 12)
+        diagnostics_lines = wrap_text(pdf, diagonistics, max_width=width - 40)
+        for i, line in enumerate(diagnostics_lines):
             line_width = pdf.stringWidth(line, "Helvetica", 12)
-            # Center each line of diagnostics text
-            pdf.drawString((width - line_width) / 2, height - (280 + i *15),line)  
+            pdf.drawString((width - line_width) / 2, height - (280 + i * 15), line)
 
-        # Date Section (Top Right) - Adjusted position to avoid cutting off
-        pdf.setFont("Helvetica",12)
-        
-        pdf.drawString(width -180 ,height -40 ,f"Date: {dateandtime}")
+        # Medicines
+        line_y_start = height - (280 + len(diagnostics_lines) * 15)
+        pdf.setFont("Helvetica-Bold", 16)
+        medicine_title = "Medicines:"
+        title_width = pdf.stringWidth(medicine_title, "Helvetica-Bold", 16)
+        pdf.drawString((width - title_width) / 2, line_y_start - 20, medicine_title)
 
-        # Footer Section with a modern look
-        pdf.setFillColor(HexColor("#E94E77"))   # Footer background color
-        pdf.rect(0 ,0 ,width ,0.75 * inch ,fill=1)
+        pdf.setFont("Helvetica", 12)
+        medicine_lines = wrap_text(pdf, medicine, max_width=width - 40)
+        for j, med_line in enumerate(medicine_lines):
+            med_line_width = pdf.stringWidth(med_line, "Helvetica", 12)
+            pdf.drawString((width - med_line_width) / 2, line_y_start - 40 - (j * 15), med_line)
 
-        pdf.setFillColor(HexColor("#FFFFFF"))   # White text in footer
-        pdf.setFont("Helvetica",10)
+        # Adjust footer position based on content
+        footer_y_offset = line_y_start - 60 - (len(medicine_lines) * 15)
+        if footer_y_offset < 100:
+            footer_y_offset = 100
 
-        pdf.drawString(20 ,0.25 * inch ,f"© {hospitalname}")
+        # Date (top right)
+        pdf.setFont("Helvetica", 12)
+        pdf.drawString(width - 180, height - 40, f"Date: {dateandtime}")
 
-        # Add timestamp on right side of footer
+        # Footer
+        footer_height = 0.75 * inch
+        pdf.setFillColor(HexColor("#E94E77"))
+        pdf.rect(0, 0, width, footer_height, fill=1)
+        pdf.setFillColor(HexColor("#FFFFFF"))
+        pdf.setFont("Helvetica", 10)
+        pdf.drawString(20, 0.25 * inch, f"© {hospitalname}")
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        pdf.drawString(width -180 ,0.25 * inch ,f"Generated on: {timestamp}")
+        pdf.drawString(width - 180, 0.25 * inch, f"Generated on: {timestamp}")
 
-        # Save the PDF
+        # Save PDF
         pdf.save()
 
         prescribe_data = {
@@ -172,23 +154,25 @@ def createprescribfn():
             "patientfullname": patientfirstname + ' ' + patientlastname,
             "dateandtime": dateandtime,
             "diagonistics": diagonistics,
+            "medicine": medicine,
             "file_path": save_path,
-            "patientid":patientid,
-            "doctorid":doctorid,
+            "patientid": patientid,
+            "doctorid": doctorid,
             "prescription_id": prescription_id,
-            "guestaccess":"no",
-             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
+            "guestaccess": "no",
+            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         }
 
         prescribe_collection.insert_one(prescribe_data)
 
-        # Return response
-        return jsonify({"message": "Prescription created successfully", "file_path": save_path}),200
+        return jsonify({
+            "message": "Prescription created successfully",
+            "file_path": save_path
+        }), 200
 
     except Exception as e:
-       messagetype ='error'
-       message = f"Error generating prescription: {str(e)}"
-       filelocation ='patientops/createprescription.py'
-       generatelogs(messagetype,message,filelocation)
-       return jsonify({"error":"Failed to create prescription"}),500
-
+        messagetype = 'error'
+        message = f"Error generating prescription: {str(e)}"
+        filelocation = 'patientops/createprescription.py'
+        generatelogs(messagetype, message, filelocation)
+        return jsonify({"error": "Failed to create prescription"}), 500
