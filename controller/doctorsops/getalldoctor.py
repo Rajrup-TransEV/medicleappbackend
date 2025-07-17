@@ -5,12 +5,7 @@ from utils.logs import generatelogs
 import base64
 from dotenv import load_dotenv
 
-
 load_dotenv()
-
-# Upload folder setup
-UPLOAD_FOLDER = 'uploads/doctorprofilepicture'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db_connection():
     client = MongoClient(os.getenv('MONGODB_URI'))
@@ -19,16 +14,17 @@ def get_db_connection():
 
 getalldoctor_bp = Blueprint('getalldoctor', __name__)
 
-
 def encode_image_to_base64(image_path):
-    """Encodes an image to a Base64 string."""
+    """Encodes an image to a Base64 string if the file exists."""
     try:
-        with open(image_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-            return encoded_string
+        if image_path and os.path.exists(image_path):
+            with open(image_path, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                return encoded_string
     except Exception as e:
         print(f"Error encoding image: {e}")
-        return None
+    return None
+
 @getalldoctor_bp.route('/doctorops/getalldoctor', methods=['GET'])
 def getalldoctor():
     try:
@@ -38,34 +34,38 @@ def getalldoctor():
         appointmentfees_collections = db['appointmentfees']
 
         doctors = doctor_collection.find()
-
         doctor_list = []
+
         for doctor in doctors:
+            # Get the file path directly from the DB document
+            profile_picture_path = doctor.get('profilepictures')
+            # Normalize path for cross-OS compatibility (especially if stored path has Windows-style '\')
+            if profile_picture_path:
+                profile_picture_path = os.path.normpath(profile_picture_path)
+            profile_image_base64 = encode_image_to_base64(profile_picture_path)
+
             doctor_id = doctor.get('uid')
 
-            # Fetch all timetable entries for this doctor
             timetables = list(timetable_collection.find({"doctorid": doctor_id}))
-            formatted_timetables = []
-            for t in timetables:
-                formatted_timetables.append({
+            formatted_timetables = [
+                {
                     "date": t.get("date"),
                     "schedule": t.get("schedule")
-                })
+                } for t in timetables
+            ]
 
-            # Fetch appointment fees for this doctor
             appointmentfees = list(appointmentfees_collections.find({"doctoremail": doctor.get("email")}))
-            formatted_appointmentfees = []
-            for af in appointmentfees:
-                formatted_appointmentfees.append({
+            formatted_appointmentfees = [
+                {
                     "uid": af.get("uid"),
                     "doctoremail": af.get("doctoremail"),
                     "appointmentfees": af.get("appointmentfees"),
                     "created_at": af.get("created_at")
-                })
+                } for af in appointmentfees
+            ]
 
-            # Prepare doctor data including timetable and appointment fees
             doctor_data = {
-                'uid': doctor.get('uid'),
+                'uid': doctor_id,
                 'fullname': doctor.get('fullname'),
                 'gender': doctor.get('gender'),
                 'dob': doctor.get('dob'),
@@ -77,7 +77,8 @@ def getalldoctor():
                 'email': doctor.get('email'),
                 'phonenumber': doctor.get('phonenumber'),
                 'timetable': formatted_timetables,
-                'appointmentfees': formatted_appointmentfees
+                'appointmentfees': formatted_appointmentfees,
+                'profile_image': profile_image_base64  # This is now dynamically fetched
             }
 
             doctor_list.append(doctor_data)
