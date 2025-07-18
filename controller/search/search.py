@@ -12,7 +12,6 @@ def get_db_connection():
     return db
 
 searchbp = Blueprint('search', __name__)
-
 @searchbp.route('/search', methods=['POST'])
 def searchfn():
     try:
@@ -22,35 +21,44 @@ def searchfn():
         if not search_value:
             return jsonify({"message": "Search value must be provided in 'search' form field"}), 400
 
-        result = {}
-        collections = db.list_collection_names()
+        result = []
 
-        for collection_name in collections:
-            collection = db[collection_name]
-            sample_doc = collection.find_one()
+        # Step 1: Search only in doctors collection
+        doctors_collection = db['doctors']  # Make sure this is your doctors collection name
+        query = {
+            "$or": [
+                {"fullname": {"$regex": search_value, "$options": "i"}},
+                {"specialization": {"$regex": search_value, "$options": "i"}}
+            ]
+        }
 
-            if not sample_doc:
+        matched_doctors = list(doctors_collection.find(query))
+
+        if not matched_doctors:
+            return jsonify({"message": "No matching doctors found"}), 404
+
+        # Step 2: For each doctor, find their appointment fees
+        fees_collection = db['appointmentfees']  # Change this to your actual fees collection name
+
+        for doctor in matched_doctors:
+            doctor_email = doctor.get('email')
+
+            if not doctor_email:
                 continue
 
-            # Get all field names except _id
-            field_names = [field for field in sample_doc.keys() if field != '_id']
+            fee_data = fees_collection.find_one({"doctoremail": doctor_email})
 
-            or_query = [{field: {"$regex": search_value, "$options": "i"}} for field in field_names]
+            # Prepare clean doctor data
+            doctor_cleaned = {k: v for k, v in doctor.items() if k != '_id'}
 
-            documents = list(collection.find({"$or": or_query}))
-            cleaned_docs = []
+            if fee_data:
+                doctor_cleaned['appointmentfees'] = fee_data.get('appointmentfees', None)
+            else:
+                doctor_cleaned['appointmentfees'] = None
 
-            for doc in documents:
-                doc.pop('_id', None)  # Remove _id
-                cleaned_docs.append(doc)
+            result.append(doctor_cleaned)
 
-            if cleaned_docs:
-                result[collection_name] = cleaned_docs
-
-        if not result:
-            return jsonify({"message": "No matching records found"}), 404
-
-        return jsonify(result), 200
+        return jsonify({"doctors": result}), 200
 
     except Exception as e:
         generatelogs(f"Error in /search endpoint: {str(e)}")
