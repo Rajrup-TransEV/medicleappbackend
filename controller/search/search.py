@@ -3,6 +3,12 @@ import os
 from pymongo import MongoClient
 from utils.logs import generatelogs
 from dotenv import load_dotenv
+from .doctorsearch import search_doctors
+from .patientsearch import patientsearch
+from .billsearch import billsearch
+from .rooms import roomsearch
+from .staffsearch import staffsearch
+from .appoinmntsearch import appoinmntsearch
 
 load_dotenv()
 
@@ -15,46 +21,52 @@ searchbp = Blueprint('search', __name__)
 
 @searchbp.route('/search', methods=['POST'])
 def searchfn():
-    try:
-        db = get_db_connection()
-        search_value = request.form.get('search') or (request.json.get('search') if request.is_json else None)
+    query = (
+        request.form.get('search') or 
+        (request.json.get('search') if request.is_json else None)
+    )
 
-        if not search_value:
-            return jsonify({"message": "Search value must be provided in 'search' field"}), 400
+    if not query:
+        return jsonify({"message": "Search value must be provided in 'search' field"}), 400
 
-        result = []
+    results = {}
 
-        doctors_collection = db['doctors']
-        query = {
-            "$or": [
-                {"fullname": {"$regex": search_value, "$options": "i"}},
-                {"email": search_value},
-                {"specialization": {"$regex": search_value, "$options": "i"}}
-            ]
-        }
+    # Doctor search
+    doctors = search_doctors(query)
+    if doctors:
+        results["doctors"] = doctors
 
-        matched_doctors = list(doctors_collection.find(query))
-        print(f"[DEBUG] Search Value: {search_value}")
-        print(f"[DEBUG] Matched Doctors: {matched_doctors}")
+    # Patient search
+    patients = patientsearch(query)
+    if patients:
+        results["patients"] = patients
+    
+    # Bill search
+    bills = billsearch(query)
+    if bills:
+        results["bills"] = bills
 
-        if not matched_doctors:
-            return jsonify({"message": "No matching doctors found"}), 404
+    # Room search
+    rooms = roomsearch(query)
+    if rooms:
+        results["rooms"] = rooms
+    
+    # Staff search
+    staff = staffsearch(query)
+    if staff:
+        results["staff"] = staff
 
-        fees_collection = db['appointmentfees']
+    # Appoinmnt search
+    appoinmnts = appoinmntsearch(query)
+    if appoinmnts:
+        results["appoinmnts"] = appoinmnts
 
-        for doctor in matched_doctors:
-            doctor_email = doctor.get('email')
-            if not doctor_email:
-                continue
+    # Add more sections like labs, pharmacies, etc. as needed
+    # labs = labsearchfn(query)
+    # if labs:
+    #     results["labs"] = labs
 
-            fee_data = fees_collection.find_one({"doctoremail": doctor_email})
+    if not results:
+        return jsonify({"message": "No results found"}), 404
 
-            doctor_cleaned = {k: v for k, v in doctor.items() if k != '_id'}
-            doctor_cleaned['appointmentfees'] = fee_data.get('appointmentfees') if fee_data else None
-            result.append(doctor_cleaned)
-
-        return jsonify({"doctors": result}), 200
-
-    except Exception as e:
-        generatelogs(f"Error in /search endpoint: {str(e)}")
-        return jsonify({"error": "Internal Server Error"}), 500
+    return jsonify(results), 200
