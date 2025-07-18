@@ -33,6 +33,7 @@ def labbookfn():
         doctor_reference = str(request.form.get('doctor_reference'))
         patient_email = str(request.form.get('email'))
         labtesttype = str(request.form.get('labtesttype', ''))
+        tempbookingstatus = str(request.form.get('tempbookingstatus'))
         if not all([labbookname, cause, booking_time, doctor_reference, patient_email]):
             return jsonify({"error": "Missing required fields"}), 400
 
@@ -76,6 +77,7 @@ def labbookfn():
             'patient_lastname': last_name,
             'patient_phone': phone_number,
             'labtesttype': labtesttype,
+            'tempbookingstatus': tempbookingstatus,
             'attachment_path': attachment_path,
             'created_at': datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })

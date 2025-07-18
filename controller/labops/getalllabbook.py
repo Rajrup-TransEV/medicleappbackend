@@ -45,6 +45,7 @@ def getalllabbookfn():
                 'cause': i.get('cause'),
                 'labtesttype': i.get('labtesttype'),
                 'booking_time': i.get('booking_time'),
+                'tempbookingstatus': i.get('tempbookingstatus'),
                 'doctor_reference': i.get('doctor_reference'),
                 'patient_email': i.get('patient_email'),
                 'patient_firstname': i.get('patient_firstname'),

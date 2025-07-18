@@ -32,6 +32,7 @@ def labbookupdatefn():
     doctor_reference = str(request.form.get('doctor_reference'))
     labtesttype = str(request.form.get('labtesttype', ''))
     patient_email = str(request.form.get('email'))
+    tempbookingstatus = str(request.form.get('tempbookingstatus'))
 
     try:
         db = get_db_connection()
@@ -50,6 +51,8 @@ def labbookupdatefn():
             update_details['doctor_reference'] = doctor_reference
         if labtesttype:
             update_details['labtesttype'] = labtesttype
+        if tempbookingstatus:
+            update_details['tempbookingstatus'] = tempbookingstatus
         if patient_email:
             patient_col = db['patients']
             patient = patient_col.find_one({'email': patient_email})
