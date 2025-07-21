@@ -6,7 +6,6 @@ import uuid
 
 import pytz
 from utils.logs import generatelogs
-from lib.emailsender import email_sender
 from dotenv import load_dotenv
 
 
