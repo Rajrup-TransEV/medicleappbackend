@@ -34,21 +34,21 @@ def labbookupdatefn():
         labbookcol = db['labbook']
         update_details = {}
 
-        if labbookname:
+        if labbookname is not None:
             update_details['labbookname'] = labbookname
-        if labbookdescription:
+        if labbookdescription is not None:
             update_details['labbookdescription'] = labbookdescription
-        if cause:
+        if cause is not None:
             update_details['cause'] = cause
-        if booking_time:
+        if booking_time is not None:
             update_details['booking_time'] = booking_time
-        if doctor_reference:
+        if doctor_reference is not None:
             update_details['doctor_reference'] = doctor_reference
-        if labtesttype:
+        if labtesttype is not None:
             update_details['labtesttype'] = labtesttype
-        if tempbookingstatus:
+        if tempbookingstatus is not None:
             update_details['tempbookingstatus'] = tempbookingstatus
-        if patient_email:
+        if patient_email is not None:
             patient_col = db['patients']
             patient = patient_col.find_one({'email': patient_email})
             if not patient:
