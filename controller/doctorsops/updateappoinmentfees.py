@@ -22,9 +22,9 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
-updateappoinmentfees_bp = Blueprint('updateappoinmentfees_bp', __name__)
+updatefeesbp = Blueprint('updateappoinmentfees_bp', __name__)
 
-@updateappoinmentfees_bp.route("/doctors/updateappoinmentfees", methods=["POST"])
+@updatefeesbp.route("/doctors/updateappoinmentfees", methods=["POST"])
 def update_appoinmentfees():
     appointmentfees_id = request.form.get('appointmentfeesid')
     appointmentfees = request.form.get('appointmentfees')
