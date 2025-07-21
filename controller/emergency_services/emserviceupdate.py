@@ -3,9 +3,7 @@ from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
 from utils.logs import generatelogs
-import base64
 from dotenv import load_dotenv
-import uuid
 
 load_dotenv()
 

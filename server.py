@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_socketio import SocketIO,emit
+from flask_socketio import SocketIO
 #
 from controller.patientops.signup import signup_bp
 from controller.patientops.login import login_bp

@@ -1,15 +1,5 @@
 from flask import Blueprint, jsonify, request
-from datetime import datetime
-import pytz
 from pymongo import MongoClient
-import bcrypt
-import uuid
-import re
-import os
-import random
-import time
-from werkzeug.utils import secure_filename  # Import secure_filename for safe file handling
-from lib.emailsender import email_sender
 from utils.logs import generatelogs
 from dotenv import load_dotenv
 

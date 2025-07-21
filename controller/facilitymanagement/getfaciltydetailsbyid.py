@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
 from utils.logs import generatelogs
 from dotenv import load_dotenv
 
