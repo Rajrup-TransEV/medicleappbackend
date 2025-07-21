@@ -4,10 +4,8 @@ from pymongo import MongoClient
 import os
 import uuid
 from werkzeug.utils import secure_filename
-
 import pytz
 from utils.logs import generatelogs
-from lib.emailsender import email_sender
 from dotenv import load_dotenv
 
 load_dotenv()
