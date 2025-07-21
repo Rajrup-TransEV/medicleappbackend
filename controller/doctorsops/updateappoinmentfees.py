@@ -32,9 +32,9 @@ def update_appoinmentfees():
         db = get_db_connection()
         appointmentfees_collection = db['appointmentfees']
         
-        query = {"uid": appointmentfees_id}
         
-        appointmentfees_collection.update_one(query, {"$set": updatefields})
+        
+        appointmentfees_collection.update_one({"uid": appointmentfees_id}, {"$set": updatefields})
         generatelogs('success', 'appointment fees updated successfully', 'updateappoinmentfees.py')
         return jsonify({"message": "appointment fees updated successfully", "data":updatefields}), 200
     except Exception as e:

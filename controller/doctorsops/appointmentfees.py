@@ -25,22 +25,40 @@ def appointmentfeesfn():
 
     try:
         db = get_db_connection()
-        appointmentfees_collections = db['appointmentfees']
-
-        # Create a new appointment fees record
-        appointmentfees_id = str(uuid.uuid4())
-        appointmentfees_collections.insert_one({
-            "uid": appointmentfees_id,
-            "doctoremail": doctoremail,
-            "appointmentfees": appointmentfees,
-            "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
-        })
+        appointmentfees_collection = db['appointmentfees']
         
-        # Log successful operation
-        generatelogs('info', f'Appointment fees created successfully', 'appointmentfees.py')
+        # Check if record exists for this doctor
+        existing_record = appointmentfees_collection.find_one({"doctoremail": doctoremail})
         
-        # Return response with appointment fees ID
-        return jsonify({"message": "Appointment fees created successfully!", "appointmentfees_id": appointmentfees_id}), 200
+        if existing_record:
+            # Update existing record
+            result = appointmentfees_collection.update_one(
+                {"doctoremail": doctoremail},
+                {
+                    "$set": {
+                        "appointmentfees": appointmentfees,
+                        "updated_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
+                    }
+                }
+            )
+            if result.modified_count > 0:
+                generatelogs('info', f'Appointment fees updated for doctor: {doctoremail}', 'appointmentfees.py')
+                return jsonify({"message": "Appointment fees updated successfully!"}), 200
+        else:
+            # Create new record
+            appointmentfees_id = str(uuid.uuid4())
+            appointmentfees_collection.insert_one({
+                "uid": appointmentfees_id,
+                "doctoremail": doctoremail,
+                "appointmentfees": appointmentfees,
+                "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat(),
+                "updated_at": None
+            })
+            generatelogs('info', f'New appointment fees created for doctor: {doctoremail}', 'appointmentfees.py')
+            return jsonify({"message": "Appointment fees created successfully!", "appointmentfees_id": appointmentfees_id}), 201
+            
+        return jsonify({"message": "No changes made"}), 200
+        
     except Exception as e:
         print(e)
         generatelogs('error', f'Error occurred: {str(e)}', 'appointmentfees.py')
