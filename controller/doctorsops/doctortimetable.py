@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import os
 from utils.logs import generatelogs
 from dotenv import load_dotenv
+import uuid
 
 
 load_dotenv()
