@@ -141,6 +141,7 @@ from controller.doctorsops.getallappointmentfees import getallappointmentfeesbp
 from controller.doctorsops.docappointmentfees import doctorappointmentfeesbp
 from controller.doctorsops.updateappoinmentfees import updatefeesbp
 from controller.search.search import searchbp
+from controller.appoinmentops.list_patients_by_slot import list_patients_bp
 
 
 load_dotenv()
@@ -223,6 +224,7 @@ app.register_blueprint(getallappoinmentbp)
 app.register_blueprint(updateappoinmentopsbp)
 app.register_blueprint(getappoinmenthistorybp)
 app.register_blueprint(deleteapponbp)
+app.register_blueprint(list_patients_bp)
 #prescribe
 app.register_blueprint(prescribe_bp)
 app.register_blueprint(getallprescribebp)
