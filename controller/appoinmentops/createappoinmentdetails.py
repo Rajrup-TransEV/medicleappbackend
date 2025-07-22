@@ -47,7 +47,7 @@ def createappoinment():
             "appoinmenttime": appoinmenttime,
             "appoinmentdetails": appointmentdetails,
             "doctorid": doctorid,
-            'status': 'applied',
+            'status': 'booked',
             "created_at": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
         })
 
