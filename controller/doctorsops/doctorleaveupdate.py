@@ -16,8 +16,7 @@ doctorleaveupdate_bp = Blueprint('doctorleaveupdate_bp', __name__)
 
 @doctorleaveupdate_bp.route("/doctors/leaveupdate", methods=["POST"])
 def update_leave():
-    leave_id = request.form.get('leaveid')  # Single leave ID for update
-    # doctor_id = request.form.get('doctorid')
+    leave_id = request.form.get('leaveid')  
     leave_from = request.form.get('leavefrom')
     leave_to = request.form.get('leaveto')
     reason = request.form.get('reason')
@@ -25,18 +24,12 @@ def update_leave():
 
     update_fields = {}
 
-    # Validate input
-    # if not doctor_id and not leave_id:
-    #     return jsonify({"error": "Either Doctor ID or Leave ID is required!"}), 400
-
     try:
         db = get_db_connection()
         doctor_leave_collection = db['doctorleave']
         
         # Construct query based on provided identifiers
         query = {}
-        # if doctor_id:
-        #     query["doctorid"] = doctor_id
         if leave_id:
             query["uid"] = leave_id
         
