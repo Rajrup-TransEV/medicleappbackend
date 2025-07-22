@@ -16,12 +16,12 @@ def get_db_connection():
     return db
 
 docsstaffnotebp = Blueprint('docsstaffnotebp', __name__)
-@docsstaffnotebp.route("/notify/docstaffidnote", methods=["GET"])
+@docsstaffnotebp.route("/notify/docstaffidnote", methods=["POST"])
 def get_notifications():
     try:
         # Retrieve query parameters
-        doctorid = request.args.get('doctorid')
-        staffid = request.args.get('staffid')
+        doctorid = request.form.get('doctorid')
+        staffid = request.form.get('staffid')
 
         if not doctorid or not staffid:
             return jsonify({"error": "Doctor ID and Staff ID are required"}), 400
