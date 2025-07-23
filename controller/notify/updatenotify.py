@@ -39,6 +39,9 @@ def updatenotify():
         notificationtype = request.form.get('notificationtype')
         notificationadminid = request.form.get('notificationadminid')
         notificationstatus = request.form.get('notificationstatus')
+        doctorid = request.form.get('doctorid')
+        patientid = request.form.get('patientid')
+        staffid = request.form.get('staffid')
 
         update_details = {}
         if notificationtitle:
@@ -51,6 +54,12 @@ def updatenotify():
             update_details['notificationadminid'] = notificationadminid
         if notificationstatus:
             update_details['notificationstatus'] = notificationstatus
+        if doctorid:
+            update_details['doctorid'] = doctorid
+        if patientid:
+            update_details['patientid'] = patientid
+        if staffid:
+            update_details['staffid'] = staffid
 
         result = notification_collection.update_one(
             {"uid": uid},

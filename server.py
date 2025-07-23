@@ -143,6 +143,7 @@ from controller.doctorsops.updateappoinmentfees import updatefeesbp
 from controller.search.search import searchbp
 from controller.appoinmentops.list_patients_by_slot import list_patients_by_datetime_bp
 from controller.notify.docstaffidnote import docsstaffnotebp
+from controller.notify.patientnotification import patientnotificationfetchbp
 
 load_dotenv()
 
@@ -320,6 +321,7 @@ app.register_blueprint(showallnotify_bp)
 app.register_blueprint(unseennotifyupdatebp)
 app.register_blueprint(showunseennotify_bp)
 app.register_blueprint(docsstaffnotebp)
+app.register_blueprint(patientnotificationfetchbp)
 #discharge
 app.register_blueprint(pdopsbp)
 app.register_blueprint(getallpadops_bp)

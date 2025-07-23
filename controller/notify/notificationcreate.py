@@ -4,8 +4,6 @@ from flask import Blueprint, jsonify, request
 import os
 from pymongo import MongoClient
 import pytz
-from utils.logs import generatelogs
-from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -29,6 +27,10 @@ def notificationcreate():
         notificationdescription = request.form.get('notificationdescription')
         notificationtype = request.form.get('notificationtype')
         notificationadminid = request.form.get('notificationadminid')
+        doctorid = request.form.get('doctorid')
+        patientid = request.form.get('patientid')
+        staffid = request.form.get('staffid')
+
 
         # Store in MongoDB
         db = get_db_connection()
@@ -39,6 +41,9 @@ def notificationcreate():
             "notificationdescription": notificationdescription,
             "notificationtype": notificationtype,
             "notificationadminid": notificationadminid,
+            "doctorid": doctorid,
+            "staffid": staffid,
+            "patientid": patientid,
             "notificationstatus": "active",
             "seennotify": "false",
             "created_at": created_at,
