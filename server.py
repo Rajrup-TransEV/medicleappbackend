@@ -144,6 +144,12 @@ from controller.search.search import searchbp
 from controller.appoinmentops.list_patients_by_slot import list_patients_by_datetime_bp
 from controller.notify.docstaffidnote import docsstaffnotebp
 from controller.notify.patientnotification import patientnotificationfetchbp
+from controller.hcarepackage.createpackage import createpackagebp
+from controller.hcarepackage.getallpackage import getallpackagebp
+from controller.hcarepackage.getpackagebyid import getpackagebyidbp
+from controller.hcarepackage.updatepackage import package_update_bp
+from controller.hcarepackage.deletepackage import deletepackagebp
+
 
 load_dotenv()
 
@@ -334,6 +340,12 @@ app.register_blueprint(emservicebyidbp)
 app.register_blueprint(emserviceupdatebp)
 #search
 app.register_blueprint(searchbp)
+#hcarepackage
+app.register_blueprint(createpackagebp)
+app.register_blueprint(getallpackagebp)
+app.register_blueprint(getpackagebyidbp)
+app.register_blueprint(package_update_bp)
+app.register_blueprint(deletepackagebp)
 #websocket based routes
 
 if __name__ == '__main__':
