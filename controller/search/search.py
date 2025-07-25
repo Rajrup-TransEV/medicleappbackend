@@ -9,6 +9,7 @@ from .billsearch import billsearch
 from .rooms import roomsearch
 from .staffsearch import staffsearch
 from .appoinmntsearch import appoinmntsearch
+from .packagesearch import packagesearch
 
 load_dotenv()
 
@@ -60,6 +61,11 @@ def searchfn():
     appoinmnts = appoinmntsearch(query)
     if appoinmnts:
         results["appoinmnts"] = appoinmnts
+    
+    # Package search
+    packages = packagesearch(query)
+    if packages:
+        results["packages"] = packages
 
     # Add more sections like labs, pharmacies, etc. as needed
     # labs = labsearchfn(query)
