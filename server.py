@@ -145,8 +145,8 @@ from controller.appoinmentops.list_patients_by_slot import list_patients_by_date
 from controller.notify.docstaffidnote import docsstaffnotebp
 from controller.notify.patientnotification import patientnotificationfetchbp
 from controller.hcarepackage.createpackage import createpackagebp
-from controller.hcarepackage.getallpackage import getallpackagebp
-from controller.hcarepackage.getpackagebyid import getpackagebyidbp
+from controller.hcarepackage.getallpackages import getallpackagesbp
+from controller.hcarepackage.getpackageinfobyid import getpackageinfobyidbp
 from controller.hcarepackage.updatepackage import package_update_bp
 from controller.hcarepackage.deletepackage import deletepackagebp
 
@@ -342,8 +342,8 @@ app.register_blueprint(emserviceupdatebp)
 app.register_blueprint(searchbp)
 #hcarepackage
 app.register_blueprint(createpackagebp)
-app.register_blueprint(getallpackagebp)
-app.register_blueprint(getpackagebyidbp)
+app.register_blueprint(getallpackagesbp)
+app.register_blueprint(getpackageinfobyidbp)
 app.register_blueprint(package_update_bp)
 app.register_blueprint(deletepackagebp)
 #websocket based routes
