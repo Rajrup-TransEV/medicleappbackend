@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 import os
 from pymongo import MongoClient
 import pytz
@@ -8,6 +8,7 @@ from utils.logs import generatelogs
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from flask_socketio import emit
+import json
 
 load_dotenv()
 
@@ -20,14 +21,28 @@ def deletenotify(socketio):
     @socketio.on('deletenotify')
     def deletenotifyfn(data):
         try:
+            # Check if data is a string and parse it as JSON
+            if isinstance(data, str):
+                try:
+                    data = json.loads(data)
+                except json.JSONDecodeError as e:
+                    generatelogs('error', f'Invalid JSON data: {str(e)}', 'deletenotify.py')
+                    emit('message', {"error": "Invalid data format: JSON parsing failed"})
+                    return
+            # Verify that data is a dictionary
+            if not isinstance(data, dict):
+                generatelogs('error', 'Data must be a dictionary or valid JSON object', 'deletenotify.py')
+                emit('message', {"error": "Invalid data format: Expected a JSON object"})
+                return
+
             db = get_db_connection()
             notification_collection = db['notifications']
             uid = str(data.get('notificationuid'))
 
-            print(uid)  # For debugging, consider replacing with logging if needed
-            notificationfind = notification_collection.find_one({"uid": uid})
-            print(notificationfind)  # For debugging, consider replacing with logging if needed
+            # Log the UID for debugging
+            generatelogs('info', f'Attempting to delete notification with uid {uid}', 'deletenotify.py')
 
+            notificationfind = notification_collection.find_one({"uid": uid})
             if not notificationfind:
                 generatelogs('info', f'No notification found with uid {uid}', 'deletenotify.py')
                 emit('message', {"message": "No data found associated with the id"})
@@ -43,5 +58,4 @@ def deletenotify(socketio):
 
         except Exception as e:
             generatelogs('error', f'Error while deleting notification: {str(e)}', 'deletenotify.py')
-            print(e)
-            emit('message', {"error": "An error occurred while deleting notification"})
+            emit('message', {"error": "An error occurred while deleting notification", "details": str(e)})
