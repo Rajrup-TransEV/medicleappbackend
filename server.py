@@ -115,13 +115,13 @@ from controller.guestlogin.allguessaccessprescribedata import allguestaccesspres
 from controller.guestlogin.allguestaccesslabdata import allguestaccesslabdata_bp
 from controller.survey.applicationsurvey.deleteappsurvey import deleteappsurveybp
 from controller.survey.medicalsurvey.deletemedicalsurvey import deletemedicalsurveybp
-from controller.notify.notificationcreate import notifybp
-from controller.notify.updatenotify import updatenotifybp
-from controller.notify.deletenotify import deletenotifybp
-from controller.notify.showactivenotify import showactivenotify_bp
-from controller.notify.showallnotify import showallnotify_bp
-from controller.notify.unseennotifyupdate import unseennotifyupdatebp
-from controller.notify.showunseennotify import showunseennotify_bp
+# from controller.notify.notificationcreate import notifybp
+# from controller.notify.updatenotify import updatenotifybp
+# from controller.notify.deletenotify import deletenotifybp
+# from controller.notify.showactivenotify import showactivenotify_bp
+# from controller.notify.showallnotify import showallnotify_bp
+# from controller.notify.unseennotifyupdate import unseennotifyupdatebp
+# from controller.notify.showunseennotify import showunseennotify_bp
 from controller.discharge.pdops import pdopsbp
 from controller.discharge.getallpadops import getallpadops_bp
 from controller.discharge.deletepadops import deletepadops_bp
@@ -142,13 +142,25 @@ from controller.doctorsops.docappointmentfees import doctorappointmentfeesbp
 from controller.doctorsops.updateappoinmentfees import updatefeesbp
 from controller.search.search import searchbp
 from controller.appoinmentops.list_patients_by_slot import list_patients_by_datetime_bp
-from controller.notify.docstaffidnote import docsstaffnotebp
-from controller.notify.patientnotification import patientnotificationfetchbp
+# from controller.notify.docstaffidnote import docsstaffnotebp
+# from controller.notify.patientnotification import patientnotificationfetchbp
+
+from controller.notify.updatenotify import updatenotify
+from controller.notify.deletenotify import deletenotify
+from controller.notify.notificationcreate import notificationcreate
+from controller.notify.patientnotification import patientnotificationfetch
+from controller.notify.showactivenotify import showactivenotify
+from controller.notify.showallnotify import showallnotify
+from controller.notify.unseennotifyupdate import unseennotifyupdate
+from controller.notify.showunseennotify import showunseennotify
+from controller.notify.unseennotifyupdate import unseennotifyupdate
+from controller.notify.docstaffidnote import get_notifications
 from controller.hcarepackage.createpackage import createpackagebp
 from controller.hcarepackage.getallpackages import getallpackagesbp
 from controller.hcarepackage.getpackageinfobyid import getpackageinfobyidbp
 from controller.hcarepackage.updatepackage import package_update_bp
 from controller.hcarepackage.deletepackage import deletepackagebp
+from controller.hcarepackage.getpackageinfobyid import getpackageinfobyidbp
 
 
 load_dotenv()
@@ -319,15 +331,15 @@ app.register_blueprint(getallbillbp)
 app.register_blueprint(getbillbypatientemailbp)
 app.register_blueprint(getbillbybillidbp)
 #notify
-app.register_blueprint(notifybp)
-app.register_blueprint(updatenotifybp)
-app.register_blueprint(deletenotifybp)
-app.register_blueprint(showactivenotify_bp)
-app.register_blueprint(showallnotify_bp)
-app.register_blueprint(unseennotifyupdatebp)
-app.register_blueprint(showunseennotify_bp)
-app.register_blueprint(docsstaffnotebp)
-app.register_blueprint(patientnotificationfetchbp)
+# app.register_blueprint(notifybp)
+# app.register_blueprint(updatenotifybp)
+# app.register_blueprint(deletenotifybp)
+# app.register_blueprint(showactivenotify_bp)
+# app.register_blueprint(showallnotify_bp)
+# app.register_blueprint(unseennotifyupdatebp)
+# app.register_blueprint(showunseennotify_bp)
+# app.register_blueprint(docsstaffnotebp)
+# app.register_blueprint(patientnotificationfetchbp)
 #discharge
 app.register_blueprint(pdopsbp)
 app.register_blueprint(getallpadops_bp)
@@ -347,6 +359,15 @@ app.register_blueprint(getpackageinfobyidbp)
 app.register_blueprint(package_update_bp)
 app.register_blueprint(deletepackagebp)
 #websocket based routes
+notificationcreate(socketio)
+updatenotify(socketio)
+deletenotify(socketio)
+showactivenotify(socketio)
+showallnotify(socketio)
+unseennotifyupdate(socketio)
+showunseennotify(socketio)
+get_notifications(socketio)
+patientnotificationfetch(socketio)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)  # Run the app with SocketIO support.

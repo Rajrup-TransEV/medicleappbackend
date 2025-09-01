@@ -1,12 +1,13 @@
 from datetime import datetime
 import uuid
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 import os
 from pymongo import MongoClient
 import pytz
 from utils.logs import generatelogs
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from flask_socketio import emit
 
 load_dotenv()
 
@@ -15,23 +16,25 @@ def get_db_connection():
     db = client[os.getenv('DB_NAME')]
     return db
 
-unseennotifyupdatebp = Blueprint('unseennotifyupdatebp', __name__)
-
-@unseennotifyupdatebp.route("/notify/unseen/update", methods=["POST"])
-def unseennotifyupdate():
-    try:
-        db = get_db_connection()
-        notification_collection = db['notifications']
-        uid = str(request.form.get('notificationuid'))
-        if not uid:
-            return jsonify({"message": "notificationuid is required"}), 400
-        notificationfind = notification_collection.find_one({"uid": uid})
-        if not notificationfind:
-            return jsonify({"message": "No data found associated with the ID"}), 404
-        result = notification_collection.update_one({"uid": uid}, {"$set": {"seennotify": "true"}})
-        if result.modified_count > 0:
-            return jsonify({"message": "Notification updated successfully"}), 200
-        else:
-            return jsonify({"message": "No matching notification found"}), 404
-    except Exception as e:
-        return jsonify({"error": "An error occurred while updating the notification"}), 500
+def unseennotifyupdate(socketio):
+    @socketio.on('update_unseen_notification')
+    def unseennotifyupdatefn(data):
+        try:
+            db = get_db_connection()
+            notification_collection = db['notifications']
+            uid = str(data.get('notificationuid'))
+            if not uid:
+                emit('message', {"message": "notificationuid is required"})
+                return
+            notificationfind = notification_collection.find_one({"uid": uid})
+            if not notificationfind:
+                emit('message', {"message": "No data found associated with the ID"})
+                return
+            result = notification_collection.update_one({"uid": uid}, {"$set": {"seennotify": "true"}})
+            if result.modified_count > 0:
+                emit('message', {"message": "Notification updated successfully"})
+            else:
+                emit('message', {"message": "No matching notification found"})
+        except Exception as e:
+            generatelogs('error', f'Error updating notification: {str(e)}', 'unseennotifyupdate.py')
+            emit('message', {"error": "Internal server error", "details": str(e)})
