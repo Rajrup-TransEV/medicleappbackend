@@ -28,6 +28,7 @@ def notificationcreate(socketio):
                     generatelogs('error', f'Invalid JSON data: {str(e)}', 'notificationcreate.py')
                     emit('message', {"error": "Invalid data format: JSON parsing failed"})
                     return
+
             # Verify that data is a dictionary
             if not isinstance(data, dict):
                 generatelogs('error', 'Data must be a dictionary or valid JSON object', 'notificationcreate.py')
@@ -71,7 +72,22 @@ def notificationcreate(socketio):
             # Store in MongoDB
             db = get_db_connection()
             notification_collection = db['notifications']
-            result = notification_collection.insert_one(notification_data)
+            notification_collection.insert_one(notification_data)
+
+            # Fetch active socket connections for relevant users from multiplexer
+            multiplexer_collection = db['multiplexer']
+            user_ids = [id for id in [doctorid, patientid, staffid, notificationadminid] if id]
+            generatelogs('info', f'Querying multiplexer for user_ids: {user_ids}', 'notificationcreate.py')
+            active_connections = multiplexer_collection.find({
+                'user_id': {'$in': user_ids},
+                'active': True
+            })
+
+            # Collect all socket IDs in a flat deduped list
+            socket_connections = list({
+                str(conn['socket_id']) for conn in active_connections
+            })
+            generatelogs('info', f'Active socket connections found: {socket_connections}', 'notificationcreate.py')
 
             # Create a response dictionary excluding created_at
             response_data = {
@@ -84,11 +100,16 @@ def notificationcreate(socketio):
                 "staffid": notification_data["staffid"],
                 "patientid": notification_data["patientid"],
                 "notificationstatus": notification_data["notificationstatus"],
-                "seennotify": notification_data["seennotify"]
+                "seennotify": notification_data["seennotify"],
+                "socket_connections": socket_connections
             }
 
-            # Emit success response to client
-            generatelogs('success', f'Notification {notification_data["uid"]} created successfully', 'notificationcreate.py')
+            # Emit success response to client with socket connections
+            generatelogs(
+                'success',
+                f'Notification {notification_data["uid"]} created successfully with socket connections: {socket_connections}',
+                'notificationcreate.py'
+            )
             emit('message', {
                 "message": "Notification created successfully",
                 "notification": response_data
@@ -97,3 +118,6 @@ def notificationcreate(socketio):
         except Exception as e:
             generatelogs('error', f'Error while creating notification: {str(e)}', 'notificationcreate.py')
             emit('message', {"error": "An error occurred while creating the notification", "details": str(e)})
+
+    # Note: If this function is meant to return something (e.g., the blueprint or handler), 
+    # adjust accordingly. For now, assuming it's setting up the event handler in place.

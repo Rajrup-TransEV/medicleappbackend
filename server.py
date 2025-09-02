@@ -161,7 +161,7 @@ from controller.hcarepackage.getpackageinfobyid import getpackageinfobyidbp
 from controller.hcarepackage.updatepackage import package_update_bp
 from controller.hcarepackage.deletepackage import deletepackagebp
 from controller.hcarepackage.getpackageinfobyid import getpackageinfobyidbp
-
+from controller.notify.multiplexer import multiplexer
 
 load_dotenv()
 
@@ -368,6 +368,7 @@ unseennotifyupdate(socketio)
 showunseennotify(socketio)
 get_notifications(socketio)
 patientnotificationfetch(socketio)
+multiplexer(socketio)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)  # Run the app with SocketIO support.
