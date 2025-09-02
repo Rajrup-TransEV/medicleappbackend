@@ -39,11 +39,6 @@ def get_notifications(socketio):
             doctorid = data.get('doctorid')
             staffid = data.get('staffid')
 
-            if not doctorid or not staffid:
-                generatelogs('error', 'Doctor ID and Staff ID are required', 'notifications.py')
-                emit('message', {"error": "Doctor ID and Staff ID are required"})
-                return
-
             # Connect to the database
             db = get_db_connection()
             notification_collection = db['notifications']
